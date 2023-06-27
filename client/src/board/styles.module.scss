@@ -1,0 +1,96 @@
+.board {
+  display: grid;
+  // grid-template-columns: repeat(11, auto);
+  grid-template-areas:
+    "empty static-row"
+    "static-column play-area";
+}
+
+.emptyCell {
+  grid-area: empty;
+}
+.staticRow {
+  grid-area: static-row;
+}
+.staticColumn {
+  grid-area: static-column;
+}
+.playArea {
+  grid-area: play-area;
+  display: grid;
+  grid-template-columns: repeat(10, auto);
+}
+
+.column {
+  display: flex;
+  flex-direction: column;
+}
+
+.cell {
+  border: 1px solid black;
+
+  $cellSize: 30px;
+  height: $cellSize;
+  width: $cellSize;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cell:hover {
+  background-color: lightblue;
+}
+
+.boat {
+  height: 100%;
+  width: 100%;
+  background-color: black;
+}
+
+$boatMargin: 10%;
+$boatSize: 80%;
+
+.boatStartVertical {
+  margin-top: 2 * $boatMargin;
+  width: $boatSize;
+}
+.boatMiddleVertical {
+  width: $boatSize;
+}
+.boatEndVertical {
+  width: $boatSize;
+  border-radius: 0 0 50% 50%;
+}
+
+.boatStartHorizontal {
+  margin-left: $boatMargin;
+  height: $boatSize;
+}
+.boatMiddleHorizontal {
+  height: $boatSize;
+}
+.boatEndHorizontal {
+  height: $boatSize;
+  border-radius: 0 50% 50% 0;
+}
+
+.attacked {
+  background-color: red;
+}
+
+.missed {
+  background-color: gray;
+  height: 100%;
+  width: 100%;
+}
+
+.sunk {
+  background-color: orange;
+}
+
+.defendMiss {
+  height: 100%;
+  width: 100%;
+  background-color: gray;
+}
