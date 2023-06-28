@@ -1,12 +1,4 @@
 import { handleError } from "../auth/errorHandling";
-import {
-  missShip,
-  openGameOverDialog,
-  setIsGameOver,
-  setWinnerPlayerId,
-  sinkShip,
-  swapPlayerIdToPlay,
-} from "../redux/activeGameSlice";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import {
   selectActivePlayerId,
@@ -75,21 +67,8 @@ const BoardEnemy = ({ gameId, playerId }: BoardProps) => {
         guesserPlayerId: playerId,
         gameId,
       });
-      const { hasBoat, isGameOver } = response.data;
-      if (hasBoat) {
-        dispatch(sinkShip({ point, guesserPlayerId: playerId }));
-        console.log("ship sunk, player gets a new turn");
-        if (isGameOver) {
-          console.log("game over. Winner:", playerId);
-          dispatch(setIsGameOver(true));
-          dispatch(openGameOverDialog());
-          dispatch(setWinnerPlayerId(playerId));
-        }
-      } else {
-        dispatch(missShip({ point, guesserPlayerId: playerId }));
-        dispatch(swapPlayerIdToPlay());
-        console.log("miss, player turn changes");
-      }
+
+      // Response handled in event handler
     } catch (error) {
       handleError(error);
     }

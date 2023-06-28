@@ -1,10 +1,11 @@
 import { Router } from "express";
+import { Server } from "socket.io";
 import { GameController } from "./gameController";
 
-export const gameRouter = () => {
+export const gameRouter = (io: Server) => {
   const router = Router();
 
-  const controller = new GameController();
+  const controller = new GameController(io);
 
   router.get("/game-room/:gameRoomId", (req, res, next) =>
     controller.getGame(req, res, next)

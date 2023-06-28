@@ -1,4 +1,5 @@
 import { NextFunction, Request, Response } from "express";
+import { Server } from "socket.io";
 import { Game, GameState } from "../database/game";
 import { DbService } from "./database/dbService";
 
@@ -13,6 +14,11 @@ export type ResetGamePayload = {
 
 export class GameController {
   private gameDbService = new DbService();
+  private io: Server;
+
+  constructor(io: Server) {
+    this.io = io;
+  }
 
   async getGame(req: Request, res: Response, next: NextFunction) {
     try {
@@ -52,6 +58,7 @@ export class GameController {
         initialGame.id
       );
 
+      this.io.emit("gameStarted", startedGame);
       res.json(startedGame);
       console.log("Started game:", startedGame.id);
     } catch (error) {
@@ -107,11 +114,15 @@ export class GameController {
         guesserPlayerId,
         gameId,
       });
-      return res.json({
+      const guessResult = {
         hasBoat: result.shipHit,
         nextPlayerId: result.nextPlayerId,
         isGameOver: result.isGameOver,
-      });
+        point,
+        playerId: guesserPlayerId,
+      };
+      this.io.emit("squareGuessed", guessResult);
+      return res.json(guessResult);
     } catch (error) {
       next(error);
     }

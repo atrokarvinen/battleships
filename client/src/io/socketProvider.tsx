@@ -1,6 +1,17 @@
-import { io } from "socket.io-client";
 import { ReactElement, createContext, useEffect } from "react";
-import { useAppDispatch } from "../redux/hooks";
+import { io } from "socket.io-client";
+import { mapGameDtoToActiveGame } from "../game/api";
+import { GameDTO } from "../game/apiModel";
+import {
+  missShip,
+  openGameOverDialog,
+  setActiveGame,
+  setIsGameOver,
+  setWinnerPlayerId,
+  sinkShip,
+  swapPlayerIdToPlay,
+} from "../redux/activeGameSlice";
+import { addMessage } from "../redux/chatSlice";
 import {
   addNewGameRoom,
   deleteAllGameRooms,
@@ -8,12 +19,12 @@ import {
   joinGame,
   leaveGame,
 } from "../redux/gameRoomSlice";
+import { useAppDispatch } from "../redux/hooks";
 import {
   Player,
   addPlayerToGame,
   removePlayerFromGame,
 } from "../redux/playerSlice";
-import { addMessage } from "../redux/chatSlice";
 
 type SocketProviderProps = { children: ReactElement };
 
@@ -55,6 +66,7 @@ const SocketProvider = ({ children }: SocketProviderProps) => {
       dispatch(addMessage(message));
     });
 
+    // Game room
     socket.on("gameCreated", (game) => {
       console.log(`Game ${JSON.stringify(game)} created`);
       dispatch(addNewGameRoom(game));
@@ -78,6 +90,32 @@ const SocketProvider = ({ children }: SocketProviderProps) => {
       console.log(`Player ${playerId} left game ${gameId}`);
       dispatch(leaveGame(payload));
       dispatch(removePlayerFromGame(payload));
+    });
+
+    // Game
+    socket.on("gameStarted", (game) => {
+      console.log("[Socket client] game started:", game);
+      const startedGame: GameDTO = game;
+      const activeGame = mapGameDtoToActiveGame(startedGame);
+      dispatch(setActiveGame(activeGame));
+    });
+    socket.on("squareGuessed", (guessResult) => {
+      console.log("[Socket client] square guessed:", guessResult);
+      const { hasBoat, isGameOver, point, playerId } = guessResult;
+      if (hasBoat) {
+        dispatch(sinkShip({ point, guesserPlayerId: playerId }));
+        console.log("ship sunk, player gets a new turn");
+        if (isGameOver) {
+          console.log("game over. Winner:", playerId);
+          dispatch(setIsGameOver(true));
+          dispatch(openGameOverDialog());
+          dispatch(setWinnerPlayerId(playerId));
+        }
+      } else {
+        dispatch(missShip({ point, guesserPlayerId: playerId }));
+        dispatch(swapPlayerIdToPlay());
+        console.log("miss, player turn changes");
+      }
     });
   }
 

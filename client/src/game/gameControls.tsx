@@ -1,11 +1,10 @@
 import { Button, Stack } from "@mui/material";
-import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import {
-  setActiveGame,
-  setIsGameOver,
   openGameOverDialog,
+  setIsGameOver,
   setWinnerPlayerId,
 } from "../redux/activeGameSlice";
+import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import { selectActivePlayerId, selectBoardState } from "../redux/selectors";
 import {
   mapGameDtoToActiveGame,
@@ -31,7 +30,8 @@ const GameControls = ({ gameRoomId, playerIds }: GameControlsProps) => {
     const activeGame = mapGameDtoToActiveGame(startedGame);
     console.log("started game:", activeGame);
 
-    dispatch(setActiveGame(activeGame));
+    // Response received as event
+    // dispatch(setActiveGame(activeGame));
   }
 
   async function endGame() {

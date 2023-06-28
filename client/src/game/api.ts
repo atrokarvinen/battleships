@@ -1,11 +1,10 @@
 import axios from "axios";
-import { config } from "../config/config";
-import { Cell, GameDTO, BoatPart as ApiBoatPart } from "./apiModel";
-import { ActiveGameState } from "../redux/activeGameSlice";
-import { AttackResult } from "../board/cell/attack-result";
-import { BoardPoint } from "../board/board";
 import { BoatPart } from "../board/cell-boat-part";
-import { generateEmptyBoardPoints } from "../board/redux/board-utils";
+import { AttackResult } from "../board/cell/attack-result";
+import { BoardPoint } from "../board/point";
+import { config } from "../config/config";
+import { ActiveGameState } from "../redux/activeGameSlice";
+import { BoatPart as ApiBoatPart, Cell, GameDTO } from "./apiModel";
 
 const _axios = axios.create({ baseURL: `${config.backendBaseUrl}/game` });
 
@@ -33,7 +32,6 @@ export const getGameByRoomIdRequest = (gameRoomId: string) => {
 export const mapGameDtoToActiveGame = (game: GameDTO) => {
   const activeGame: ActiveGameState = {
     boards: game.playerInfos.map((board) => ({
-      boardId: "some id",
       playerId: board.playerId,
       points: board.ownShips.map((cell) => {
         const boardPoint: BoardPoint = {
