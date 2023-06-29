@@ -23,7 +23,7 @@ const BoardEnemy = ({ gameId, playerId }: BoardProps) => {
   const isGameOver = useAppSelector(selectIsGameOver);
   const dispatch = useAppDispatch();
 
-  console.log("enemy points:", points);
+  // console.log("enemy points:", points);
 
   const cellClicked = async (point: Point) => {
     console.log("cell clicked @" + JSON.stringify(point));

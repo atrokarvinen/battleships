@@ -1,23 +1,24 @@
+import { Box, FormControlLabel, Stack, Switch } from "@mui/material";
+import { useContext, useEffect, useState } from "react";
 import { useParams } from "react-router";
-import GameControls from "./gameControls";
-import InfoBoard from "./infoBoard";
-import PlayerArea from "./playerArea";
-import styles from "./styles.module.scss";
-import GameChat from "./gameChat";
-import { useContext, useEffect } from "react";
-import { useAppDispatch, useAppSelector } from "../redux/hooks";
-import { getGameRequest } from "../lobby/api";
 import { handleError } from "../auth/errorHandling";
-import { Box, Stack } from "@mui/material";
+import { useAuth } from "../auth/useAuth";
 import { SocketContext } from "../io/socketProvider";
+import { getGameRequest } from "../lobby/api";
+import { GameRoom } from "../lobby/gameRoom";
 import { setActiveGame } from "../redux/activeGameSlice";
+import { addNewGameRoom } from "../redux/gameRoomSlice";
+import { useAppDispatch, useAppSelector } from "../redux/hooks";
+import { addPlayer } from "../redux/playerSlice";
 import { selectActiveGame, selectGame } from "../redux/selectors";
 import { getGameByRoomIdRequest, mapGameDtoToActiveGame } from "./api";
 import { GameDTO } from "./apiModel";
-import { addNewGameRoom } from "../redux/gameRoomSlice";
+import GameChat from "./gameChat";
+import GameControls from "./gameControls";
 import GameOverDialog from "./gameOverDialog";
-import { addPlayer } from "../redux/playerSlice";
-import { GameRoom } from "../lobby/gameRoom";
+import InfoBoard from "./infoBoard";
+import PlayerArea from "./playerArea";
+import styles from "./styles.module.scss";
 
 type GameProps = {};
 
@@ -28,9 +29,12 @@ type RouteParams = {
 const Game = ({}: GameProps) => {
   const dispatch = useAppDispatch();
   const params = useParams<RouteParams>();
+  const { userId: playerId } = useAuth();
   const gameRoomId = params.id!;
 
   const socket = useContext(SocketContext);
+
+  const [showOpponent, setShowOpponent] = useState(true);
 
   const game = useAppSelector(selectActiveGame);
   const gameRoom = useAppSelector((state) => selectGame(state, gameRoomId));
@@ -72,12 +76,13 @@ const Game = ({}: GameProps) => {
     return <div>{`Unknown game id: '${gameRoomId}'`}</div>;
   }
 
-  const playerIds = game.players.map((p) => p.id);
-  const player1 = gameRoom.players.length > 0 ? gameRoom.players[0] : undefined;
-  const player2 = gameRoom.players.length > 1 ? gameRoom.players[1] : undefined;
+  const self = gameRoom.players.find((p) => p.id === playerId);
+  const opponent = gameRoom.players.find((p) => p.id !== playerId);
+  if (!self) {
+    return <div>{`Unknown player id: '${playerId}'`}</div>;
+  }
 
-  // console.log("player1:", player1);
-  // console.log("player2:", player2);
+  const playerIds = game.players.map((p) => p.id);
 
   return (
     <Box className={styles.game} mt={2} data-testid="active-game">
@@ -88,17 +93,27 @@ const Game = ({}: GameProps) => {
           playerIds={gameRoom?.players.map((p) => p.id) ?? []}
         />
       </Stack>
-      <PlayerArea
-        gameId={game.id}
-        name={player1?.username ?? ""}
-        playerId={player1?.id ?? "1"}
-      />
+      <PlayerArea gameId={game.id} name={self.username} playerId={self.id} />
       <div style={{ margin: 10 }}></div>
-      <PlayerArea
-        gameId={game.id}
-        name={player2?.username ?? ""}
-        playerId={player2?.id ?? "2"}
-      />
+      <Stack direction={"column"}>
+        <FormControlLabel
+          control={
+            <Switch
+              defaultChecked
+              value={showOpponent}
+              onChange={(e) => setShowOpponent(e.target.checked)}
+            />
+          }
+          label="Show opponent board"
+        />
+        {showOpponent && (
+          <PlayerArea
+            gameId={game.id}
+            name={opponent?.username ?? ""}
+            playerId={opponent?.id ?? "1"}
+          />
+        )}
+      </Stack>
       <GameChat gameId={gameRoomId} playerIds={playerIds} />
       <GameOverDialog />
     </Box>
