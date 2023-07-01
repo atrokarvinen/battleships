@@ -83,6 +83,9 @@ const Game = ({}: GameProps) => {
 
   const playerIds = game.players.map((p) => p.id);
 
+  // console.log("playerId:", playerId);
+  // console.log("self:", self);
+
   return (
     <Box className={styles.game} mt={2} data-testid="active-game">
       <Stack spacing={3} minWidth={300}>

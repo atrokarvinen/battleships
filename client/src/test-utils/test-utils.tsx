@@ -1,15 +1,14 @@
 /* eslint-disable import/export */
-import { cleanup, render } from "@testing-library/react";
+import { PreloadedState, configureStore } from "@reduxjs/toolkit";
+import { RenderOptions, cleanup, render } from "@testing-library/react";
 import { Provider } from "react-redux";
+import { MemoryRouter } from "react-router";
 import { afterEach } from "vitest";
 import {
   RootState,
-  store,
   preloadedState as initialState,
   rootReducer,
 } from "../redux/store";
-import { PreloadedState, configureStore } from "@reduxjs/toolkit";
-import { MemoryRouter } from "react-router";
 
 afterEach(() => {
   cleanup();
@@ -25,13 +24,14 @@ const setupStore = (preloadedState: PreloadedState<RootState>) => {
 function customRender(
   ui: React.ReactElement,
   preloadedState = initialState,
+  initialRoutes: string[] | undefined = undefined,
   store = setupStore(preloadedState),
-  options = {}
+  options: RenderOptions = {}
 ) {
   return render(ui, {
     // wrap provider(s) here if needed
     wrapper: ({ children }) => (
-      <MemoryRouter>
+      <MemoryRouter initialEntries={initialRoutes}>
         <Provider store={store}>{children}</Provider>
       </MemoryRouter>
     ),

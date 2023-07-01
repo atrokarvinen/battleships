@@ -1,9 +1,8 @@
 import type { PayloadAction } from "@reduxjs/toolkit";
 import { createSlice } from "@reduxjs/toolkit";
-import { BoardPoint } from "../board/board";
 import { BoatPart } from "../board/cell-boat-part";
 import { AttackResult } from "../board/cell/attack-result";
-import { Point } from "../board/point";
+import { BoardPoint, Point } from "../board/point";
 import { AddBoatPayload } from "../board/redux/addBoatPayload";
 import { generateEmptyBoardPoints } from "../board/redux/board-utils";
 import { GuessBoatPayload } from "../board/redux/guessBoatPayload";
