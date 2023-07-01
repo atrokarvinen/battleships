@@ -4,7 +4,7 @@ import { AttackResult } from "../board/cell/attack-result";
 import { BoardPoint } from "../board/point";
 import { config } from "../config/config";
 import { ActiveGameState } from "../redux/activeGameSlice";
-import { BoatPart as ApiBoatPart, Cell, GameDTO } from "./apiModel";
+import { BoatPart as ApiBoatPart, Cell, GameDTO, GameState } from "./apiModel";
 
 const _axios = axios.create({ baseURL: `${config.backendBaseUrl}/game` });
 
@@ -56,6 +56,7 @@ export const mapGameDtoToActiveGame = (game: GameDTO) => {
       }),
     })),
     id: game.id,
+    isGameStarted: game.state === GameState.STARTED,
     isGameOver:
       game.winnerId === game.playerIds[0] ||
       game.winnerId === game.playerIds[1],

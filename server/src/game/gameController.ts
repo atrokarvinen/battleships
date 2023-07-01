@@ -1,6 +1,5 @@
 import { NextFunction, Request, Response } from "express";
 import { Server } from "socket.io";
-import { Game, GameState } from "../database/game";
 import { DbService } from "./database/dbService";
 
 export type StartGamePayload = {
@@ -87,20 +86,7 @@ export class GameController {
     next: NextFunction
   ) {
     try {
-      const { gameRoomId } = req.body;
-
-      console.log("Resetting game:", gameRoomId);
-
-      const gameToReset = await Game.findOne({ gameRoomId });
-      if (!gameToReset) {
-        return res.status(404).json({ error: "Game not found" });
-      }
-
-      gameToReset.state = GameState.ENDED;
-      await gameToReset.save();
-
-      res.end();
-      console.log("Reset game:", gameRoomId);
+      console.log("Not implemented");
     } catch (error) {
       next(error);
     }

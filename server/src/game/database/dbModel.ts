@@ -1,6 +1,6 @@
 import { Schema, model } from "mongoose";
-import { Board, Boat, Cell, Game, PlayerInformation, Point } from "./model";
 import { toObjectOptions } from "../../database/dbOptions";
+import { Board, Boat, Cell, Game, PlayerInformation, Point } from "./model";
 
 const pointSchema = new Schema<Point>(
   {
@@ -51,10 +51,9 @@ const gameSchema = new Schema<Game>(
     winnerId: String,
     playerIds: [String],
     state: Number,
-    // boards: [boardSchema],
     playerInfos: [playerInfoSchema],
   },
   { toObject: toObjectOptions }
 );
 
-export const GameModel = model("gamev2", gameSchema);
+export const GameModel = model("game", gameSchema);

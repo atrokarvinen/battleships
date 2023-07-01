@@ -1,4 +1,5 @@
 import { Router } from "express";
+import { validationMiddleware } from "../middleware/validationMiddleware";
 import { AuthController } from "./authController";
 import {
   genCookie,
@@ -8,7 +9,6 @@ import {
   postCookie,
 } from "./cookie-test";
 import { signInValidation, signUpValidation } from "./validation";
-import { validationMiddleware } from "../middleware/validationMiddleware";
 
 export const authRouter = () => {
   const router = Router();
@@ -26,6 +26,7 @@ export const authRouter = () => {
     validationMiddleware,
     authController.signIn
   );
+  router.get("/guest/sign-in", authController.signInAsGuest);
   router.post("/sign-out", authController.signOut);
   router.delete("/", authController.deleteAllUsers);
   router.post("/test-token", authController.testToken);

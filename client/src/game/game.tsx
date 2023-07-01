@@ -34,7 +34,8 @@ const Game = ({}: GameProps) => {
 
   const socket = useContext(SocketContext);
 
-  const [showOpponent, setShowOpponent] = useState(true);
+  const showOpponentInitialValue = false;
+  const [showOpponent, setShowOpponent] = useState(showOpponentInitialValue);
 
   const game = useAppSelector(selectActiveGame);
   const gameRoom = useAppSelector((state) => selectGame(state, gameRoomId));
@@ -76,11 +77,9 @@ const Game = ({}: GameProps) => {
     return <div>{`Unknown game id: '${gameRoomId}'`}</div>;
   }
 
+  // TODO need to set p1 and p2 in database
   const self = gameRoom.players.find((p) => p.id === playerId);
   const opponent = gameRoom.players.find((p) => p.id !== playerId);
-  if (!self) {
-    return <div>{`Unknown player id: '${playerId}'`}</div>;
-  }
 
   const playerIds = game.players.map((p) => p.id);
 
@@ -93,13 +92,17 @@ const Game = ({}: GameProps) => {
           playerIds={gameRoom?.players.map((p) => p.id) ?? []}
         />
       </Stack>
-      <PlayerArea gameId={game.id} name={self.username} playerId={self.id} />
+      <PlayerArea
+        gameId={game.id}
+        name={self?.username ?? ""}
+        playerId={self?.id ?? ""}
+      />
       <div style={{ margin: 10 }}></div>
       <Stack direction={"column"}>
         <FormControlLabel
           control={
             <Switch
-              defaultChecked
+              defaultChecked={showOpponentInitialValue}
               value={showOpponent}
               onChange={(e) => setShowOpponent(e.target.checked)}
             />

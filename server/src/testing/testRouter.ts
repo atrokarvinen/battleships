@@ -1,41 +1,18 @@
-import { Router, Response, Request, NextFunction } from "express";
-import { User } from "../database/user";
-import { GameRoom } from "../database/gameRoom";
+import { Router } from "express";
+import { TestController } from "./testController";
 
-export const testRouter = Router();
+export const testRouter = () => {
+  const router = Router();
 
-export const testEnvMiddleware = (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  const isTestEnvironment = true;
-  if (!isTestEnvironment) {
-    return res
-      .status(403)
-      .json({ message: "Route is only available in test environment" });
-  }
-  return next();
+  const controller = new TestController();
+
+  router.delete("/users", controller.deleteAllUsers);
+  router.delete("/users/:name", controller.deleteUserByName);
+
+  router.delete("/games/:title", controller.deleteGameByTitle);
+  router.delete("/games/:title/games", controller.deleteGamesFromGameRoom);
+
+  router.post("/games/seed", controller.seedGame);
+
+  return router;
 };
-
-export const deleteAllUsers = async (req: Request, res: Response) => {
-  await User.deleteMany({});
-  res.end();
-};
-
-export const deleteUserByName = async (req: Request, res: Response) => {
-  const username = req.params.name;
-  await User.deleteMany({ username });
-  res.end();
-};
-
-export const deleteGameByTitle = async (req: Request, res: Response) => {
-  const title = req.params.title;
-  await GameRoom.deleteMany({ title });
-  res.end();
-};
-
-testRouter.delete("/users", deleteAllUsers);
-testRouter.delete("/users/:name", deleteUserByName);
-
-testRouter.delete("/games/:title", deleteGameByTitle);

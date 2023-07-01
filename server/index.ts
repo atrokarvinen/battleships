@@ -14,7 +14,8 @@ import { gameRoomRouter } from "./src/gameRoom/gameRoomRouter";
 import { errorHandleMiddleware } from "./src/middleware/errorHandleMiddleware";
 import { logRequestMiddleware } from "./src/middleware/logRequestMiddleware";
 import { addListeners } from "./src/socket/socket";
-import { testEnvMiddleware, testRouter } from "./src/testing/testRouter";
+import { testEnvMiddleware } from "./src/testing/testEnvMiddleware";
+import { testRouter } from "./src/testing/testRouter";
 
 const app = express();
 
@@ -32,7 +33,7 @@ app.use("/auth", authRouter());
 app.use("/account", authMiddleware, accountRouter);
 app.use("/game-room", gameRoomRouter(io));
 app.use("/game", gameRouter(io));
-app.use("/test", testEnvMiddleware, testRouter);
+app.use("/test", testEnvMiddleware, testRouter());
 app.use((req, res, next) => {
   const { url, method, route } = req;
   console.log(

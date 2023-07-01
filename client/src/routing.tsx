@@ -1,12 +1,12 @@
+import { Box } from "@mui/material";
 import { Navigate, Route, Routes } from "react-router";
 import { BrowserRouter } from "react-router-dom";
-import Lobby from "./lobby/lobby";
-import Game from "./game/game";
-import Navigation from "./navigation/navigation";
-import Login from "./auth/login";
 import CookieTest from "./auth/cookie-test";
-import { Box, Button, Container } from "@mui/material";
+import Login from "./auth/login";
 import ProtectedRoute from "./auth/protectedRoute";
+import Game from "./game/game";
+import Lobby from "./lobby/lobby";
+import Navigation from "./navigation/navigation";
 import MuiTest from "./test/mui-test";
 import SocketTest from "./test/socket-test";
 
@@ -26,7 +26,6 @@ const Routing = ({}: RoutingProps) => {
         <Routes>
           <Route element={<ProtectedRoute />}>
             <Route path="/lobby" element={<Lobby />} />
-            {/* <Route path="/game/:id" element={<GameRoom />} /> */}
             <Route path="/game/:id" element={<Game />} />
             <Route path="/game" element={<Game />} />
           </Route>

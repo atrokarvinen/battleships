@@ -1,6 +1,7 @@
-import { Outlet, useNavigate } from "react-router";
-import { ReactElement } from "react";
-import { Button, CircularProgress } from "@mui/material";
+import { CircularProgress } from "@mui/material";
+import { ReactElement, useState } from "react";
+import { Outlet, useLocation } from "react-router";
+import Unauthorized from "./unauthorized";
 import { useAuth } from "./useAuth";
 
 type ProtectedRouteProps = {
@@ -9,27 +10,22 @@ type ProtectedRouteProps = {
 
 const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
   const { isAuth, isLoading } = useAuth();
-  const navigate = useNavigate();
+  const location = useLocation();
 
-  // Todo move to own file
-  const Unauthorized = () => {
-    return (
-      <div>
-        <h1>Not authorized, please log in</h1>
-        <Button onClick={() => navigate("/")} variant="contained">
-          Login
-        </Button>
-      </div>
-    );
-  };
-
+  const [unAuthRoute, setUnauthRoute] = useState<string | undefined>();
   if (isLoading) {
     return <CircularProgress />;
   }
 
   if (!isAuth) {
-    console.log("not authenticated, redirecting...");
-    return <Unauthorized />;
+    const tryRoute = location.pathname;
+    console.log(
+      `not authenticated, saving route '${tryRoute}', redirecting...`
+    );
+    if (tryRoute !== unAuthRoute) {
+      setUnauthRoute(tryRoute);
+    }
+    return <Unauthorized unAuthRoute={unAuthRoute} />;
   }
   return <Outlet />;
 };

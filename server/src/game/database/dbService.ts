@@ -30,8 +30,11 @@ export class DbService {
     const infos = game.playerInfos;
     const own = infos.find((b) => b.playerId === guesserPlayerId);
     const enemy = infos.find((b) => b.playerId !== guesserPlayerId);
-    if (!own || !enemy) {
-      throw new Error(`Failed to find board of player '${guesserPlayerId}'`);
+    if (!own) {
+      throw new Error(`Failed to find own board of '${guesserPlayerId}'`);
+    }
+    if (!enemy) {
+      throw new Error(`Failed to find enemy board`);
     }
     const guessedCellOwnSide = own.guesses.find(pointMatches(point));
     const guessedCellEnemySide = enemy.ownShips.find(pointMatches(point));

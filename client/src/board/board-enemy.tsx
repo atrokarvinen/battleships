@@ -75,7 +75,7 @@ const BoardEnemy = ({ gameId, playerId }: BoardProps) => {
   };
 
   return (
-    <div className={styles.board}>
+    <div className={styles.board} data-testid="enemy-board">
       <StaticCells />
       <div className={styles.playArea}>
         {points.map((point, index) => (

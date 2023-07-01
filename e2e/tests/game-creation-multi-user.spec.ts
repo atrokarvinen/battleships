@@ -1,11 +1,11 @@
-import { APIRequestContext, Page, expect, test } from "@playwright/test";
-import { config } from "./config";
+import { APIRequestContext, expect, test } from "@playwright/test";
 import {
-  deleteGameByTitle,
+  createGameRoom as createGameRequest,
+  deleteGameRoomByTitle,
   deleteUserByName,
   signUpAndSignIn,
-  createGame as createGameRequest,
 } from "./common";
+import { config } from "./config";
 import { defaultUser } from "./defaults";
 
 const { frontendUrl } = config;
@@ -24,7 +24,7 @@ test.describe("multi user game creation", () => {
   });
 
   const cleanup = async (request: APIRequestContext) => {
-    await deleteGameByTitle(request, gameTitle);
+    await deleteGameRoomByTitle(request, gameTitle);
     await deleteUserByName(request, username1);
     await deleteUserByName(request, username2);
   };

@@ -6,3 +6,4 @@ export const accountRouter = Router();
 const controller = new AccountController();
 
 accountRouter.get("/", controller.getAccount);
+accountRouter.get("/guest", controller.getGuestAccountInfo);

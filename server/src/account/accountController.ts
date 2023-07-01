@@ -1,4 +1,6 @@
-import { Request, Response, NextFunction } from "express";
+import { NextFunction, Request, Response } from "express";
+import jwt from "jsonwebtoken";
+import { env } from "../core/env";
 import { User } from "../database/user";
 
 export class AccountController {
@@ -13,5 +15,18 @@ export class AccountController {
     } catch (error) {
       next(error);
     }
+  }
+
+  async getGuestAccountInfo(req: Request, res: Response, next: NextFunction) {
+    const cookieName = env.JWT_COOKIE_NAME;
+    const cookie = req.cookies[cookieName];
+    if (!cookie) {
+      const error = `Expected to find an auth cookie '${cookieName}'`;
+      return res.status(403).end(error);
+    }
+
+    const token = jwt.verify(cookie, env.JWT_SECRET);
+    const { userId, username } = token as any;
+    return res.json({ userId, username });
   }
 }

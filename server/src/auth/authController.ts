@@ -1,11 +1,12 @@
-import { NextFunction, Request, Response } from "express";
-import { SignUpPayload } from "./signUpPayload";
-import { SignInPayload } from "./signInPayload";
 import bcrypt from "bcrypt";
-import { User } from "../database/user";
+import { NextFunction, Request, Response } from "express";
 import jwt from "jsonwebtoken";
 import { env } from "../core/env";
 import { ValidationFailure } from "../core/validationFailure";
+import { User } from "../database/user";
+import { generateGuid, getRandomGuestName } from "./guestNames";
+import { SignInPayload } from "./signInPayload";
+import { SignUpPayload } from "./signUpPayload";
 
 export class AuthController {
   signUp = async (req: Request, res: Response, next: NextFunction) => {
@@ -78,6 +79,31 @@ export class AuthController {
       next(error);
     }
   };
+
+  async signInAsGuest(req: Request, res: Response, next: NextFunction) {
+    try {
+      const username = getRandomGuestName();
+      const userId = generateGuid();
+
+      // Create token
+      const secret = env.JWT_SECRET;
+      const tokenInfo = { userId };
+      const token = jwt.sign(tokenInfo, secret);
+      const cookieName = env.JWT_COOKIE_NAME;
+
+      console.log(`Successfully created guest user '${username}'`);
+      res
+        .status(200)
+        .cookie(cookieName, token, {
+          httpOnly: true,
+          sameSite: "none",
+          secure: true,
+        })
+        .json({ username: username, userId, gamesJoined: [] });
+    } catch (error) {
+      next(error);
+    }
+  }
 
   async signOut(req: Request, res: Response, next: NextFunction) {
     try {

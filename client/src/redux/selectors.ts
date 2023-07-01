@@ -17,6 +17,7 @@ export const selectChatMessages = (state: RootState) => state.chat.messages;
 
 // Auth
 export const selectIsLoggedIn = (state: RootState) => state.auth.isLoggedIn;
+export const selectIsGuest = (state: RootState) => state.auth.isGuest;
 export const selectUsername = (state: RootState) => state.auth.username;
 export const selectUserId = (state: RootState) => state.auth.userId;
 
@@ -33,6 +34,8 @@ export const selectActivePlayers = (state: RootState) =>
   state.activeGame.players;
 export const selectActivePlayerId = (state: RootState) =>
   state.activeGame.activePlayerId;
+export const selectIsGameStarted = (state: RootState) =>
+  state.activeGame.isGameStarted;
 export const selectIsGameOver = (state: RootState) =>
   state.activeGame.isGameOver;
 export const selectShowGameOverDialog = (state: RootState) =>

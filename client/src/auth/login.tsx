@@ -1,17 +1,17 @@
-import styles from "./styles.module.scss";
 import { Box, Button, Dialog, DialogContent, DialogTitle } from "@mui/material";
 import { useState } from "react";
+import { useNavigate } from "react-router";
+import { login } from "../redux/authSlice";
+import { useAppDispatch } from "../redux/hooks";
+import { addPlayer } from "../redux/playerSlice";
+import { signInAsGuestRequest, signInRequest, signUpRequest } from "./api";
+import { FormError, handleError } from "./errorHandling";
+import { LoginForm } from "./loginForm";
+import { FormErrorMap } from "./models";
 import SignIn from "./signIn";
 import SignUp from "./signUp";
 import { SignUpForm } from "./singUpForm";
-import { signInRequest, signUpRequest } from "./api";
-import { LoginForm } from "./loginForm";
-import { useNavigate } from "react-router";
-import { useAppDispatch } from "../redux/hooks";
-import { addPlayer } from "../redux/playerSlice";
-import { FormErrorMap } from "./models";
-import { FormError, handleError } from "./errorHandling";
-import { login } from "../redux/authSlice";
+import styles from "./styles.module.scss";
 
 type LoginProps = {};
 
@@ -52,7 +52,7 @@ const Login = ({}: LoginProps) => {
           gamesJoined: response.data.gamesJoined,
         })
       );
-      dispatch(login({ userId, username }));
+      dispatch(login({ userId, username, isGuest: false }));
 
       navigate("/lobby");
     } catch (error) {
@@ -87,6 +87,17 @@ const Login = ({}: LoginProps) => {
     }
   };
 
+  const handleGuestLogin = async () => {
+    try {
+      const response = await signInAsGuestRequest();
+      const { userId, username } = response.data;
+      dispatch(login({ userId, username, isGuest: true }));
+      navigate("/lobby");
+    } catch (error) {
+      handleError(error);
+    }
+  };
+
   return (
     <Box className={styles.login}>
       <SignIn
@@ -94,6 +105,13 @@ const Login = ({}: LoginProps) => {
         onSubmit={handleSignInSubmit}
         error={signInError}
       />
+      <Button
+        onClick={handleGuestLogin}
+        variant="outlined"
+        sx={{ width: "150px", mt: 1 }}
+      >
+        Guest login
+      </Button>
       <Button
         onClick={openSignUpForm}
         variant="outlined"

@@ -7,9 +7,9 @@ export const logRequestMiddleware = (
 ) => {
   console.time("request");
   const { url, method } = req;
-  const { statusCode } = res;
   console.log(`Handling request [${method}] ${url}`);
   res.on("finish", () => {
+    const { statusCode } = res;
     console.log(`Handled request [${method}] ${url}. Response: ${statusCode}`);
     console.timeEnd("request");
   });

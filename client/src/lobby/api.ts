@@ -45,3 +45,9 @@ export const getAccountInfo = () => {
     withCredentials: true,
   });
 };
+
+export const getGuestAccountInfo = () => {
+  return axios.get(`${config.backendBaseUrl}/account/guest`, {
+    withCredentials: true,
+  });
+};

@@ -1,8 +1,3 @@
-export type User = {
-  username: string;
-  password: string;
-};
-
 export type GameSeed = {
   gameRoomId: string;
   shipPositions: ShipPlacement[];

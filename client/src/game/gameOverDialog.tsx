@@ -1,13 +1,12 @@
 import {
-  Dialog,
-  DialogContent,
-  DialogActions,
-  DialogTitle,
   Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
 } from "@mui/material";
-import styles from "./styles.module.scss";
-import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import { closeGameOverDialog } from "../redux/activeGameSlice";
+import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import {
   selectShowGameOverDialog,
   selectWinnerPlayer,
@@ -26,7 +25,7 @@ const GameOverDialog = ({}: GameOverDialogProps) => {
   };
 
   return (
-    <Dialog open={isOpen} onClose={onClose}>
+    <Dialog data-testid="game-over-dialog" open={isOpen} onClose={onClose}>
       <DialogTitle>Game over</DialogTitle>
       <DialogContent>{`Game is over. Player '${winner?.username}' won!`}</DialogContent>
       <DialogActions>

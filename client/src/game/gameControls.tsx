@@ -5,7 +5,7 @@ import {
   setWinnerPlayerId,
 } from "../redux/activeGameSlice";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
-import { selectActivePlayerId, selectBoardState } from "../redux/selectors";
+import { selectActivePlayerId, selectIsGameStarted } from "../redux/selectors";
 import {
   mapGameDtoToActiveGame,
   resetGameRequest,
@@ -21,7 +21,7 @@ type GameControlsProps = {
 const GameControls = ({ gameRoomId, playerIds }: GameControlsProps) => {
   const dispatch = useAppDispatch();
   const player = useAppSelector(selectActivePlayerId);
-  const board = useAppSelector(selectBoardState);
+  const isGameStarted = useAppSelector(selectIsGameStarted);
 
   async function startGame() {
     const response = await startGameRequest({ gameRoomId, playerIds });
@@ -52,10 +52,20 @@ const GameControls = ({ gameRoomId, playerIds }: GameControlsProps) => {
 
   return (
     <Stack spacing={1} alignItems={"center"}>
-      <Button sx={{ width: 100 }} variant="contained" onClick={startGame}>
+      <Button
+        sx={{ width: 100 }}
+        variant="contained"
+        onClick={startGame}
+        disabled={isGameStarted}
+      >
         Start
       </Button>
-      <Button sx={{ width: 100 }} variant="contained" onClick={endGame}>
+      <Button
+        sx={{ width: 100 }}
+        variant="contained"
+        onClick={endGame}
+        disabled={!isGameStarted}
+      >
         End
       </Button>
       <Button sx={{ width: 100 }} variant="contained" onClick={testGameOver}>

@@ -1,10 +1,9 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
-import { Board } from "./boardSlice";
-import { GuessBoatPayload } from "../board/redux/guessBoatPayload";
-import { BoardPoint } from "../board/board";
-import { Point } from "../board/point";
-import { AttackResult } from "../board/cell/attack-result";
 import { BoatPart } from "../board/cell-boat-part";
+import { AttackResult } from "../board/cell/attack-result";
+import { BoardPoint, Point } from "../board/point";
+import { GuessBoatPayload } from "../board/redux/guessBoatPayload";
+import { Board } from "./boardSlice";
 
 export type ActiveGamePlayer = {
   id: string;
@@ -23,6 +22,7 @@ export type ActiveGameState = {
   activePlayerId?: string;
   winnerPlayerId?: string;
 
+  isGameStarted: boolean;
   isGameOver: boolean;
   showGameOverDialog: boolean;
 
@@ -33,6 +33,7 @@ export type ActiveGameState = {
 export const initialState: ActiveGameState = {
   id: "1",
   players: [],
+  isGameStarted: false,
   isGameOver: false,
   showGameOverDialog: false,
   boards: [],
@@ -66,6 +67,7 @@ const activeGameSlice = createSlice({
       state.id = action.payload.id;
       state.players = action.payload.players;
       state.boards = action.payload.boards;
+      state.isGameStarted = action.payload.isGameStarted;
       state.isGameOver = action.payload.isGameOver;
       state.guesses = action.payload.guesses;
     },

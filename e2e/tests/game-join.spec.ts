@@ -1,7 +1,7 @@
 import { expect, test } from "@playwright/test";
 import {
-  createGame,
-  deleteGameByTitle,
+  createGameRoom,
+  deleteGameRoomByTitle,
   deleteUserByName,
   signUpAndSignIn,
 } from "./common";
@@ -14,9 +14,9 @@ const username = defaultUser.username;
 test.beforeEach(async ({ page }) => {
   const { request } = page;
 
-  await deleteGameByTitle(request, title);
+  await deleteGameRoomByTitle(request, title);
   await deleteUserByName(request, username);
-  await createGame(request, { title });
+  await createGameRoom(request, { title });
   await signUpAndSignIn({ req: request });
 
   await page.goto(`${config.frontendUrl}/lobby`);
@@ -24,7 +24,7 @@ test.beforeEach(async ({ page }) => {
 });
 
 test.afterEach(async ({ request }) => {
-  await deleteGameByTitle(request, title);
+  await deleteGameRoomByTitle(request, title);
   await deleteUserByName(request, username);
 });
 

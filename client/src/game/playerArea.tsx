@@ -25,6 +25,7 @@ const PlayerArea = ({ name, playerId, gameId }: PlayerAreaProps) => {
       <Typography
         variant="h6"
         className={cn(styles.playerName, { [styles.active]: isPlayersTurn })}
+        data-testid="player-name"
       >
         {name}
       </Typography>

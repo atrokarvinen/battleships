@@ -1,8 +1,8 @@
-import styles from "./styles.module.scss";
 import cn from "classnames";
-import { Point } from "./point";
 import { BoatPart } from "./cell-boat-part";
 import { AttackResult } from "./cell/attack-result";
+import { Point } from "./point";
+import styles from "./styles.module.scss";
 
 type CellProps = {
   point: Point;
@@ -23,8 +23,13 @@ const Cell = ({
 }: CellProps) => {
   const hasBoat = boatPart !== BoatPart.Unknown && boatPart !== BoatPart.None;
   return (
-    <div className={styles.cell} onClick={() => cellClicked({ x, y })}>
+    <div
+      data-testid={`square-${x}-${y}`}
+      className={styles.cell}
+      onClick={() => cellClicked({ x, y })}
+    >
       <div
+        data-testid={hasBoat ? "ship-square" : "water-square"}
         className={cn({
           [styles.boat]: hasBoat,
           [styles.boatStartHorizontal]: boatPart === BoatPart.StartHorizontal,

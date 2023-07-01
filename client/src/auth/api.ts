@@ -1,7 +1,7 @@
 import axios from "axios";
 import { config } from "../config/config";
-import { SignUpForm } from "./singUpForm";
 import { LoginForm } from "./loginForm";
+import { SignUpForm } from "./singUpForm";
 
 export const appAxios = axios.create({
   baseURL: config.backendBaseUrl,
@@ -14,6 +14,10 @@ export const signUpRequest = (payload: SignUpForm) => {
 
 export const signInRequest = (payload: LoginForm) => {
   return appAxios.post(`auth/sign-in`, payload);
+};
+
+export const signInAsGuestRequest = () => {
+  return appAxios.get(`auth/guest/sign-in`);
 };
 
 export const signOutRequest = () => {
