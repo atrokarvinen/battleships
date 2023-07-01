@@ -3,12 +3,12 @@ import { signIn } from "./common";
 import { defaultPassword } from "./defaults";
 import { test } from "./game-play-fixture";
 
-test("starts game", async ({ page, gamePlayPage, player1 }) => {
+test("starts game", async ({ page, gamePlayPage }) => {
   await expect(page.getByRole("button", { name: /start/i })).toBeVisible();
 
   await gamePlayPage.startGame();
 
-  await gamePlayPage.verifyPlayerTurnActive(player1);
+  await gamePlayPage.verifyPlayerTurnActive(gamePlayPage.player1);
 });
 
 test("cannot start game when game already started", async ({
@@ -28,25 +28,23 @@ test("cannot start game if player count is not two", async ({ page }) => {
 test("changes player order when fails to guess", async ({
   page,
   gamePlayPage,
-  player1,
 }) => {
   await gamePlayPage.startGame();
   await gamePlayPage.seedGameDummyShips();
   await page.reload();
-  await gamePlayPage.verifyPlayerTurnActive(player1);
+  await gamePlayPage.verifyPlayerTurnActive(gamePlayPage.player1);
 
   const enemyBoard = page.getByTestId("enemy-board");
   const guessedSquare = enemyBoard.getByTestId("square-5-5");
   await guessedSquare.click();
 
   await expect(guessedSquare.getByTestId("water-square")).toHaveClass(/missed/);
-  await gamePlayPage.verifyPlayerTurnInactive(player1);
+  await gamePlayPage.verifyPlayerTurnInactive(gamePlayPage.player1);
 });
 
 test("ends game when all ships are destroyed", async ({
   page,
   gamePlayPage,
-  player1,
 }) => {
   await gamePlayPage.startGame();
   await gamePlayPage.seedGameDummyShips();
@@ -60,27 +58,22 @@ test("ends game when all ships are destroyed", async ({
   await enemyBoard.getByTestId("square-0-1").click();
 
   await expect(gameOverDialog).toBeVisible();
-  await expect(gameOverDialog).toContainText(player1);
+  await expect(gameOverDialog).toContainText(gamePlayPage.player1);
 });
 
 test("loads the game when page is refreshed", async ({
   page,
   gamePlayPage,
-  player1,
 }) => {
   await gamePlayPage.startGame();
   await gamePlayPage.seedGameDummyShips();
   await page.reload();
 
   await expect(page.getByTestId("ship-square")).toHaveCount(2);
-  await gamePlayPage.verifyPlayerTurnActive(player1);
+  await gamePlayPage.verifyPlayerTurnActive(gamePlayPage.player1);
 });
 
-test("cannot guess when not own turn", async ({
-  page,
-  gamePlayPage,
-  player1,
-}) => {
+test("cannot guess when not own turn", async ({ page, gamePlayPage }) => {
   await gamePlayPage.startGame();
   await gamePlayPage.seedGameDummyShips();
   await page.reload();
@@ -91,7 +84,7 @@ test("cannot guess when not own turn", async ({
   await square1.click();
 
   await expect(square1.getByTestId("water-square")).toHaveClass(/missed/);
-  await gamePlayPage.verifyPlayerTurnInactive(player1);
+  await gamePlayPage.verifyPlayerTurnInactive(gamePlayPage.player1);
 
   const square2 = enemyBoard.getByTestId("square-0-0");
   await square2.click();
@@ -99,17 +92,12 @@ test("cannot guess when not own turn", async ({
   await expect(square2.getByTestId("water-square")).not.toHaveClass(/missed/);
 });
 
-test("guesses are broadcasted", async ({
-  page,
-  gamePlayPage,
-  browser,
-  player2,
-}) => {
+test("guesses are broadcasted", async ({ page, gamePlayPage, browser }) => {
   const context = await browser.newContext();
   const pageP2 = await context.newPage();
   await signIn({
     req: pageP2.request,
-    user: { username: player2, password: defaultPassword },
+    user: { username: gamePlayPage.player2, password: defaultPassword },
   });
   await pageP2.goto(page.url());
 
@@ -128,21 +116,17 @@ test("guesses are broadcasted", async ({
   await expect(squareP1.getByTestId("water-square")).toHaveClass(/missed/);
 });
 
-test("game start is broadcasted", async ({
-  page,
-  gamePlayPage,
-  browser,
-  player2,
-}) => {
+test("game start is broadcasted", async ({ page, gamePlayPage, browser }) => {
   const context = await browser.newContext();
   const pageP2 = await context.newPage();
   await signIn({
     req: pageP2.request,
-    user: { username: player2, password: defaultPassword },
+    user: { username: gamePlayPage.player1, password: defaultPassword },
   });
   await pageP2.goto(page.url());
 
   await gamePlayPage.startGame();
+  await pageP2.waitForTimeout(500);
   await expect(pageP2.getByTestId("ship-square")).toHaveCount(2);
 });
 

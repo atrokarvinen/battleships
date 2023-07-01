@@ -1,17 +1,20 @@
 import { expect, test } from "@playwright/test";
-import { deleteAllUsers, signUp, signUpAndSignIn } from "./common";
+import { deleteUserByName, signUp, signUpAndSignIn, uniquefy } from "./common";
 import { config } from "./config";
+import { defaultPassword, defaultUser } from "./defaults";
 import { User } from "./models";
 
 const { frontendUrl } = config;
 
+const testUsername = uniquefy(defaultUser.username);
+
 test.beforeEach(async ({ page }) => {
-  await deleteAllUsers(page.request);
+  await deleteUserByName(page.request, testUsername);
   await page.goto(frontendUrl);
 });
 
 test.afterEach(async ({ request }) => {
-  await deleteAllUsers(request);
+  await deleteUserByName(request, testUsername);
 });
 
 test("signs up", async ({ page }) => {
@@ -22,7 +25,7 @@ test("signs up", async ({ page }) => {
 
   const usernameLocator = page.getByLabel(/username/i);
   await expect(dialog.locator(usernameLocator)).toBeVisible();
-  await dialog.locator(page.getByLabel(/username/i)).fill("test username");
+  await dialog.locator(page.getByLabel(/username/i)).fill(testUsername);
 
   const passwordLocator = page.locator("#sign-up-password");
   await expect(dialog.locator(passwordLocator)).toBeVisible();
@@ -35,8 +38,8 @@ test("signs up", async ({ page }) => {
 });
 
 test("signs in", async ({ page }) => {
-  const username = "test username";
-  const password = "Password1";
+  const username = testUsername;
+  const password = defaultPassword;
   const user: User = { username, password };
   await signUp({ req: page.request, user });
 
@@ -51,8 +54,8 @@ test("signs in", async ({ page }) => {
 });
 
 test("does not sign in when wrong password", async ({ page }) => {
-  const username = "test username";
-  const password = "Password1";
+  const username = testUsername;
+  const password = defaultPassword;
   const user: User = { username, password };
   await signUp({ req: page.request, user });
 
@@ -68,8 +71,8 @@ test("does not sign in when wrong password", async ({ page }) => {
 });
 
 test("requires unique username", async ({ page }) => {
-  const username = "test username";
-  const password = "Password1";
+  const username = testUsername;
+  const password = defaultPassword;
   const user: User = { username, password };
   await signUp({ req: page.request, user });
 
@@ -89,8 +92,8 @@ test("requires unique username", async ({ page }) => {
 });
 
 test("stays logged in after page refresh", async ({ page }) => {
-  const username = "test username";
-  const password = "Password1";
+  const username = testUsername;
+  const password = defaultPassword;
   const user: User = { username, password };
   await signUpAndSignIn({ req: page.request, user });
 
@@ -104,8 +107,8 @@ test("stays logged in after page refresh", async ({ page }) => {
 });
 
 test("logs out when logout button is clicked", async ({ page }) => {
-  const username = "test username";
-  const password = "Password1";
+  const username = testUsername;
+  const password = defaultPassword;
   const user: User = { username, password };
   await signUpAndSignIn({ req: page.request, user });
 
@@ -118,8 +121,8 @@ test("logs out when logout button is clicked", async ({ page }) => {
 });
 
 test("logs out when page is closed", async ({ page, browser }) => {
-  const username = "test username";
-  const password = "Password1";
+  const username = testUsername;
+  const password = defaultPassword;
   const user: User = { username, password };
   await signUpAndSignIn({ req: page.request, user });
 

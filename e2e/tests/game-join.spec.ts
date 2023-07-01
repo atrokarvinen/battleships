@@ -4,23 +4,27 @@ import {
   deleteGameRoomByTitle,
   deleteUserByName,
   signUpAndSignIn,
+  uniquefy,
 } from "./common";
 import { config } from "./config";
-import { defaultUser } from "./defaults";
+import { defaultPassword, defaultUser } from "./defaults";
 
-const title = "test game join";
-const username = defaultUser.username;
+const title = uniquefy("test game join");
+const username = uniquefy(defaultUser.username);
 
 test.beforeEach(async ({ page }) => {
   const { request } = page;
 
   await deleteGameRoomByTitle(request, title);
   await deleteUserByName(request, username);
+
   await createGameRoom(request, { title });
-  await signUpAndSignIn({ req: request });
+  await signUpAndSignIn({
+    req: request,
+    user: { username, password: defaultPassword },
+  });
 
   await page.goto(`${config.frontendUrl}/lobby`);
-  await page.reload();
 });
 
 test.afterEach(async ({ request }) => {

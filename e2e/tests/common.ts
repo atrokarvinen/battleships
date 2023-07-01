@@ -1,13 +1,16 @@
 import { APIRequestContext, expect } from "@playwright/test";
 import { config } from "./config";
-import { defaultUser } from "./defaults";
 import { GameSeed, User } from "./models";
 
 const { backendUrl } = config;
 
+export const uniquefy = (name: string) => {
+  return `${name}-${Date.now()}`;
+};
+
 type LoginInfo = {
   req: APIRequestContext;
-  user?: User;
+  user: User;
 };
 
 export const signUpAndSignIn = async (payload: LoginInfo) => {
@@ -15,7 +18,7 @@ export const signUpAndSignIn = async (payload: LoginInfo) => {
   await signIn(payload);
 };
 
-export const signUp = async ({ req, user = defaultUser }: LoginInfo) => {
+export const signUp = async ({ req, user }: LoginInfo) => {
   const { username, password } = user;
   const signUpResponse = await req.post(`${backendUrl}/auth/sign-up`, {
     data: {
@@ -27,20 +30,12 @@ export const signUp = async ({ req, user = defaultUser }: LoginInfo) => {
   expect(signUpResponse.ok()).toBeTruthy();
 };
 
-export const signIn = async ({ req, user = defaultUser }: LoginInfo) => {
+export const signIn = async ({ req, user }: LoginInfo) => {
   const { username, password } = user;
   const signInResponse = await req.post(`${backendUrl}/auth/sign-in`, {
     data: { username, password },
   });
   expect(signInResponse.ok()).toBeTruthy();
-};
-
-export const deleteAllUsers = async (request: APIRequestContext) => {
-  await request.delete(`${backendUrl}/test/users`);
-};
-
-export const deleteAllGames = async (request: APIRequestContext) => {
-  await request.delete(`${backendUrl}/game-room`);
 };
 
 export const deleteGameRoomByTitle = async (

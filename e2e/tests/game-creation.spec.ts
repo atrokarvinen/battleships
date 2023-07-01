@@ -1,23 +1,39 @@
-import { test, expect, Page } from "@playwright/test";
-import { deleteAllGames, deleteAllUsers, signUpAndSignIn } from "./common";
+import { APIRequestContext, Page, expect, test } from "@playwright/test";
+import {
+  deleteGameRoomByTitle,
+  deleteUserByName,
+  signUpAndSignIn,
+  uniquefy,
+} from "./common";
 import { config } from "./config";
+import { defaultPassword, defaultUser } from "./defaults";
 
 const { frontendUrl } = config;
 
+const gameTitle = uniquefy("test game");
+const gameTitleNotDeleted = uniquefy("not deleted");
+const username = uniquefy(defaultUser.username);
+
 test.beforeEach(async ({ page }) => {
-  await deleteAllUsers(page.request);
-  await deleteAllGames(page.request);
-  signUpAndSignIn({ req: page.request });
+  await cleanup(page.request);
+  signUpAndSignIn({
+    req: page.request,
+    user: { username, password: defaultPassword },
+  });
   await page.goto(`${frontendUrl}/lobby`);
 });
 
 test.afterEach(async ({ request }) => {
-  await deleteAllGames(request);
+  await cleanup(request);
 });
 
-test("creates game", async ({ page }) => {
-  const gameTitle = "test game";
+const cleanup = async (request: APIRequestContext) => {
+  await deleteGameRoomByTitle(request, gameTitle);
+  await deleteGameRoomByTitle(request, gameTitleNotDeleted);
+  await deleteUserByName(request, username);
+};
 
+test("creates game", async ({ page }) => {
   const dialog = page.getByTestId("create-game-dialog");
   await expect(dialog).toBeHidden();
   await page.getByRole("button", { name: /create new game/i }).click();
@@ -31,7 +47,6 @@ test("creates game", async ({ page }) => {
 });
 
 test("loads games after page reload", async ({ page }) => {
-  const gameTitle = "test game";
   await createGame(gameTitle, page);
 
   await page.reload();
@@ -40,8 +55,6 @@ test("loads games after page reload", async ({ page }) => {
 });
 
 test("cancel closes dialog and does not create game", async ({ page }) => {
-  const gameTitle = "test game";
-
   const dialog = page.getByTestId("create-game-dialog");
   await expect(dialog).toBeHidden();
   await page.getByRole("button", { name: /create new game/i }).click();
@@ -55,10 +68,8 @@ test("cancel closes dialog and does not create game", async ({ page }) => {
 });
 
 test("deletes game", async ({ page }) => {
-  const gameTitle = "test game";
-
   await createGame(gameTitle, page);
-  await createGame("not deleted", page);
+  await createGame(gameTitleNotDeleted, page);
 
   const createdGame = page
     .getByTestId("game-row")
@@ -72,7 +83,7 @@ test("deletes game", async ({ page }) => {
   await dialog.getByRole("button", { name: /delete/i }).click();
   await expect(dialog).toBeHidden();
   await expect(createdGame).toBeHidden();
-  await expect(page.getByText("not deleted")).toBeVisible();
+  await expect(page.getByText(gameTitleNotDeleted)).toBeVisible();
 });
 
 const createGame = async (title: string, page: Page) => {

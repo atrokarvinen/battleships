@@ -1,24 +1,27 @@
 import { test as base } from "@playwright/test";
-import { createGameRoom, joinGame, signIn, signUpAndSignIn } from "./common";
+import {
+  createGameRoom,
+  joinGame,
+  signIn,
+  signUpAndSignIn,
+  uniquefy,
+} from "./common";
 import { config } from "./config";
 import { defaultPassword } from "./defaults";
 import { GamePlayPage } from "./game-play-page";
 
-const gameName = "test game";
-const player1 = "Player 1";
-const player2 = "Player 2";
-
 let gameRoomId: string;
 
-type MyFixture = {
+type GameFixture = {
   gamePlayPage: GamePlayPage;
-  gameName: string;
-  player1: string;
-  player2: string;
 };
 
-export const test = base.extend<MyFixture>({
+export const test = base.extend<GameFixture>({
   gamePlayPage: async ({ page, context }, use) => {
+    const gameName = uniquefy("test game");
+    const player1 = uniquefy("Player 1");
+    const player2 = uniquefy("Player 2");
+
     const { request } = page;
     // Set up the fixture.
     const gamePlayPage = new GamePlayPage(page, context, player1, player2);
@@ -51,8 +54,4 @@ export const test = base.extend<MyFixture>({
     // Clean up the fixture.
     // await gamePlayPage.cleanup(request, gameName, player1, player2);
   },
-
-  gameName,
-  player1,
-  player2,
 });

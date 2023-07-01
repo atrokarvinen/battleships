@@ -4,6 +4,7 @@ import {
   deleteGameRoomByTitle,
   deleteUserByName,
   signUpAndSignIn,
+  uniquefy,
 } from "./common";
 import { config } from "./config";
 import { defaultUser } from "./defaults";
@@ -11,11 +12,11 @@ import { defaultUser } from "./defaults";
 const { frontendUrl } = config;
 
 test.describe("multi user game creation", () => {
-  const username1 = "test1";
-  const username2 = "test2";
-  const gameTitle = "test game";
+  const username1 = uniquefy("test1");
+  const username2 = uniquefy("test2");
+  const gameTitle = uniquefy("test game");
 
-  test.beforeEach(async ({ page, context, request }) => {
+  test.beforeEach(async ({ request }) => {
     await cleanup(request);
   });
 
