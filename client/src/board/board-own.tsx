@@ -17,7 +17,7 @@ const BoardOwn = ({ gameId, playerId }: BoardProps) => {
   };
 
   return (
-    <div className={styles.board}>
+    <div data-testid="own-board" className={styles.board}>
       <StaticCells />
       <div className={styles.playArea}>
         {points.map((point, index) => (

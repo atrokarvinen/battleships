@@ -1,4 +1,6 @@
 import { expect } from "@playwright/test";
+import { signIn } from "./common";
+import { defaultPassword } from "./defaults";
 import { test } from "./game-play-fixture";
 
 test("starts game", async ({ page, gamePlayPage, player1 }) => {
@@ -95,6 +97,53 @@ test("cannot guess when not own turn", async ({
   await square2.click();
   await page.waitForTimeout(1000);
   await expect(square2.getByTestId("water-square")).not.toHaveClass(/missed/);
+});
+
+test("guesses are broadcasted", async ({
+  page,
+  gamePlayPage,
+  browser,
+  player2,
+}) => {
+  const context = await browser.newContext();
+  const pageP2 = await context.newPage();
+  await signIn({
+    req: pageP2.request,
+    user: { username: player2, password: defaultPassword },
+  });
+  await pageP2.goto(page.url());
+
+  await gamePlayPage.startGame();
+  await gamePlayPage.seedGameDummyShips();
+  await page.reload();
+
+  const enemyBoardP1 = page.getByTestId("enemy-board");
+  const squareP1 = enemyBoardP1.getByTestId("square-5-5");
+  await expect(squareP1).toBeVisible();
+  await squareP1.click();
+
+  const ownBoardP2 = pageP2.getByTestId("own-board");
+  const squareP2 = ownBoardP2.getByTestId("square-5-5");
+  await expect(squareP2.getByTestId("water-square")).toHaveClass(/missed/);
+  await expect(squareP1.getByTestId("water-square")).toHaveClass(/missed/);
+});
+
+test("game start is broadcasted", async ({
+  page,
+  gamePlayPage,
+  browser,
+  player2,
+}) => {
+  const context = await browser.newContext();
+  const pageP2 = await context.newPage();
+  await signIn({
+    req: pageP2.request,
+    user: { username: player2, password: defaultPassword },
+  });
+  await pageP2.goto(page.url());
+
+  await gamePlayPage.startGame();
+  await expect(pageP2.getByTestId("ship-square")).toHaveCount(2);
 });
 
 test("ends game", async ({ page }) => {
