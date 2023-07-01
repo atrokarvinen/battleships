@@ -1,6 +1,6 @@
-import { test, expect } from "@playwright/test";
-import { config } from "./config";
+import { expect, test } from "@playwright/test";
 import { deleteAllUsers, signUp, signUpAndSignIn } from "./common";
+import { config } from "./config";
 import { User } from "./models";
 
 const { frontendUrl } = config;
@@ -44,7 +44,7 @@ test("signs in", async ({ page }) => {
   await page.getByLabel(/password/i).fill(password);
 
   expect(page.url()).not.toContain("lobby");
-  await page.getByRole("button", { name: /login/i }).click();
+  await page.getByRole("button", { name: "Login", exact: true }).click();
   const playerName = page.getByRole("heading", { name: username });
   await expect(playerName).toBeVisible();
   expect(page.url()).toContain("lobby");
@@ -60,7 +60,7 @@ test("does not sign in when wrong password", async ({ page }) => {
   await page.getByLabel(/password/i).fill("Invalid password");
 
   await expect(page.getByText(/invalid/i)).not.toBeVisible();
-  await page.getByRole("button", { name: /login/i }).click();
+  await page.getByRole("button", { name: "Login", exact: true }).click();
 
   await expect(page.getByText(/invalid username or password/i)).toBeVisible();
 
@@ -104,7 +104,17 @@ test("stays logged in after page refresh", async ({ page }) => {
 });
 
 test("logs out when logout button is clicked", async ({ page }) => {
-  expect(true).toBe(true);
+  const username = "test username";
+  const password = "Password1";
+  const user: User = { username, password };
+  await signUpAndSignIn({ req: page.request, user });
+
+  await page.goto(`${frontendUrl}/lobby`);
+  await expect(page.getByRole("heading", { name: username })).toBeVisible();
+
+  await page.getByRole("button", { name: /logout/i }).click();
+  await expect(page.getByRole("button", { name: /sign up/i })).toBeVisible();
+  await expect(page.url()).toContain("/login");
 });
 
 test("logs out when page is closed", async ({ page, browser }) => {
