@@ -1,5 +1,5 @@
-import { BoatPart } from "./cell-boat-part";
-import { AttackResult } from "./cell/attack-result";
+import { ShipPart } from "./square-ship-part";
+import { AttackResult } from "./square/attack-result";
 
 export type Point = {
   x: number;
@@ -8,7 +8,7 @@ export type Point = {
 
 export type BoardPoint = {
   point: Point;
-  boatPart: BoatPart;
+  shipPart: ShipPart;
   attackResult: AttackResult;
   defendResult: AttackResult;
 };

@@ -1,10 +1,10 @@
 import { AttackResult } from "./attack-result";
-import { BoatPart } from "./cell-boat-part";
 import { Point } from "./point";
+import { ShipPart } from "./square-ship-part";
 
 export type BoardPoint = {
   point: Point;
-  boatPart: BoatPart;
+  shipPart: ShipPart;
   attackResult: AttackResult;
   defendResult: AttackResult;
 };

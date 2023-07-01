@@ -1,6 +1,6 @@
 import { Point } from "../point";
 
-export type AddBoatPayload = {
+export type AddShipPayload = {
   points: Point[];
   start: Point;
   end: Point;

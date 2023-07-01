@@ -99,11 +99,11 @@ const SocketProvider = ({ children }: SocketProviderProps) => {
       const activeGame = mapGameDtoToActiveGame(startedGame);
       dispatch(setActiveGame(activeGame));
     });
-    socket.on("squareGuessed", (guessResult) => {
-      console.log("[Socket client] square guessed:", guessResult);
-      const { hasBoat, isGameOver, point, playerId } = guessResult;
-      if (hasBoat) {
-        dispatch(sinkShip({ point, guesserPlayerId: playerId }));
+    socket.on("squareAttacked", (attackResult) => {
+      console.log("[Socket client] square attacked:", attackResult);
+      const { hasShip, isGameOver, point, playerId } = attackResult;
+      if (hasShip) {
+        dispatch(sinkShip({ point, attackerPlayerId: playerId }));
         console.log("ship sunk, player gets a new turn");
         if (isGameOver) {
           console.log("game over. Winner:", playerId);
@@ -112,7 +112,7 @@ const SocketProvider = ({ children }: SocketProviderProps) => {
           dispatch(setWinnerPlayerId(playerId));
         }
       } else {
-        dispatch(missShip({ point, guesserPlayerId: playerId }));
+        dispatch(missShip({ point, attackerPlayerId: playerId }));
         dispatch(swapPlayerIdToPlay());
         console.log("miss, player turn changes");
       }

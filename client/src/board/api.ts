@@ -4,12 +4,12 @@ import { Point } from "./point";
 
 const _axios = axios.create({ baseURL: `${config.backendBaseUrl}/game` });
 
-export type GuessCellPayload = {
+export type AttackSquarePayload = {
   point: Point;
-  guesserPlayerId: string;
+  attackerPlayerId: string;
   gameId: string;
 };
 
-export const guessCellRequest = (payload: GuessCellPayload) => {
-  return _axios.post("/guess", payload);
+export const attackSquareRequest = (payload: AttackSquarePayload) => {
+  return _axios.post("/attack", payload);
 };

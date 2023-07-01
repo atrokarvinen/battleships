@@ -1,6 +1,6 @@
-import { createRandomFleetLocations } from "../boatGeneration";
+import { createRandomFleetLocations } from "../shipGeneration";
 import { GameModel } from "./dbModel";
-import { Board, BoatPart, Cell, Game, GameState, Point } from "./model";
+import { Board, Game, GameState, Point, ShipPart, Square } from "./model";
 
 type GameDTO = Game & { id: string };
 
@@ -11,57 +11,57 @@ export class DbService {
     return gameDto;
   }
 
-  async guessCell({
+  async attackSquare({
     point,
     gameId,
-    guesserPlayerId,
+    attackerPlayerId,
   }: {
     point: any;
-    guesserPlayerId: string;
+    attackerPlayerId: string;
     gameId: string;
   }) {
     const { x, y } = point;
-    console.log(`Guessing point (${x}, ${y})`);
+    console.log(`Attacking point (${x}, ${y})`);
 
     const game = await GameModel.findById(gameId);
     if (!game) {
       throw new Error(`Failed to find game '${gameId}'`);
     }
     const infos = game.playerInfos;
-    const own = infos.find((b) => b.playerId === guesserPlayerId);
-    const enemy = infos.find((b) => b.playerId !== guesserPlayerId);
+    const own = infos.find((b) => b.playerId === attackerPlayerId);
+    const enemy = infos.find((b) => b.playerId !== attackerPlayerId);
     if (!own) {
-      throw new Error(`Failed to find own board of '${guesserPlayerId}'`);
+      throw new Error(`Failed to find own board of '${attackerPlayerId}'`);
     }
     if (!enemy) {
       throw new Error(`Failed to find enemy board`);
     }
-    const guessedCellOwnSide = own.guesses.find(pointMatches(point));
-    const guessedCellEnemySide = enemy.ownShips.find(pointMatches(point));
-    if (!guessedCellOwnSide || !guessedCellEnemySide) {
-      throw new Error(`Failed to find cell at point '${point}'`);
+    const attackedSquareOwnSide = own.attacks.find(pointMatches(point));
+    const attackedSquareEnemySide = enemy.ownShips.find(pointMatches(point));
+    if (!attackedSquareOwnSide || !attackedSquareEnemySide) {
+      throw new Error(`Failed to find square at point '${point}'`);
     }
-    guessedCellOwnSide.boat = guessedCellEnemySide.boat;
-    guessedCellOwnSide.isVertical = guessedCellEnemySide.isVertical;
-    guessedCellOwnSide.hasBoat = guessedCellEnemySide.hasBoat;
-    guessedCellOwnSide.hasBeenGuessed = true;
-    guessedCellEnemySide.hasBeenGuessed = true;
+    attackedSquareOwnSide.ship = attackedSquareEnemySide.ship;
+    attackedSquareOwnSide.isVertical = attackedSquareEnemySide.isVertical;
+    attackedSquareOwnSide.hasShip = attackedSquareEnemySide.hasShip;
+    attackedSquareOwnSide.hasBeenAttacked = true;
+    attackedSquareEnemySide.hasBeenAttacked = true;
 
-    const shipHit = guessedCellEnemySide.hasBoat;
-    const otherPlayer = game.playerIds.find((pId) => pId !== guesserPlayerId);
-    const nextPlayerId = shipHit ? guesserPlayerId : otherPlayer!;
+    const shipHit = attackedSquareEnemySide.hasShip;
+    const otherPlayer = game.playerIds.find((pId) => pId !== attackerPlayerId);
+    const nextPlayerId = shipHit ? attackerPlayerId : otherPlayer!;
 
     game.activePlayerId = nextPlayerId;
 
     const isGameOver = enemy.ownShips
-      .filter((x) => x.hasBoat)
-      .every((x) => x.hasBeenGuessed);
+      .filter((x) => x.hasShip)
+      .every((x) => x.hasBeenAttacked);
 
     if (isGameOver) {
-      game.winnerId = guesserPlayerId;
+      game.winnerId = attackerPlayerId;
     }
 
-    console.log("Point guessed. hasBoat:", guessedCellEnemySide.hasBoat);
+    console.log("Point attacked. hasShip:", attackedSquareEnemySide.hasShip);
     console.log("Is game over:", isGameOver);
 
     const updatedGame = await game.save();
@@ -93,8 +93,8 @@ export class DbService {
       // boards: playerIds.map((pId) => createEmptyBoard(pId)),
       playerInfos: playerIds.map((pId) => ({
         playerId: pId,
-        guesses: createEmptyBoardCells(10),
-        ownShips: createEmptyBoardCells(10),
+        attacks: createEmptyBoardSquares(10),
+        ownShips: createEmptyBoardSquares(10),
       })),
       playerIds,
       state: GameState.STARTED,
@@ -121,23 +121,23 @@ export class DbService {
       const placements = createRandomFleetLocations();
       placements.forEach((placement) => {
         const { takenPoints, isVertical, start, end } = placement;
-        takenPoints.forEach((boatPoint) => {
-          const cell = board.ownShips.find(pointMatches(boatPoint));
-          if (!cell) {
-            const { x, y } = boatPoint;
-            throw new Error(`Cell (${x}, ${y}) not found`);
+        takenPoints.forEach((shipPoint) => {
+          const square = board.ownShips.find(pointMatches(shipPoint));
+          if (!square) {
+            const { x, y } = shipPoint;
+            throw new Error(`Square (${x}, ${y}) not found`);
           }
-          const isStart = pointsMatch(start, boatPoint);
-          const isEnd = pointsMatch(end, boatPoint);
+          const isStart = pointsMatch(start, shipPoint);
+          const isEnd = pointsMatch(end, shipPoint);
 
-          // Mutate cell
-          cell.hasBoat = true;
-          cell.boat = isStart
-            ? BoatPart.START
+          // Mutate square
+          square.hasShip = true;
+          square.ship = isStart
+            ? ShipPart.START
             : isEnd
-            ? BoatPart.END
-            : BoatPart.MIDDLE;
-          cell.isVertical = isVertical;
+            ? ShipPart.END
+            : ShipPart.MIDDLE;
+          square.isVertical = isVertical;
         });
       });
     });
@@ -148,31 +148,31 @@ export class DbService {
   }
 }
 
-export const createEmptyBoardCells = (boardSize: number) => {
+export const createEmptyBoardSquares = (boardSize: number) => {
   const arr = Array.from(Array(boardSize)).map((_, index) => index);
-  const cells: Cell[] = arr
+  const squares: Square[] = arr
     .map((row) => {
       return arr.map((column) => {
-        const cell: Cell = {
-          boat: BoatPart.UNKNOWN,
-          hasBeenGuessed: false,
-          hasBoat: false,
+        const square: Square = {
+          ship: ShipPart.UNKNOWN,
+          hasBeenAttacked: false,
+          hasShip: false,
           isVertical: false,
           point: { x: column, y: row },
         };
-        return cell;
+        return square;
       });
     })
     .flat();
-  return cells;
+  return squares;
 };
 
 export const createEmptyBoard = (playerId: string) => {
   const boardSize = 10;
   const board: Board = {
     playerId,
-    cells: createEmptyBoardCells(boardSize),
-    boats: [],
+    squares: createEmptyBoardSquares(boardSize),
+    ships: [],
   };
   return board;
 };
@@ -181,7 +181,7 @@ export const pointsMatch = (pointA: Point, pointB: Point) => {
   return pointA.x === pointB.x && pointA.y === pointB.y;
 };
 
-export const pointMatches = (pointA: Point) => (cell: Cell) => {
-  const pointB = cell.point;
+export const pointMatches = (pointA: Point) => (square: Square) => {
+  const pointB = square.point;
   return pointsMatch(pointA, pointB);
 };

@@ -61,7 +61,7 @@ export const selectPoints = (state: RootState, playerId: string) => {
   return board.points;
 };
 export const selectEnemyPoints = (state: RootState, playerId: string) => {
-  const board = state.activeGame.guesses.find(
+  const board = state.activeGame.attacks.find(
     (board) => board.playerId === playerId
   );
   if (!board) return [];

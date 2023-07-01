@@ -1,5 +1,4 @@
 import {
-  Button,
   Paper,
   Table,
   TableBody,
@@ -9,9 +8,7 @@ import {
   styled,
   tableCellClasses,
 } from "@mui/material";
-import styles from "./styles.module.scss";
 import { GameRoom } from "./gameRoom";
-import { joinGameRequest } from "./api";
 
 type GamesTableProps = {
   games: GameRoom[];

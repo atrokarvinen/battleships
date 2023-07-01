@@ -25,7 +25,7 @@ test("cannot start game if player count is not two", async ({ page }) => {
   expect(true).toBeTruthy();
 });
 
-test("changes player order when fails to guess", async ({
+test("changes player order when fails to attack", async ({
   page,
   gamePlayPage,
 }) => {
@@ -35,10 +35,12 @@ test("changes player order when fails to guess", async ({
   await gamePlayPage.verifyPlayerTurnActive(gamePlayPage.player1);
 
   const enemyBoard = page.getByTestId("enemy-board");
-  const guessedSquare = enemyBoard.getByTestId("square-5-5");
-  await guessedSquare.click();
+  const attackedSquare = enemyBoard.getByTestId("square-5-5");
+  await attackedSquare.click();
 
-  await expect(guessedSquare.getByTestId("water-square")).toHaveClass(/missed/);
+  await expect(attackedSquare.getByTestId("water-square")).toHaveClass(
+    /missed/
+  );
   await gamePlayPage.verifyPlayerTurnInactive(gamePlayPage.player1);
 });
 
@@ -73,7 +75,7 @@ test("loads the game when page is refreshed", async ({
   await gamePlayPage.verifyPlayerTurnActive(gamePlayPage.player1);
 });
 
-test("cannot guess when not own turn", async ({ page, gamePlayPage }) => {
+test("cannot attack when not own turn", async ({ page, gamePlayPage }) => {
   await gamePlayPage.startGame();
   await gamePlayPage.seedGameDummyShips();
   await page.reload();
@@ -92,7 +94,7 @@ test("cannot guess when not own turn", async ({ page, gamePlayPage }) => {
   await expect(square2.getByTestId("water-square")).not.toHaveClass(/missed/);
 });
 
-test("guesses are broadcasted", async ({ page, gamePlayPage, browser }) => {
+test("attacks are broadcasted", async ({ page, gamePlayPage, browser }) => {
   const context = await browser.newContext();
   const pageP2 = await context.newPage();
   await signIn({

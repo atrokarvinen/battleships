@@ -1,7 +1,7 @@
-import { BoardPoint } from "./boardPoint";
-import { BoatPart } from "./cell-boat-part";
 import { AttackResult } from "./attack-result";
+import { BoardPoint } from "./boardPoint";
 import { Point } from "./point";
+import { ShipPart } from "./square-ship-part";
 
 const boardSize = 10;
 const arr = Array.from(Array(boardSize)).map((_, index) => index);
@@ -15,8 +15,8 @@ export const generateEmptyBoardPoints = (): BoardPoint[] => {
     .flat()
     .map((p) => {
       return {
-        hasBoat: false,
-        boatPart: BoatPart.None,
+        hasShip: false,
+        shipPart: ShipPart.None,
         point: { x: p.x, y: p.y },
         attackResult: AttackResult.None,
         defendResult: AttackResult.None,
@@ -24,19 +24,19 @@ export const generateEmptyBoardPoints = (): BoardPoint[] => {
     });
 };
 
-export function determineBoatPart(
+export function determineShipPart(
   currentPoint: Point,
   start: Point,
   end: Point,
   isVertical: boolean
-): BoatPart {
+): ShipPart {
   const isStart = currentPoint.x === start.x && currentPoint.y === start.y;
   const isEnd = currentPoint.x === end.x && currentPoint.y === end.y;
   if (isStart) {
-    return isVertical ? BoatPart.StartVertical : BoatPart.StartHorizontal;
+    return isVertical ? ShipPart.StartVertical : ShipPart.StartHorizontal;
   } else if (isEnd) {
-    return isVertical ? BoatPart.EndVertical : BoatPart.EndHorizontal;
+    return isVertical ? ShipPart.EndVertical : ShipPart.EndHorizontal;
   } else {
-    return isVertical ? BoatPart.MiddleVertical : BoatPart.MiddleHorizontal;
+    return isVertical ? ShipPart.MiddleVertical : ShipPart.MiddleHorizontal;
   }
 }

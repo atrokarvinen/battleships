@@ -92,23 +92,23 @@ export class GameController {
     }
   }
 
-  async guessCell(req: Request, res: Response, next: NextFunction) {
+  async attackSquare(req: Request, res: Response, next: NextFunction) {
     try {
-      const { point, guesserPlayerId, gameId } = req.body;
-      const result = await this.gameDbService.guessCell({
+      const { point, attackerPlayerId, gameId } = req.body;
+      const result = await this.gameDbService.attackSquare({
         point,
-        guesserPlayerId,
+        attackerPlayerId,
         gameId,
       });
-      const guessResult = {
-        hasBoat: result.shipHit,
+      const attackResult = {
+        hasShip: result.shipHit,
         nextPlayerId: result.nextPlayerId,
         isGameOver: result.isGameOver,
         point,
-        playerId: guesserPlayerId,
+        playerId: attackerPlayerId,
       };
-      this.io.emit("squareGuessed", guessResult);
-      return res.json(guessResult);
+      this.io.emit("squareAttacked", attackResult);
+      return res.json(attackResult);
     } catch (error) {
       next(error);
     }

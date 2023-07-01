@@ -1,10 +1,15 @@
 import axios from "axios";
-import { BoatPart } from "../board/cell-boat-part";
-import { AttackResult } from "../board/cell/attack-result";
 import { BoardPoint } from "../board/point";
+import { ShipPart } from "../board/square-ship-part";
+import { AttackResult } from "../board/square/attack-result";
 import { config } from "../config/config";
 import { ActiveGameState } from "../redux/activeGameSlice";
-import { BoatPart as ApiBoatPart, Cell, GameDTO, GameState } from "./apiModel";
+import {
+  ShipPart as ApiShipPart,
+  GameDTO,
+  GameState,
+  Square,
+} from "./apiModel";
 
 const _axios = axios.create({ baseURL: `${config.backendBaseUrl}/game` });
 
@@ -33,24 +38,24 @@ export const mapGameDtoToActiveGame = (game: GameDTO) => {
   const activeGame: ActiveGameState = {
     boards: game.playerInfos.map((board) => ({
       playerId: board.playerId,
-      points: board.ownShips.map((cell) => {
+      points: board.ownShips.map((square) => {
         const boardPoint: BoardPoint = {
-          point: cell.point,
-          attackResult: determineAttackResult(cell),
-          defendResult: determineAttackResult(cell),
-          boatPart: determineBoatPart(cell),
+          point: square.point,
+          attackResult: determineAttackResult(square),
+          defendResult: determineAttackResult(square),
+          shipPart: determineShipPart(square),
         };
         return boardPoint;
       }),
     })),
-    guesses: game.playerInfos.map((board) => ({
+    attacks: game.playerInfos.map((board) => ({
       playerId: board.playerId,
-      points: board.guesses.map((cell) => {
+      points: board.attacks.map((square) => {
         const boardPoint: BoardPoint = {
-          point: cell.point,
-          attackResult: determineAttackResult(cell),
-          defendResult: determineAttackResult(cell),
-          boatPart: determineBoatPart(cell),
+          point: square.point,
+          attackResult: determineAttackResult(square),
+          defendResult: determineAttackResult(square),
+          shipPart: determineShipPart(square),
         };
         return boardPoint;
       }),
@@ -71,9 +76,9 @@ export const mapGameDtoToActiveGame = (game: GameDTO) => {
   return activeGame;
 };
 
-const determineAttackResult = (cell: Cell) => {
-  if (cell.hasBeenGuessed) {
-    if (cell.hasBoat) {
+const determineAttackResult = (square: Square) => {
+  if (square.hasBeenAttacked) {
+    if (square.hasShip) {
       return AttackResult.Hit;
     }
     return AttackResult.Miss;
@@ -81,23 +86,23 @@ const determineAttackResult = (cell: Cell) => {
   return AttackResult.None;
 };
 
-const determineBoatPart = (cell: Cell): BoatPart => {
-  if (cell.isVertical) {
-    if (cell.boat === ApiBoatPart.START) {
-      return BoatPart.StartVertical;
-    } else if (cell.boat === ApiBoatPart.MIDDLE) {
-      return BoatPart.MiddleVertical;
-    } else if (cell.boat === ApiBoatPart.END) {
-      return BoatPart.EndVertical;
+const determineShipPart = (square: Square): ShipPart => {
+  if (square.isVertical) {
+    if (square.ship === ApiShipPart.START) {
+      return ShipPart.StartVertical;
+    } else if (square.ship === ApiShipPart.MIDDLE) {
+      return ShipPart.MiddleVertical;
+    } else if (square.ship === ApiShipPart.END) {
+      return ShipPart.EndVertical;
     }
   } else {
-    if (cell.boat === ApiBoatPart.START) {
-      return BoatPart.StartHorizontal;
-    } else if (cell.boat === ApiBoatPart.MIDDLE) {
-      return BoatPart.MiddleHorizontal;
-    } else if (cell.boat === ApiBoatPart.END) {
-      return BoatPart.EndHorizontal;
+    if (square.ship === ApiShipPart.START) {
+      return ShipPart.StartHorizontal;
+    } else if (square.ship === ApiShipPart.MIDDLE) {
+      return ShipPart.MiddleHorizontal;
+    } else if (square.ship === ApiShipPart.END) {
+      return ShipPart.EndHorizontal;
     }
   }
-  return BoatPart.None;
+  return ShipPart.None;
 };

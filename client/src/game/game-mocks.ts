@@ -3,7 +3,7 @@ import { setupServer } from "msw/node";
 import { config } from "../config/config";
 import { GameRoom } from "../lobby/gameRoom";
 import { GameDTO, GameState } from "./apiModel";
-import { defaultCell } from "./defaults";
+import { defaultSquare } from "./defaults";
 
 const baseURL = config.backendBaseUrl;
 
@@ -33,8 +33,8 @@ export const handlers = [
       activePlayerId: "1",
       playerIds: ["1", "2"],
       playerInfos: [
-        { playerId: "1", ownShips: [defaultCell], guesses: [defaultCell] },
-        { playerId: "2", ownShips: [defaultCell], guesses: [defaultCell] },
+        { playerId: "1", ownShips: [defaultSquare], attacks: [defaultSquare] },
+        { playerId: "2", ownShips: [defaultSquare], attacks: [defaultSquare] },
       ],
       state: GameState.UNKNOWN,
       winnerId: "",
@@ -42,7 +42,7 @@ export const handlers = [
     return res(ctx.json({ game: response }));
   }),
 
-  rest.post(`${baseURL}/game/guess`, (req, res, ctx) => {
+  rest.post(`${baseURL}/game/attack`, (req, res, ctx) => {
     return res(ctx.status(200));
   }),
 ];

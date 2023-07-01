@@ -5,11 +5,11 @@ const boardSize = 10;
 const arr = Array.from(Array(boardSize)).map((_, index) => index);
 const ranks = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J"];
 
-export const StaticCells = () => {
+export const StaticSquares = () => {
   return (
     <>
-      <div className={styles.emptyCell}>
-        <div className={styles.cell} />
+      <div className={styles.emptySquare}>
+        <div className={styles.square} />
       </div>
       <div className={styles.staticRow}>
         <StaticColumn items={arr} direction="row" />

@@ -1,9 +1,9 @@
-import { BoatPart, Cell } from "./apiModel";
+import { ShipPart, Square } from "./apiModel";
 
-export const defaultCell: Cell = {
-  boat: BoatPart.UNKNOWN,
-  hasBeenGuessed: false,
-  hasBoat: false,
+export const defaultSquare: Square = {
+  ship: ShipPart.UNKNOWN,
+  hasBeenAttacked: false,
+  hasShip: false,
   isVertical: false,
   point: { x: 0, y: 0 },
 };

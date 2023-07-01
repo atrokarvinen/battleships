@@ -5,18 +5,18 @@ export type FleetReserve = {
 
 export type Fleet = {
   quantity: number;
-  class: Boat;
+  class: Ship;
 };
 
-export type Boat = {
+export type Ship = {
   name: string;
   size: number;
 };
 
-export const carrier: Boat = { name: "carrier", size: 6 };
-export const battleship: Boat = { name: "battleship", size: 4 };
-export const cruiser: Boat = { name: "cruiser", size: 3 };
-export const submarine: Boat = { name: "submarine", size: 2 };
+export const carrier: Ship = { name: "carrier", size: 6 };
+export const battleship: Ship = { name: "battleship", size: 4 };
+export const cruiser: Ship = { name: "cruiser", size: 3 };
+export const submarine: Ship = { name: "submarine", size: 2 };
 
 export const standardCarrierQuantity = 1;
 export const standardBattleshipQuantity = 2;
@@ -38,6 +38,6 @@ export const standardReserve: FleetReserve = {
     standardSubmarineQuantity,
 };
 
-export const standardTotalBoatSquares = standardReserve.fleets
+export const standardTotalShipSquares = standardReserve.fleets
   .map((f) => f.quantity * f.class.size)
   .reduce((size, totalSize) => size + totalSize, 0);

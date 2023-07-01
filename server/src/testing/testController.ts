@@ -3,7 +3,7 @@ import { GameRoom } from "../database/gameRoom";
 import { User } from "../database/user";
 import { GameModel } from "../game/database/dbModel";
 import { pointsMatch } from "../game/database/dbService";
-import { BoatPart, Cell } from "../game/database/model";
+import { ShipPart, Square } from "../game/database/model";
 import { GameSeed, Point } from "./models";
 
 export class TestController {
@@ -81,18 +81,18 @@ export class TestController {
     return res.end();
   };
 
-  setPositions(positions: Point[], ships: Cell[]) {
+  setPositions(positions: Point[], ships: Square[]) {
     ships.forEach((s) => {
-      s.hasBoat = false;
-      s.boat = BoatPart.UNKNOWN;
+      s.hasShip = false;
+      s.ship = ShipPart.UNKNOWN;
     });
     positions.forEach((pos) => {
       const square = ships.find((s) => pointsMatch(s.point, pos));
       if (!square) {
         throw new Error(`square not found at ${pos.x}, ${pos.y}`);
       }
-      square.hasBoat = true;
-      square.boat = BoatPart.MIDDLE;
+      square.hasShip = true;
+      square.ship = ShipPart.MIDDLE;
     });
   }
 }

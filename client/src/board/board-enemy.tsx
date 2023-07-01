@@ -5,11 +5,11 @@ import {
   selectEnemyPoints,
   selectIsGameOver,
 } from "../redux/selectors";
-import { guessCellRequest } from "./api";
-import Cell from "./cell";
-import { AttackResult } from "./cell/attack-result";
+import { attackSquareRequest } from "./api";
 import { Point } from "./point";
-import { StaticCells } from "./staticCells";
+import Square from "./square";
+import { AttackResult } from "./square/attack-result";
+import { StaticSquares } from "./staticSquares";
 import styles from "./styles.module.scss";
 
 type BoardProps = {
@@ -25,8 +25,8 @@ const BoardEnemy = ({ gameId, playerId }: BoardProps) => {
 
   // console.log("enemy points:", points);
 
-  const cellClicked = async (point: Point) => {
-    console.log("cell clicked @" + JSON.stringify(point));
+  const squareClicked = async (point: Point) => {
+    console.log("square clicked @" + JSON.stringify(point));
     console.log(
       `playerIdToPlay === playerId: ${playerIdToPlay} === ${playerId}`
     );
@@ -38,33 +38,33 @@ const BoardEnemy = ({ gameId, playerId }: BoardProps) => {
       return;
     }
     const isPlayersTurn = playerIdToPlay === playerId;
-    const isAlreadyGuessed =
+    const isAlreadyAttacked =
       targetPoint.attackResult !== undefined &&
       targetPoint.attackResult !== AttackResult.None;
     const isOpponentBoard = true;
     if (!isOpponentBoard) {
-      console.log("guess should click opponent board");
+      console.log("attack should click opponent board");
       return;
     }
     if (!isPlayersTurn) {
       console.log("incorrect player turn");
       return;
     }
-    if (isAlreadyGuessed) {
+    if (isAlreadyAttacked) {
       console.log(
-        "cell already guessed: " + AttackResult[targetPoint.attackResult]
+        "square already attacked: " + AttackResult[targetPoint.attackResult]
       );
       return;
     }
     if (isGameOver) {
-      console.log("game already over, cannot guess");
+      console.log("game already over, cannot attack");
       return;
     }
-    console.log("guessing point:", point);
+    console.log("attacking point:", point);
     try {
-      const response = await guessCellRequest({
+      const response = await attackSquareRequest({
         point,
-        guesserPlayerId: playerId,
+        attackerPlayerId: playerId,
         gameId,
       });
 
@@ -76,10 +76,10 @@ const BoardEnemy = ({ gameId, playerId }: BoardProps) => {
 
   return (
     <div className={styles.board} data-testid="enemy-board">
-      <StaticCells />
+      <StaticSquares />
       <div className={styles.playArea}>
         {points.map((point, index) => (
-          <Cell key={index} cellClicked={cellClicked} {...point} />
+          <Square key={index} squareClicked={squareClicked} {...point} />
         ))}
       </div>
     </div>

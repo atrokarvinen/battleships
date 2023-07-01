@@ -1,7 +1,7 @@
 import { useAppSelector } from "../redux/hooks";
 import { selectPoints } from "../redux/selectors";
-import Cell from "./cell";
-import { StaticCells } from "./staticCells";
+import Square from "./square";
+import { StaticSquares } from "./staticSquares";
 import styles from "./styles.module.scss";
 
 type BoardProps = {
@@ -12,16 +12,16 @@ type BoardProps = {
 const BoardOwn = ({ gameId, playerId }: BoardProps) => {
   const points = useAppSelector((state) => selectPoints(state, playerId));
 
-  const cellClicked = () => {
+  const squareClicked = () => {
     console.log("clicked own board. nothing happens");
   };
 
   return (
     <div data-testid="own-board" className={styles.board}>
-      <StaticCells />
+      <StaticSquares />
       <div className={styles.playArea}>
         {points.map((point, index) => (
-          <Cell key={index} cellClicked={cellClicked} {...point} />
+          <Square key={index} squareClicked={squareClicked} {...point} />
         ))}
       </div>
     </div>

@@ -1,17 +1,17 @@
 import { generateEmptyBoardPoints } from "./board-utils";
 import { Point } from "./point";
-import { Boat, standardReserve } from "./boat-reserve";
+import { Ship, standardReserve } from "./ship-reserve";
 
-export type BoatPlacement = {
+export type ShipPlacement = {
   takenPoints: Point[];
-  boat: Boat;
+  ship: Ship;
   start: Point;
   end: Point;
   isVertical: boolean;
 };
 
-const isValidPlacement = (freePoints: Point[], boatPoints: Point[]) => {
-  const allValid = boatPoints.every((bp) =>
+const isValidPlacement = (freePoints: Point[], shipPoints: Point[]) => {
+  const allValid = shipPoints.every((bp) =>
     freePoints.some((fp) => fp.x === bp.x && fp.y == bp.y)
   );
   return allValid;
@@ -21,16 +21,16 @@ export const createRandomFleetLocations = () => {
   const points = generateEmptyBoardPoints();
   let availablePoints = [...points];
 
-  const allBoats = standardReserve.fleets
-    .map((boat) => {
-      const boatClass = boat.class;
-      const qty = boat.quantity;
-      return Array.from(Array(qty)).map(() => boatClass);
+  const allShips = standardReserve.fleets
+    .map((ship) => {
+      const shipClass = ship.class;
+      const qty = ship.quantity;
+      return Array.from(Array(qty)).map(() => shipClass);
     })
     .flat();
 
-  const placements: BoatPlacement[] = allBoats.map((boat, index) => {
-    const boatSize = boat.size;
+  const placements: ShipPlacement[] = allShips.map((ship, index) => {
+    const shipSize = ship.size;
 
     const maxIter = 1000;
     let iter = 0;
@@ -45,8 +45,8 @@ export const createRandomFleetLocations = () => {
 
       isVertical = Math.random() < 0.5;
 
-      const endX = isVertical ? startX : startX + boatSize - 1;
-      const endY = !isVertical ? startY : startY + boatSize - 1;
+      const endX = isVertical ? startX : startX + shipSize - 1;
+      const endY = !isVertical ? startY : startY + shipSize - 1;
 
       start = { x: startX, y: startY };
       end = { x: endX, y: endY };
@@ -71,7 +71,7 @@ export const createRandomFleetLocations = () => {
     // console.log("available points: " + availablePoints.length);
 
     // console.log(
-    //   `Placed boat '${boat.name}' #${index + 1} to ${JSON.stringify(
+    //   `Placed ship '${ship.name}' #${index + 1} to ${JSON.stringify(
     //     takenPoints
     //   )} after (${iter}) iterations`
     // );
@@ -82,9 +82,9 @@ export const createRandomFleetLocations = () => {
       );
     });
 
-    const placement: BoatPlacement = {
+    const placement: ShipPlacement = {
       takenPoints,
-      boat: boat,
+      ship: ship,
       start,
       end,
       isVertical,

@@ -1,4 +1,4 @@
-export type Boat = {
+export type Ship = {
   length: number;
   start: Point;
   isVertical: boolean;
@@ -9,46 +9,46 @@ export type Point = {
   y: number;
 };
 
-export enum CellDisplay {
+export enum SquareDisplay {
   UNKNOWN,
   EMPTY,
   MISS,
   DESTROYED,
 }
 
-export enum BoatPart {
+export enum ShipPart {
   UNKNOWN,
   START,
   MIDDLE,
   END,
 }
 
-export type Cell = {
+export type Square = {
   point: Point;
 
-  hasBeenGuessed: boolean;
-  hasBoat: boolean;
-  boat: BoatPart;
+  hasBeenAttacked: boolean;
+  hasShip: boolean;
+  ship: ShipPart;
 
   isVertical: boolean;
 };
 
 export type PlayerInformation = {
   playerId: string;
-  ownShips: Cell[];
-  guesses: Cell[];
+  ownShips: Square[];
+  attacks: Square[];
 };
 
 export type Board = {
   playerId: string;
 
-  boatPoints?: Point[];
-  guessedPoints?: Point[];
+  shipPoints?: Point[];
+  attackedPoints?: Point[];
   missedPoints?: Point[];
   destroyedPoints?: Point[];
 
-  boats: Boat[];
-  cells: Cell[];
+  ships: Ship[];
+  squares: Square[];
 };
 
 export enum GameState {

@@ -18,8 +18,8 @@ export const gameRouter = (io: Server) => {
   router.post("/reset", (req, res, next) =>
     controller.resetGame(req, res, next)
   );
-  router.post("/guess", (req, res, next) =>
-    controller.guessCell(req, res, next)
+  router.post("/attack", (req, res, next) =>
+    controller.attackSquare(req, res, next)
   );
 
   return router;

@@ -1,4 +1,4 @@
-export enum BoatPart {
+export enum ShipPart {
   Unknown,
   None,
   StartHorizontal,

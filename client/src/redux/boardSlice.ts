@@ -1,11 +1,11 @@
 import type { PayloadAction } from "@reduxjs/toolkit";
 import { createSlice } from "@reduxjs/toolkit";
-import { BoatPart } from "../board/cell-boat-part";
-import { AttackResult } from "../board/cell/attack-result";
 import { BoardPoint, Point } from "../board/point";
-import { AddBoatPayload } from "../board/redux/addBoatPayload";
+import { AddShipPayload } from "../board/redux/addShipPayload";
+import { AttackShipPayload } from "../board/redux/attackShipPayload";
 import { generateEmptyBoardPoints } from "../board/redux/board-utils";
-import { GuessBoatPayload } from "../board/redux/guessBoatPayload";
+import { ShipPart } from "../board/square-ship-part";
+import { AttackResult } from "../board/square/attack-result";
 
 export interface Board {
   points: BoardPoint[];
@@ -36,10 +36,10 @@ export const boardSlice = createSlice({
   // `createSlice` will infer the state type from the `initialState` argument
   initialState,
   reducers: {
-    addBoat: (state, action: PayloadAction<AddBoatPayload>) => {
+    addShip: (state, action: PayloadAction<AddShipPayload>) => {
       console.log("not implemented");
     },
-    guessBoat: (state, action: PayloadAction<GuessBoatPayload>) => {
+    attackShip: (state, action: PayloadAction<AttackShipPayload>) => {
       console.log("not implemented");
     },
 
@@ -51,7 +51,7 @@ export const boardSlice = createSlice({
         board.points.forEach((p) => {
           p.attackResult = AttackResult.None;
           p.defendResult = AttackResult.None;
-          p.boatPart = BoatPart.None;
+          p.shipPart = ShipPart.None;
         });
       });
     },
@@ -62,7 +62,7 @@ const pointMatches = (point: Point) => (boardPoint: BoardPoint) => {
   return boardPoint.point.x === point.x && boardPoint.point.y === point.y;
 };
 
-export const { addBoat, resetBoard, guessBoat, setBoardState } =
+export const { addShip, resetBoard, attackShip, setBoardState } =
   boardSlice.actions;
 
 export default boardSlice.reducer;

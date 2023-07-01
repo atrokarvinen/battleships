@@ -9,7 +9,7 @@ const StaticColumn = ({ items, direction }: StaticColumnProps) => {
   return (
     <div className={styles.column} style={{ flexDirection: direction }}>
       {items.map((i) => (
-        <div key={i} className={styles.cell}>
+        <div key={i} className={styles.square}>
           {i}
         </div>
       ))}

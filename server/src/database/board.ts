@@ -5,7 +5,7 @@ export interface IPoint {
   y: string;
 }
 
-export interface IBoat {
+export interface IShip {
   points: IPoint[];
   start: IPoint;
   end: IPoint;
@@ -15,11 +15,11 @@ export interface IBoat {
 export interface IBoard {
   gameId: string;
   playerId: string;
-  boats: IBoat[];
+  ships: IShip[];
 }
 
 const boardSchema = new Schema<IBoard>({
-  boats: [String],
+  ships: [String],
   gameId: String,
   playerId: String,
 });

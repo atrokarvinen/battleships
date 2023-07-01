@@ -1,9 +1,8 @@
 import mongoose from "mongoose";
-import _ from "lodash";
+import { standardTotalShipSquares } from "../ship-reserve";
 import { GameModel } from "./dbModel";
 import { DbService } from "./dbService";
-import { BoatPart, Game, GameState } from "./model";
-import { standardReserve, standardTotalBoatSquares } from "../boat-reserve";
+import { Game, GameState, ShipPart } from "./model";
 
 describe("game db testing", () => {
   const service = new DbService();
@@ -50,17 +49,17 @@ describe("game db testing", () => {
     expect(createdGame).toMatchObject(gameToCreate);
   });
 
-  it("creates game with single boat and cell", async () => {
+  it("creates game with single ship and square", async () => {
     const gameToCreate: Game = {
       activePlayerId: "1",
       boards: [
         {
-          boats: [{ start: { x: 1, y: 2 }, isVertical: true, length: 5 }],
-          cells: [
+          ships: [{ start: { x: 1, y: 2 }, isVertical: true, length: 5 }],
+          squares: [
             {
-              boat: BoatPart.START,
-              hasBeenGuessed: true,
-              hasBoat: true,
+              ship: ShipPart.START,
+              hasBeenAttacked: true,
+              hasShip: true,
               point: { x: 1, y: 2 },
               isVertical: false,
             },
@@ -84,7 +83,7 @@ describe("game db testing", () => {
 
     expect(game.playerIds).toStrictEqual(playerIds);
     expect(game.boards).toHaveLength(playerIds.length);
-    expect(game.boards[0].cells).toHaveLength(100);
+    expect(game.boards[0].squares).toHaveLength(100);
     expect(game.boards.map((b) => b.playerId)).toStrictEqual(playerIds);
   });
 
@@ -95,13 +94,15 @@ describe("game db testing", () => {
 
     expect(game.boards).toHaveLength(playerIds.length);
 
-    const cellsWithBoat = game.boards[0].cells.filter((cell) => cell.hasBoat);
-    expect(cellsWithBoat).toHaveLength(standardTotalBoatSquares);
+    const squaresWithShip = game.boards[0].squares.filter(
+      (square) => square.hasShip
+    );
+    expect(squaresWithShip).toHaveLength(standardTotalShipSquares);
   });
 
-  it("marks location as guessed", async () => {});
-  it("destroys boat at correctly guessed location", async () => {});
-  it("declares winner when all boats are lost", async () => {});
+  it("marks location as attacked", async () => {});
+  it("destroys ship at correctly attacked location", async () => {});
+  it("declares winner when all ships are lost", async () => {});
 });
 
 const defaultGame: Game = {

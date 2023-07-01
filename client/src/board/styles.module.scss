@@ -6,7 +6,7 @@
     "static-column play-area";
 }
 
-.emptyCell {
+.emptySquare {
   grid-area: empty;
 }
 .staticRow {
@@ -26,52 +26,52 @@
   flex-direction: column;
 }
 
-.cell {
+.square {
   border: 1px solid black;
 
-  $cellSize: 30px;
-  height: $cellSize;
-  width: $cellSize;
+  $squareSize: 30px;
+  height: $squareSize;
+  width: $squareSize;
 
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-.cell:hover {
+.square:hover {
   background-color: lightblue;
 }
 
-.boat {
+.ship {
   height: 100%;
   width: 100%;
   background-color: black;
 }
 
-$boatMargin: 10%;
-$boatSize: 80%;
+$shipMargin: 10%;
+$shipSize: 80%;
 
-.boatStartVertical {
-  margin-top: 2 * $boatMargin;
-  width: $boatSize;
+.shipStartVertical {
+  margin-top: 2 * $shipMargin;
+  width: $shipSize;
 }
-.boatMiddleVertical {
-  width: $boatSize;
+.shipMiddleVertical {
+  width: $shipSize;
 }
-.boatEndVertical {
-  width: $boatSize;
+.shipEndVertical {
+  width: $shipSize;
   border-radius: 0 0 50% 50%;
 }
 
-.boatStartHorizontal {
-  margin-left: $boatMargin;
-  height: $boatSize;
+.shipStartHorizontal {
+  margin-left: $shipMargin;
+  height: $shipSize;
 }
-.boatMiddleHorizontal {
-  height: $boatSize;
+.shipMiddleHorizontal {
+  height: $shipSize;
 }
-.boatEndHorizontal {
-  height: $boatSize;
+.shipEndHorizontal {
+  height: $shipSize;
   border-radius: 0 50% 50% 0;
 }
 

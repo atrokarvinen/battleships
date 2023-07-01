@@ -1,8 +1,8 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
-import { BoatPart } from "../board/cell-boat-part";
-import { AttackResult } from "../board/cell/attack-result";
 import { BoardPoint, Point } from "../board/point";
-import { GuessBoatPayload } from "../board/redux/guessBoatPayload";
+import { AttackShipPayload } from "../board/redux/attackShipPayload";
+import { ShipPart } from "../board/square-ship-part";
+import { AttackResult } from "../board/square/attack-result";
 import { Board } from "./boardSlice";
 
 export type ActiveGamePlayer = {
@@ -10,7 +10,7 @@ export type ActiveGamePlayer = {
   username: string;
 };
 
-export type Guess = {
+export type Attack = {
   playerId: string;
   points: BoardPoint[];
 };
@@ -27,7 +27,7 @@ export type ActiveGameState = {
   showGameOverDialog: boolean;
 
   boards: Board[];
-  guesses: Guess[];
+  attacks: Attack[];
 };
 
 export const initialState: ActiveGameState = {
@@ -37,7 +37,7 @@ export const initialState: ActiveGameState = {
   isGameOver: false,
   showGameOverDialog: false,
   boards: [],
-  guesses: [],
+  attacks: [],
 };
 
 const activeGameSlice = createSlice({
@@ -69,7 +69,7 @@ const activeGameSlice = createSlice({
       state.boards = action.payload.boards;
       state.isGameStarted = action.payload.isGameStarted;
       state.isGameOver = action.payload.isGameOver;
-      state.guesses = action.payload.guesses;
+      state.attacks = action.payload.attacks;
     },
     swapPlayerIdToPlay(state) {
       const playerIds = state.players.map((p) => p.id);
@@ -95,44 +95,44 @@ const activeGameSlice = createSlice({
       console.log("closing game over dialog...");
       state.showGameOverDialog = false;
     },
-    sinkShip: (state, action: PayloadAction<GuessBoatPayload>) => {
-      const { guesserPlayerId, point: sinkPoint } = action.payload;
+    sinkShip: (state, action: PayloadAction<AttackShipPayload>) => {
+      const { attackerPlayerId, point: sinkPoint } = action.payload;
       console.log("Sinking ship at ", sinkPoint);
       const enemy = state.boards.find(
-        (board) => board.playerId !== guesserPlayerId
+        (board) => board.playerId !== attackerPlayerId
       );
-      const own = state.guesses.find(
-        (board) => board.playerId === guesserPlayerId
+      const own = state.attacks.find(
+        (board) => board.playerId === attackerPlayerId
       );
       if (!enemy || !own) return;
-      const enemyCell = enemy.points.find(pointMatches(sinkPoint));
-      const guessedCell = own.points.find(pointMatches(sinkPoint));
-      if (!enemyCell || !guessedCell) return;
-      guessedCell.boatPart = enemyCell.boatPart;
-      guessedCell.attackResult = AttackResult.Hit;
-      guessedCell.defendResult = AttackResult.Hit;
-      enemyCell.attackResult = AttackResult.Hit;
-      enemyCell.defendResult = AttackResult.Hit;
+      const enemySquare = enemy.points.find(pointMatches(sinkPoint));
+      const attackedSquare = own.points.find(pointMatches(sinkPoint));
+      if (!enemySquare || !attackedSquare) return;
+      attackedSquare.shipPart = enemySquare.shipPart;
+      attackedSquare.attackResult = AttackResult.Hit;
+      attackedSquare.defendResult = AttackResult.Hit;
+      enemySquare.attackResult = AttackResult.Hit;
+      enemySquare.defendResult = AttackResult.Hit;
 
-      console.log(`guessed cell: ${BoatPart[guessedCell.boatPart]}`);
+      console.log(`attacked square: ${ShipPart[attackedSquare.shipPart]}`);
     },
-    missShip: (state, action: PayloadAction<GuessBoatPayload>) => {
-      const { guesserPlayerId, point: missPoint } = action.payload;
+    missShip: (state, action: PayloadAction<AttackShipPayload>) => {
+      const { attackerPlayerId, point: missPoint } = action.payload;
       console.log("Missing ship at ", missPoint);
       const enemy = state.boards.find(
-        (board) => board.playerId !== guesserPlayerId
+        (board) => board.playerId !== attackerPlayerId
       );
-      const own = state.guesses.find(
-        (board) => board.playerId === guesserPlayerId
+      const own = state.attacks.find(
+        (board) => board.playerId === attackerPlayerId
       );
       if (!own || !enemy) return;
-      const enemyCell = enemy.points.find(pointMatches(missPoint));
-      const guessedCell = own.points.find(pointMatches(missPoint));
-      if (!guessedCell || !enemyCell) return;
-      guessedCell.attackResult = AttackResult.Miss;
-      guessedCell.defendResult = AttackResult.Miss;
-      enemyCell.attackResult = AttackResult.Miss;
-      enemyCell.defendResult = AttackResult.Miss;
+      const enemySquare = enemy.points.find(pointMatches(missPoint));
+      const attackedSquare = own.points.find(pointMatches(missPoint));
+      if (!attackedSquare || !enemySquare) return;
+      attackedSquare.attackResult = AttackResult.Miss;
+      attackedSquare.defendResult = AttackResult.Miss;
+      enemySquare.attackResult = AttackResult.Miss;
+      enemySquare.defendResult = AttackResult.Miss;
     },
   },
 });
