@@ -1,44 +1,68 @@
+import { BrowserContext, expect, Locator, Page } from "@playwright/test";
 import {
-  APIRequestContext,
-  BrowserContext,
-  expect,
-  Locator,
-  Page,
-} from "@playwright/test";
-import { joinGame, seedGameShips, signUpAndSignIn } from "./common";
-import { config } from "./config";
+  deleteGameRoomByTitle,
+  deleteGamesFromGameRoom,
+  deleteUserByName,
+  joinGame,
+  seedGameShips,
+  signUpAndSignIn,
+} from "./common";
 import { defaultPassword } from "./defaults";
 import { GameSeed } from "./models";
 
 export class GamePlayPage {
   readonly page: Page;
+  readonly context: BrowserContext;
+  readonly player1: string;
+  readonly player2: string;
+  private gameRoomId: string = "";
 
-  constructor(page: Page) {
+  constructor(
+    page: Page,
+    context: BrowserContext,
+    player1: string,
+    player2: string
+  ) {
     this.page = page;
+    this.context = context;
+    this.player1 = player1;
+    this.player2 = player2;
   }
 
-  startGame = async (page: Page) => {
-    await expect(page.getByTestId("ship-square")).toBeHidden();
-    await page.getByRole("button", { name: /start/i }).click();
-    await expect(page.getByTestId("ship-square")).toHaveCount(2);
+  setGameRoomId = (gameRoomId: string) => {
+    this.gameRoomId = gameRoomId;
   };
 
-  addPlayer2ToGame = async (context: BrowserContext) => {
-    const pageP2 = await context.newPage();
+  cleanup = async (gameName: string, p1: string, p2: string) => {
+    const { request } = this.page;
+    await deleteUserByName(request, p1);
+    await deleteUserByName(request, p2);
+    await deleteGamesFromGameRoom(request, gameName);
+    await deleteGameRoomByTitle(request, gameName);
+  };
+
+  startGame = async () => {
+    await expect(this.page.getByTestId("ship-square")).toBeHidden();
+    await this.page.getByRole("button", { name: /start/i }).click();
+    await expect(this.page.getByTestId("ship-square")).toHaveCount(2);
+  };
+
+  addPlayerToGame = async (username: string, gameRoomId: string) => {
+    const pageP2 = await this.context.newPage();
     await signUpAndSignIn({
       req: pageP2.request,
-      user: { username: player2, password: defaultPassword },
+      user: { username, password: defaultPassword },
     });
     await joinGame(pageP2.request, { gameId: gameRoomId });
   };
 
-  verifyPlayerTurnActive = async (page: Page, name: string) => {
-    const classNames = await this.getPlayerClassNames(page, name);
+  verifyPlayerTurnActive = async (name: string) => {
+    const classNames = await this.getPlayerClassNames(this.page, name);
     await expect(classNames).toContain("active");
   };
 
-  verifyPlayerTurnInactive = async (page: Page, name: string) => {
-    const classNames = await this.getPlayerClassNames(page, name);
+  verifyPlayerTurnInactive = async (name: string) => {
+    const classNames = await this.getPlayerClassNames(this.page, name);
     await expect(classNames).not.toContain("active");
   };
 
@@ -49,19 +73,20 @@ export class GamePlayPage {
       .evaluate((el) => el.className);
   };
 
-  seedGameDummyShips = async (request: APIRequestContext) => {
+  seedGameDummyShips = async () => {
+    const { request } = this.page;
     const seed: GameSeed = {
-      gameRoomId: gameRoomId,
+      gameRoomId: this.gameRoomId,
       shipPositions: [
         {
-          playerId: player1,
+          playerId: this.player1,
           shipPoints: [
             { x: 0, y: 0 },
             { x: 0, y: 1 },
           ],
         },
         {
-          playerId: player2,
+          playerId: this.player2,
           shipPoints: [
             { x: 0, y: 0 },
             { x: 0, y: 1 },
@@ -71,10 +96,6 @@ export class GamePlayPage {
     };
     await seedGameShips(request, seed);
   };
-
-  async goto() {
-    await this.page.goto(`${config.frontendUrl}/game/${gameRoomId}`);
-  }
 }
 
 export class PlaywrightDevPage {
