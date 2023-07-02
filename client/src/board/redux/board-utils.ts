@@ -1,5 +1,4 @@
-import { BoardPoint } from "../board";
-import { Point } from "../point";
+import { BoardPoint, Point } from "../point";
 import { ShipPart } from "../square-ship-part";
 import { AttackResult } from "../square/attack-result";
 

@@ -9,8 +9,11 @@ import {
 import { useState } from "react";
 import { socket } from "../io/socket";
 import { useAppSelector } from "../redux/hooks";
-import { selectChatMessages } from "../redux/selectors";
-import { useAuth } from "../auth/useAuth";
+import {
+  selectChatMessages,
+  selectUserId,
+  selectUsername,
+} from "../redux/selectors";
 
 type GameChatProps = {
   gameId: string;
@@ -18,7 +21,8 @@ type GameChatProps = {
 };
 
 const GameChat = ({ gameId, playerIds }: GameChatProps) => {
-  const { username, userId } = useAuth();
+  const username = useAppSelector(selectUsername);
+  const userId = useAppSelector(selectUserId);
   const [typedMessage, setTypedMessage] = useState("");
 
   const messages = useAppSelector(selectChatMessages);

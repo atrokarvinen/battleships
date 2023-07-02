@@ -1,11 +1,10 @@
 import type { PayloadAction } from "@reduxjs/toolkit";
 import { createSlice } from "@reduxjs/toolkit";
 import { BoardPoint, Point } from "../board/point";
-import { AddShipPayload } from "../board/redux/addShipPayload";
-import { AttackShipPayload } from "../board/redux/attackShipPayload";
 import { generateEmptyBoardPoints } from "../board/redux/board-utils";
 import { ShipPart } from "../board/square-ship-part";
 import { AttackResult } from "../board/square/attack-result";
+import { AddShipPayload, AttackShipPayload } from "./models";
 
 export interface Board {
   points: BoardPoint[];

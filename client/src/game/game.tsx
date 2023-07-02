@@ -2,7 +2,6 @@ import { Box, FormControlLabel, Stack, Switch } from "@mui/material";
 import { useContext, useEffect, useState } from "react";
 import { useParams } from "react-router";
 import { handleError } from "../auth/errorHandling";
-import { useAuth } from "../auth/useAuth";
 import { SocketContext } from "../io/socketProvider";
 import { getGameRequest } from "../lobby/api";
 import { GameRoom } from "../lobby/gameRoom";
@@ -10,7 +9,7 @@ import { setActiveGame } from "../redux/activeGameSlice";
 import { addNewGameRoom } from "../redux/gameRoomSlice";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import { addPlayer } from "../redux/playerSlice";
-import { selectActiveGame, selectGame } from "../redux/selectors";
+import { selectActiveGame, selectGame, selectUserId } from "../redux/selectors";
 import { getGameByRoomIdRequest, mapGameDtoToActiveGame } from "./api";
 import { GameDTO } from "./apiModel";
 import GameChat from "./gameChat";
@@ -29,7 +28,7 @@ type RouteParams = {
 const Game = ({}: GameProps) => {
   const dispatch = useAppDispatch();
   const params = useParams<RouteParams>();
-  const { userId: playerId } = useAuth();
+  const playerId = useAppSelector(selectUserId);
   const gameRoomId = params.id!;
 
   const socket = useContext(SocketContext);

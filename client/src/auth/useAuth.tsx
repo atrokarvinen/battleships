@@ -1,15 +1,12 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { getAccountInfo, getGuestAccountInfo } from "../lobby/api";
-import { login, logout as logoutUser } from "../redux/authSlice";
+import { login } from "../redux/authSlice";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import {
   selectIsGuest,
   selectIsLoggedIn,
-  selectUserId,
   selectUsername,
 } from "../redux/selectors";
-import { signOutRequest } from "./api";
 import { handleError } from "./errorHandling";
 
 export const useAuth = () => {
@@ -17,13 +14,8 @@ export const useAuth = () => {
 
   const username = useAppSelector(selectUsername);
   const isGuest = useAppSelector(selectIsGuest);
-  const userId = useAppSelector(selectUserId);
   const isAuth = useAppSelector(selectIsLoggedIn);
   const dispatch = useAppDispatch();
-  const navigate = useNavigate();
-
-  // console.log("is auth:", isAuth);
-  // console.log("loading:", isLoading);
 
   useEffect(() => {
     fetchAccountInfo();
@@ -48,15 +40,5 @@ export const useAuth = () => {
     }
   };
 
-  const logout = async () => {
-    try {
-      await signOutRequest();
-      navigate("/");
-      dispatch(logoutUser());
-    } catch (error) {
-      handleError(error);
-    }
-  };
-
-  return { userId, username, isLoading, isAuth, logout };
+  return { isLoading, isAuth };
 };

@@ -1,11 +1,12 @@
 import { Avatar, Box } from "@mui/material";
 import { deepPurple } from "@mui/material/colors";
-import { useAuth } from "../auth/useAuth";
+import { useAppSelector } from "../redux/hooks";
+import { selectUsername } from "../redux/selectors";
 
 type ProfileProps = {};
 
 const Profile = ({}: ProfileProps) => {
-  const { username } = useAuth();
+  const username = useAppSelector(selectUsername);
 
   if (!username) {
     return <></>;

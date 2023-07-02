@@ -1,31 +1,45 @@
-// import { AppBar, Button, Link, Toolbar } from "@mui/material";
-import { Link, useNavigate } from "react-router-dom";
-import { useAuth } from "../auth/useAuth";
+import Brightness4Icon from "@mui/icons-material/Brightness4";
+import Brightness7Icon from "@mui/icons-material/Brightness7";
+import FlagCircle from "@mui/icons-material/FlagCircle";
+import SettingsIcon from "@mui/icons-material/Settings";
 import {
   AppBar,
   Button,
-  Toolbar,
-  Link as MuiLink,
-  Box,
   Grid,
   IconButton,
+  Link as MuiLink,
+  Toolbar,
 } from "@mui/material";
-import FlagCircle from "@mui/icons-material/FlagCircle";
-import SettingsIcon from "@mui/icons-material/Settings";
-import Brightness4Icon from "@mui/icons-material/Brightness4";
-import Brightness7Icon from "@mui/icons-material/Brightness7";
 import { useContext } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { signOutRequest } from "../auth/api";
+import { handleError } from "../auth/errorHandling";
 import { ColorModeContext } from "../dark-mode-wrapper";
 import Profile from "../lobby/profile";
+import { logout as logoutUser } from "../redux/authSlice";
+import { useAppDispatch, useAppSelector } from "../redux/hooks";
+import { selectIsLoggedIn } from "../redux/selectors";
 
 type NavigationProps = {};
 
 const Navigation = ({}: NavigationProps) => {
   const navigate = useNavigate();
-  const { isAuth, logout } = useAuth();
+  const dispatch = useAppDispatch();
   const colorMode = useContext(ColorModeContext);
 
+  const isAuth = useAppSelector(selectIsLoggedIn);
+
   // console.log("colorMode.mode:", colorMode.mode);
+
+  const logout = async () => {
+    try {
+      await signOutRequest();
+      navigate("/");
+      dispatch(logoutUser());
+    } catch (error) {
+      handleError(error);
+    }
+  };
 
   return (
     <AppBar position="static">
