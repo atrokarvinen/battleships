@@ -81,8 +81,8 @@ it("clicks square", async () => {
   expect(await screen.findByText(/player 1/i)).toBeInTheDocument();
   expect(screen.getByText(/player 1/i).className).toContain("active");
 
-  const ownBoard = screen.getByTestId("enemy-board");
-  const square = within(ownBoard).getByTestId("square-0-0");
+  const trackingBoard = screen.getByTestId("tracking-board");
+  const square = within(trackingBoard).getByTestId("square-0-0");
   expect(square).toBeInTheDocument();
   await userEvent.click(square);
 });

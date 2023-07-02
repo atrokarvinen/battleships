@@ -1,7 +1,7 @@
 import { Box, Typography } from "@mui/material";
 import cn from "classnames";
-import BoardEnemy from "../board/board-enemy";
-import BoardOwn from "../board/board-own";
+import PrimaryBoard from "../board/primaryBoard";
+import TrackingBoard from "../board/trackingBoard";
 import { useAppSelector } from "../redux/hooks";
 import { selectActivePlayerId } from "../redux/selectors";
 import styles from "./styles.module.scss";
@@ -31,12 +31,12 @@ const PlayerArea = ({ name, playerId, gameId }: PlayerAreaProps) => {
       </Typography>
       <Box>
         <Box>
-          <Typography>Own board</Typography>
-          <BoardOwn gameId={gameId} playerId={playerId} />
+          <Typography>Primary board</Typography>
+          <PrimaryBoard gameId={gameId} playerId={playerId} />
         </Box>
         <Box>
-          <Typography>Opponent board</Typography>
-          <BoardEnemy gameId={gameId} playerId={playerId} />
+          <Typography>Tracking board</Typography>
+          <TrackingBoard gameId={gameId} playerId={playerId} />
         </Box>
       </Box>
     </Box>

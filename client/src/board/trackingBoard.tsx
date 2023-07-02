@@ -1,5 +1,5 @@
 import { handleError } from "../auth/errorHandling";
-import { useAppDispatch, useAppSelector } from "../redux/hooks";
+import { useAppSelector } from "../redux/hooks";
 import {
   selectActivePlayerId,
   selectEnemyPoints,
@@ -12,16 +12,15 @@ import { AttackResult } from "./square/attack-result";
 import { StaticSquares } from "./staticSquares";
 import styles from "./styles.module.scss";
 
-type BoardProps = {
+type TrackingBoardProps = {
   gameId: string;
   playerId: string;
 };
 
-const BoardEnemy = ({ gameId, playerId }: BoardProps) => {
+const TrackingBoard = ({ gameId, playerId }: TrackingBoardProps) => {
   const points = useAppSelector((state) => selectEnemyPoints(state, playerId));
   const playerIdToPlay = useAppSelector(selectActivePlayerId);
   const isGameOver = useAppSelector(selectIsGameOver);
-  const dispatch = useAppDispatch();
 
   // console.log("enemy points:", points);
 
@@ -43,7 +42,7 @@ const BoardEnemy = ({ gameId, playerId }: BoardProps) => {
       targetPoint.attackResult !== AttackResult.None;
     const isOpponentBoard = true;
     if (!isOpponentBoard) {
-      console.log("attack should click opponent board");
+      console.log("attack should click tracking board");
       return;
     }
     if (!isPlayersTurn) {
@@ -75,7 +74,7 @@ const BoardEnemy = ({ gameId, playerId }: BoardProps) => {
   };
 
   return (
-    <div className={styles.board} data-testid="enemy-board">
+    <div className={styles.board} data-testid="tracking-board">
       <StaticSquares />
       <div className={styles.playArea}>
         {points.map((point, index) => (
@@ -86,4 +85,4 @@ const BoardEnemy = ({ gameId, playerId }: BoardProps) => {
   );
 };
 
-export default BoardEnemy;
+export default TrackingBoard;

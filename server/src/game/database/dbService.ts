@@ -27,14 +27,15 @@ export class DbService {
     if (!game) {
       throw new Error(`Failed to find game '${gameId}'`);
     }
+    // TODO refactor wording
     const infos = game.playerInfos;
     const own = infos.find((b) => b.playerId === attackerPlayerId);
     const enemy = infos.find((b) => b.playerId !== attackerPlayerId);
     if (!own) {
-      throw new Error(`Failed to find own board of '${attackerPlayerId}'`);
+      throw new Error(`Failed to find primary board of '${attackerPlayerId}'`);
     }
     if (!enemy) {
-      throw new Error(`Failed to find enemy board`);
+      throw new Error(`Failed to find tracking board`);
     }
     const attackedSquareOwnSide = own.attacks.find(pointMatches(point));
     const attackedSquareEnemySide = enemy.ownShips.find(pointMatches(point));

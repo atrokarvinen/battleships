@@ -1,9 +1,9 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 import { BoardPoint, Point } from "../board/point";
-import { AttackShipPayload } from "../board/redux/attackShipPayload";
 import { ShipPart } from "../board/square-ship-part";
 import { AttackResult } from "../board/square/attack-result";
 import { Board } from "./boardSlice";
+import { AttackShipPayload } from "./models";
 
 export type ActiveGamePlayer = {
   id: string;
@@ -98,6 +98,7 @@ const activeGameSlice = createSlice({
     sinkShip: (state, action: PayloadAction<AttackShipPayload>) => {
       const { attackerPlayerId, point: sinkPoint } = action.payload;
       console.log("Sinking ship at ", sinkPoint);
+      // TODO refactor wording
       const enemy = state.boards.find(
         (board) => board.playerId !== attackerPlayerId
       );
@@ -122,6 +123,7 @@ const activeGameSlice = createSlice({
       const enemy = state.boards.find(
         (board) => board.playerId !== attackerPlayerId
       );
+      // TODO refactor wording
       const own = state.attacks.find(
         (board) => board.playerId === attackerPlayerId
       );
