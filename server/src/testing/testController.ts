@@ -27,13 +27,7 @@ export class TestController {
   deleteGamesFromGameRoom = async (req: Request, res: Response) => {
     const title = req.params.title;
     const gameRoom = await GameRoom.findOne({ title });
-    if (!gameRoom) {
-      return res
-        .status(404)
-        .json({ error: `game room '${title}' not found` })
-        .end();
-    }
-    await GameModel.deleteMany({ gameRoomId: gameRoom._id });
+    await GameModel.deleteMany({ gameRoomId: gameRoom?._id });
     res.end();
   };
 

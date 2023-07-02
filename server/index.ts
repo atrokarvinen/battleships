@@ -7,6 +7,7 @@ import { Server } from "socket.io";
 import { accountRouter } from "./src/account/accountRouter";
 import { authMiddleware } from "./src/auth/authMiddleware";
 import { authRouter } from "./src/auth/authRouter";
+import { cookieRouter } from "./src/cookie/cookieRouter";
 import { env } from "./src/core/env";
 import { connectToDb } from "./src/database/db";
 import { gameRouter } from "./src/game/gameRouter";
@@ -29,6 +30,7 @@ addListeners(io);
 
 app.use(logRequestMiddleware);
 
+app.use("/cookie", cookieRouter);
 app.use("/auth", authRouter());
 app.use("/account", authMiddleware, accountRouter);
 app.use("/game-room", gameRoomRouter(io));

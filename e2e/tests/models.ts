@@ -1,3 +1,5 @@
+import { APIRequestContext } from "@playwright/test";
+
 export type User = {
   username: string;
   password: string;
@@ -16,4 +18,11 @@ export type ShipPlacement = {
 export type Point = {
   x: number;
   y: number;
+};
+
+export type JoinGamePayload = { gameId: string };
+
+export type LoginInfo = {
+  req: APIRequestContext;
+  user: User;
 };
