@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import { getAccountInfo, getGuestAccountInfo } from "../lobby/api";
+import { handleError } from "../api/errorHandling";
+import { getAccountInfo, getGuestAccountInfo } from "../auth/api";
 import { login } from "../redux/authSlice";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import {
@@ -7,7 +8,6 @@ import {
   selectIsLoggedIn,
   selectUsername,
 } from "../redux/selectors";
-import { handleError } from "./errorHandling";
 
 export const useAuth = () => {
   const [isLoading, setIsLoading] = useState(true);

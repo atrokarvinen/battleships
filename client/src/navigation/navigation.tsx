@@ -12,8 +12,8 @@ import {
 } from "@mui/material";
 import { useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { handleError } from "../api/errorHandling";
 import { signOutRequest } from "../auth/api";
-import { handleError } from "../auth/errorHandling";
 import { ColorModeContext } from "../dark-mode-wrapper";
 import Profile from "../lobby/profile";
 import { logout as logoutUser } from "../redux/authSlice";

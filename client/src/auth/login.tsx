@@ -1,13 +1,14 @@
 import { Box, Button, Dialog, DialogContent, DialogTitle } from "@mui/material";
 import { useState } from "react";
 import { useNavigate } from "react-router";
+import { handleError } from "../api/errorHandling";
+import { FormError } from "../api/formError";
+import { FormErrorMap } from "../api/models";
 import { login } from "../redux/authSlice";
 import { useAppDispatch } from "../redux/hooks";
 import { addPlayer } from "../redux/playerSlice";
 import { signInAsGuestRequest, signInRequest, signUpRequest } from "./api";
-import { FormError, handleError } from "./errorHandling";
 import { LoginForm } from "./loginForm";
-import { FormErrorMap } from "./models";
 import SignIn from "./signIn";
 import SignUp from "./signUp";
 import { SignUpForm } from "./singUpForm";

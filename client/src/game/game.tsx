@@ -1,7 +1,7 @@
 import { Box, FormControlLabel, Stack, Switch } from "@mui/material";
 import { useContext, useEffect, useState } from "react";
 import { useParams } from "react-router";
-import { handleError } from "../auth/errorHandling";
+import { handleError } from "../api/errorHandling";
 import { SocketContext } from "../io/socketProvider";
 import { getGameRequest } from "../lobby/api";
 import { GameRoom } from "../lobby/gameRoom";

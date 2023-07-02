@@ -5,10 +5,13 @@ import {
   DialogTitle,
   Grid,
 } from "@mui/material";
-import styles from "./styles.module.scss";
 import { useEffect, useState } from "react";
-import CreateGameForm from "./createGameForm";
-import { CreateGame } from "./createGame";
+import { useSelector } from "react-redux";
+import { useNavigate } from "react-router";
+import { handleError } from "../api/errorHandling";
+import { setGameRooms } from "../redux/gameRoomSlice";
+import { useAppDispatch } from "../redux/hooks";
+import { selectGames } from "../redux/selectors";
 import {
   createGameRequest,
   deleteAllGamesRequest,
@@ -16,14 +19,10 @@ import {
   joinGameRequest,
   leaveGameRequest,
 } from "./api";
-import { useAppDispatch } from "../redux/hooks";
-import { setGameRooms } from "../redux/gameRoomSlice";
-import { useSelector } from "react-redux";
-import GamesTable from "./gamesTable";
-import { useNavigate } from "react-router";
-import { handleError } from "../auth/errorHandling";
+import { CreateGame } from "./createGame";
+import CreateGameForm from "./createGameForm";
 import GameDetails from "./gameDetails";
-import { selectGames } from "../redux/selectors";
+import GamesTable from "./gamesTable";
 
 type LobbyProps = {};
 

@@ -1,8 +1,7 @@
-import axios from "axios";
+import { axios } from "../api/axios";
 import { BoardPoint } from "../board/point";
 import { ShipPart } from "../board/square-ship-part";
 import { AttackResult } from "../board/square/attack-result";
-import { config } from "../config/config";
 import { ActiveGameState } from "../redux/activeGameSlice";
 import {
   ShipPart as ApiShipPart,
@@ -10,8 +9,6 @@ import {
   GameState,
   Square,
 } from "./apiModel";
-
-const _axios = axios.create({ baseURL: `${config.backendBaseUrl}/game` });
 
 export type StartGamePayload = {
   gameRoomId: string;
@@ -23,15 +20,15 @@ export type ResetGamePayload = {
 };
 
 export const startGameRequest = (payload: StartGamePayload) => {
-  return _axios.post("/start", payload);
+  return axios.post("/game/start", payload);
 };
 
 export const resetGameRequest = (payload: ResetGamePayload) => {
-  return _axios.post("/reset", payload);
+  return axios.post("/game/reset", payload);
 };
 
 export const getGameByRoomIdRequest = (gameRoomId: string) => {
-  return _axios.get(`/game-room/${gameRoomId}`);
+  return axios.get(`/game/game-room/${gameRoomId}`);
 };
 
 export const mapGameDtoToActiveGame = (game: GameDTO) => {

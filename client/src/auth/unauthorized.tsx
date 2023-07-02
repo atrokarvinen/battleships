@@ -1,9 +1,9 @@
 import { Button } from "@mui/material";
 import { useNavigate } from "react-router";
+import { handleError } from "../api/errorHandling";
 import { login } from "../redux/authSlice";
 import { useAppDispatch } from "../redux/hooks";
 import { signInAsGuestRequest } from "./api";
-import { handleError } from "./errorHandling";
 
 type UnauthorizedProps = {
   unAuthRoute?: string;

@@ -1,10 +1,10 @@
 import { yupResolver } from "@hookform/resolvers/yup";
-import { TextField, Button, Box } from "@mui/material";
+import { Box, Button, TextField } from "@mui/material";
 import { FormEvent, useEffect, useRef } from "react";
 import { useForm } from "react-hook-form";
+import { FormErrorMap } from "../api/models";
 import { schema } from "./signUpValidation";
 import { SignUpForm } from "./singUpForm";
-import { FormErrorMap } from "./models";
 
 export type SignUpProps = {
   onCancel(): void;

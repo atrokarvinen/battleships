@@ -1,8 +1,5 @@
-import axios from "axios";
-import { config } from "../config/config";
+import { axios } from "../api/axios";
 import { Point } from "./point";
-
-const _axios = axios.create({ baseURL: `${config.backendBaseUrl}/game` });
 
 export type AttackSquarePayload = {
   point: Point;
@@ -11,5 +8,5 @@ export type AttackSquarePayload = {
 };
 
 export const attackSquareRequest = (payload: AttackSquarePayload) => {
-  return _axios.post("/attack", payload);
+  return axios.post("/game/attack", payload);
 };

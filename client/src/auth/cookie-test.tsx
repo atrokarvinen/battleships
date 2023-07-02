@@ -1,10 +1,6 @@
 import { Button } from "@mui/material";
-import ax from "axios";
 import { useState } from "react";
-import { config } from "../config/config";
-
-const { backendBaseUrl } = config;
-const axios = ax.create({ baseURL: backendBaseUrl, withCredentials: true });
+import { axios } from "../api/axios";
 
 type CookieTestProps = {};
 
@@ -44,18 +40,10 @@ const CookieTest = ({}: CookieTestProps) => {
   }
 
   const getCookie = async () => {
-    await axios.get(config.backendBaseUrl + "/cookie", {
-      withCredentials: true,
-    });
+    await axios.get("/cookie");
   };
   const postCookie = async () => {
-    const response = await axios.post(
-      config.backendBaseUrl + "/cookie",
-      {},
-      {
-        withCredentials: true,
-      }
-    );
+    const response = await axios.post("/cookie");
     setCookie(response.data.cookie);
   };
 

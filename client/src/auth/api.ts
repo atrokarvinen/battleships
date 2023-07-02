@@ -1,30 +1,31 @@
-import axios from "axios";
-import { config } from "../config/config";
+import { axios } from "../api/axios";
 import { LoginForm } from "./loginForm";
 import { SignUpForm } from "./singUpForm";
 
-export const appAxios = axios.create({
-  baseURL: config.backendBaseUrl,
-  withCredentials: true,
-});
-
 export const signUpRequest = (payload: SignUpForm) => {
-  return appAxios.post(`auth/sign-up`, payload);
+  return axios.post("auth/sign-up", payload);
 };
 
 export const signInRequest = (payload: LoginForm) => {
-  return appAxios.post(`auth/sign-in`, payload);
+  return axios.post("auth/sign-in", payload);
 };
 
 export const signInAsGuestRequest = () => {
-  return appAxios.get(`auth/guest/sign-in`);
+  return axios.get("auth/guest/sign-in");
 };
 
 export const signOutRequest = () => {
-  return appAxios.post(`auth/sign-out`);
+  return axios.post("auth/sign-out");
 };
 
 export const testJwt = (payload: { token: any }) => {
-  // return appAxios.post(`auth/test-token`, payload);
-  return appAxios.post(`auth/test-auth-middleware`, payload);
+  return axios.post("auth/test-auth-middleware", payload);
+};
+
+export const getAccountInfo = () => {
+  return axios.get("/account");
+};
+
+export const getGuestAccountInfo = () => {
+  return axios.get("/account/guest");
 };

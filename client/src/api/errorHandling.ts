@@ -1,26 +1,9 @@
-import { AxiosError } from "axios";
-import { FormErrorMap, ValidationError } from "./models";
-
-export class FormError {
-  private _errors: ValidationError[];
-  public errors: FormErrorMap;
-
-  constructor(errors: ValidationError[]) {
-    this._errors = errors;
-    this.errors = this.errorsToDictionary(errors);
-  }
-
-  errorsToDictionary(errors: ValidationError[]) {
-    const dict: FormErrorMap = {};
-    errors.forEach((e) => {
-      dict[e.path] = e.msg;
-    });
-    return dict;
-  }
-}
+import axios, { AxiosError } from "axios";
+import { FormError } from "./formError";
+import { ValidationError } from "./models";
 
 export const handleError = (error: any) => {
-  if (error instanceof AxiosError) {
+  if (axios.isAxiosError(error)) {
     return handleAxiosError(error);
   }
 

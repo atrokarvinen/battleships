@@ -1,3 +1,4 @@
+import CloseIcon from "@mui/icons-material/Close";
 import {
   Button,
   Dialog,
@@ -7,18 +8,10 @@ import {
   IconButton,
   Stack,
 } from "@mui/material";
-import styles from "./styles.module.scss";
-import { useSelector } from "react-redux";
+import { handleError } from "../api/errorHandling";
 import { useAppSelector } from "../redux/hooks";
-import {
-  selectGame,
-  selectGames,
-  selectUserId,
-  selectUsername,
-} from "../redux/selectors";
+import { selectGame, selectUserId } from "../redux/selectors";
 import { deleteGameRequest } from "./api";
-import { handleError } from "../auth/errorHandling";
-import CloseIcon from "@mui/icons-material/Close";
 
 type GameDetailsProps = {
   gameId: string | undefined;

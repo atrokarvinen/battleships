@@ -1,4 +1,4 @@
-import { handleError } from "../auth/errorHandling";
+import { handleError } from "../api/errorHandling";
 import { useAppSelector } from "../redux/hooks";
 import {
   selectActivePlayerId,

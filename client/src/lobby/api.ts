@@ -1,53 +1,30 @@
-import axios from "axios";
-import { config } from "../config/config";
+import { axios } from "../api/axios";
 import { CreateGame } from "./createGame";
 
-const baseUrl = `${config.backendBaseUrl}/game-room`;
-
 export const getGamesRequest = () => {
-  return axios.get(baseUrl);
+  return axios.get("/game-room");
 };
 
 export const getGameRequest = (id: string) => {
-  return axios.get(`${baseUrl}/${id}`);
+  return axios.get(`/game-room/${id}`);
 };
 
 export const createGameRequest = (payload: CreateGame) => {
-  return axios.post(baseUrl, payload);
+  return axios.post("/game-room", payload);
 };
 
 export const deleteGameRequest = (id: string) => {
-  return axios.delete(`${baseUrl}/${id}`);
+  return axios.delete(`/game-room/${id}`);
 };
 
 export const deleteAllGamesRequest = () => {
-  return axios.delete(baseUrl);
+  return axios.delete("/game-room");
 };
 
 export const joinGameRequest = (gameId: string) => {
-  return axios.post(
-    `${baseUrl}/player/join`,
-    { gameId },
-    { withCredentials: true }
-  );
+  return axios.post("/game-room/player/join", { gameId });
 };
 
 export const leaveGameRequest = (gameId: string) => {
-  return axios.post(
-    `${baseUrl}/player/leave`,
-    { gameId },
-    { withCredentials: true }
-  );
-};
-
-export const getAccountInfo = () => {
-  return axios.get(`${config.backendBaseUrl}/account`, {
-    withCredentials: true,
-  });
-};
-
-export const getGuestAccountInfo = () => {
-  return axios.get(`${config.backendBaseUrl}/account/guest`, {
-    withCredentials: true,
-  });
+  return axios.post("/game-room/player/leave", { gameId });
 };
