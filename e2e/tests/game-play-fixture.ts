@@ -10,8 +10,6 @@ import { config } from "./config";
 import { defaultPassword } from "./defaults";
 import { GamePlayPage } from "./game-play-page";
 
-let gameRoomId: string;
-
 type GameFixture = {
   gamePlayPage: GamePlayPage;
 };
@@ -30,7 +28,7 @@ export const test = base.extend<GameFixture>({
 
     const response = await createGameRoom(request, { title: gameName });
     const createdGameRoom = await response.json();
-    gameRoomId = createdGameRoom.id;
+    const gameRoomId = createdGameRoom.id;
     gamePlayPage.setGameRoomId(gameRoomId);
 
     await signUpAndSignIn({
