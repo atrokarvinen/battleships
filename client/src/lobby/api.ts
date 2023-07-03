@@ -17,10 +17,6 @@ export const deleteGameRequest = (id: string) => {
   return axios.delete(`/game-room/${id}`);
 };
 
-export const deleteAllGamesRequest = () => {
-  return axios.delete("/game-room");
-};
-
 export const joinGameRequest = (gameId: string) => {
   return axios.post("/game-room/player/join", { gameId });
 };

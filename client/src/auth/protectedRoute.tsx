@@ -12,20 +12,18 @@ const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
   const { isAuth, isLoading } = useAuth();
   const location = useLocation();
 
-  const [unAuthRoute, setUnauthRoute] = useState<string | undefined>();
+  const [deniedRoute, setDeniedRoute] = useState<string | undefined>();
   if (isLoading) {
     return <CircularProgress />;
   }
 
   if (!isAuth) {
-    const tryRoute = location.pathname;
-    console.log(
-      `not authenticated, saving route '${tryRoute}', redirecting...`
-    );
-    if (tryRoute !== unAuthRoute) {
-      setUnauthRoute(tryRoute);
+    const route = location.pathname;
+    console.log(`not authenticated, saving route '${route}', redirecting...`);
+    if (route !== deniedRoute) {
+      setDeniedRoute(route);
     }
-    return <Unauthorized unAuthRoute={unAuthRoute} />;
+    return <Unauthorized deniedRoute={deniedRoute} />;
   }
   return <Outlet />;
 };

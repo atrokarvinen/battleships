@@ -38,7 +38,7 @@ const parseConfig = () => {
     JWT_SECRET: toString(JWT_SECRET, "JWT_SECRET"),
   };
 
-  console.log("Successfully parsed environment variables:", env);
+  // console.log("Successfully parsed environment variables:", env);
 
   return env;
 };

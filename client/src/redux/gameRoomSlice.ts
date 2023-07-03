@@ -1,8 +1,8 @@
-import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
-import { GameRoom } from "../lobby/gameRoom";
-import { GamePlayerChangedPayload } from "../io/socketProvider";
+import { createSlice } from "@reduxjs/toolkit";
 import _ from "lodash";
+import { GamePlayerChangedPayload } from "../io/socketProvider";
+import { GameRoom } from "../lobby/gameRoom";
 
 export interface GameState {
   byId: { [id: string]: GameRoom };
@@ -37,11 +37,6 @@ export const gameRoomSlice = createSlice({
       state.byId = _.omitBy(state.byId, (x) => x.id === gameId);
       state.allIds = state.allIds.filter((id) => id !== gameId);
     },
-    deleteAllGameRooms: (state) => {
-      console.log("[Redux] Deleting all games");
-      state.byId = {};
-      state.allIds = [];
-    },
     joinGame: (state, action: PayloadAction<GamePlayerChangedPayload>) => {
       const { gameId, playerId, player } = action.payload;
       console.log("[Redux] Joining game " + gameId);
@@ -62,7 +57,6 @@ export const gameRoomSlice = createSlice({
 export const {
   addNewGameRoom,
   setGameRooms,
-  deleteAllGameRooms,
   deleteGameRoom,
   joinGame,
   leaveGame,

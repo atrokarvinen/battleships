@@ -7,6 +7,7 @@ export const gameRouter = (io: Server) => {
 
   const controller = new GameController(io);
 
+  // Todo move to game room
   router.get("/game-room/:gameRoomId", (req, res, next) =>
     controller.getGame(req, res, next)
   );

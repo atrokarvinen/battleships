@@ -7,11 +7,6 @@ import { ShipPart, Square } from "../game/database/model";
 import { GameSeed, Point } from "./models";
 
 export class TestController {
-  deleteAllUsers = async (req: Request, res: Response) => {
-    await User.deleteMany({});
-    res.end();
-  };
-
   deleteUserByName = async (req: Request, res: Response) => {
     const username = req.params.name;
     await User.deleteMany({ username });

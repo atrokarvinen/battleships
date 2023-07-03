@@ -18,10 +18,6 @@ export const signOutRequest = () => {
   return axios.post("auth/sign-out");
 };
 
-export const testJwt = (payload: { token: any }) => {
-  return axios.post("auth/test-auth-middleware", payload);
-};
-
 export const getAccountInfo = () => {
   return axios.get("/account");
 };

@@ -6,7 +6,6 @@ export const testRouter = () => {
 
   const controller = new TestController();
 
-  router.delete("/users", controller.deleteAllUsers);
   router.delete("/users/:name", controller.deleteUserByName);
 
   router.delete("/games/:title", controller.deleteGameByTitle);

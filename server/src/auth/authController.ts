@@ -5,15 +5,16 @@ import { env } from "../core/env";
 import { ValidationFailure } from "../core/validationFailure";
 import { User } from "../database/user";
 import { generateGuid, getRandomGuestName } from "./guestNames";
-import { SignInPayload } from "./signInPayload";
-import { SignUpPayload } from "./signUpPayload";
+import { SignInPayload } from "./models/signInPayload";
+import { SignUpPayload } from "./models/signUpPayload";
 
 export class AuthController {
   signUp = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      console.log("signing up");
       const payload: SignUpPayload = req.body;
       const { username, password } = payload;
+
+      console.log(`Signing up user '${username}'...`);
 
       const isUnique = await this.isUsernameUnique(username);
       if (!isUnique) {
@@ -30,16 +31,13 @@ export class AuthController {
         password: hashedPassword,
       });
 
+      console.log(`Signed up user '${username}'.`);
+
       res.status(200).json(createdUser.toObject());
     } catch (error) {
       next(error);
     }
   };
-
-  async isUsernameUnique(username: string) {
-    const foundUser = await User.findOne({ username });
-    return foundUser === null;
-  }
 
   signIn = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -60,10 +58,7 @@ export class AuthController {
         return res.status(403).json({ error: "Invalid username or password" });
       }
 
-      // Create token
-      const secret = env.JWT_SECRET;
-      const tokenInfo = { userId: user.id };
-      const token = jwt.sign(tokenInfo, secret);
+      const token = this.createToken(user.id);
       const cookieName = env.JWT_COOKIE_NAME;
 
       console.log(`Successfully signed in user '${username}'`);
@@ -84,11 +79,7 @@ export class AuthController {
     try {
       const username = getRandomGuestName();
       const userId = generateGuid();
-
-      // Create token
-      const secret = env.JWT_SECRET;
-      const tokenInfo = { userId };
-      const token = jwt.sign(tokenInfo, secret);
+      const token = this.createToken(userId);
       const cookieName = env.JWT_COOKIE_NAME;
 
       console.log(`Successfully created guest user '${username}'`);
@@ -107,6 +98,7 @@ export class AuthController {
 
   async signOut(req: Request, res: Response, next: NextFunction) {
     try {
+      console.log(`Logging out user '${req.userId}'...`);
       const cookieName = env.JWT_COOKIE_NAME;
       res.clearCookie(cookieName).end();
     } catch (error) {
@@ -114,25 +106,15 @@ export class AuthController {
     }
   }
 
-  deleteAllUsers = async (req: Request, res: Response) => {
-    await User.deleteMany({});
-    res.end();
-  };
+  private async isUsernameUnique(username: string) {
+    const foundUser = await User.findOne({ username });
+    return foundUser === null;
+  }
 
-  testToken = async (req: Request, res: Response, next: NextFunction) => {
-    try {
-      const cookies = req.cookies;
-      const cookieName = env.JWT_COOKIE_NAME;
-      const token = cookies[cookieName];
-      console.log("cookies: " + JSON.stringify(cookies));
-
-      const secret = env.JWT_SECRET;
-      const tokenInfo: any = jwt.verify(token, secret);
-      console.log("Token: " + JSON.stringify(tokenInfo));
-      console.log("Token userId: " + tokenInfo.userId);
-      res.end();
-    } catch (error) {
-      next(error);
-    }
-  };
+  private createToken(userId: string) {
+    const secret = env.JWT_SECRET;
+    const tokenInfo = { userId };
+    const token = jwt.sign(tokenInfo, secret);
+    return token;
+  }
 }

@@ -14,7 +14,6 @@ import {
 import { addMessage } from "../redux/chatSlice";
 import {
   addNewGameRoom,
-  deleteAllGameRooms,
   deleteGameRoom,
   joinGame,
   leaveGame,
@@ -74,10 +73,6 @@ const SocketProvider = ({ children }: SocketProviderProps) => {
     socket.on("gameDeleted", (gameId) => {
       console.log(`Game '${gameId}' deleted`);
       dispatch(deleteGameRoom(gameId));
-    });
-    socket.on("allGamesDeleted", () => {
-      console.log(`All games deleted`);
-      dispatch(deleteAllGameRooms());
     });
     socket.on("gameJoined", (payload: GamePlayerChangedPayload) => {
       const { gameId, playerId } = payload;

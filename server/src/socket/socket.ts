@@ -1,11 +1,12 @@
 import { Server } from "socket.io";
 
+// TODO Split listeners
 export const addListeners = (io: Server) => {
   io.on("connection", (socket) => {
     const socketId = socket.id;
-    console.log(`socket '${socketId}' joined`);
 
-    console.log("Socket count:", io.of("/").sockets.size);
+    // console.log(`socket '${socketId}' joined`);
+    // console.log("Socket count:", io.of("/").sockets.size);
 
     socket.emit("helloFromServer");
 

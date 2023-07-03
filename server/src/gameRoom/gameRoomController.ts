@@ -1,12 +1,12 @@
-import { Server } from "socket.io";
-import { GameRoom, IGameRoom } from "../database/gameRoom";
 import { NextFunction, Request, Response } from "express";
 import jwt from "jsonwebtoken";
+import { Server } from "socket.io";
 import { env } from "../core/env";
+import { GameRoom, IGameRoom } from "../database/gameRoom";
 import { IUser, User } from "../database/user";
-import { Document, Types } from "mongoose";
 import { ApiError } from "../middleware/errorHandleMiddleware";
 
+// TODO Check use of ids and equality comparisons
 export class GameRoomController {
   private io: Server;
 
@@ -18,16 +18,14 @@ export class GameRoomController {
     const games = await GameRoom.find({}).populate("players");
     try {
       const convertedGames = games.map((g) => g.toObject());
+
+      // TODO refactor conversion hack
       const conv = convertedGames.map((g) => ({
         ...g,
         players: g.players.map((gp: any) => ({ ...gp, name: gp.username })),
       }));
-      // return res.json(convertedGames);
       return res.json(conv);
     } catch (error) {
-      console.log(
-        `Failed to convert games ${JSON.stringify(games)} to games: ${error}`
-      );
       return next(error);
     }
   }
@@ -40,6 +38,7 @@ export class GameRoomController {
         return res.status(403).end();
       }
       const convertedGame = game.toObject();
+      // TODO Refactor conversion hack
       const conv = {
         ...convertedGame,
         players: game.players.map((gp: any) => ({
@@ -78,25 +77,13 @@ export class GameRoomController {
     }
   }
 
-  async deleteAllGameRooms(req: Request, res: Response, next: NextFunction) {
-    try {
-      const gameId = req.params.id;
-      console.log(`Deleting all games...`);
-      const { deletedCount } = await GameRoom.deleteMany({});
-      this.io.emit("allGamesDeleted", gameId);
-      console.log(`Deleted all games, count: ${deletedCount}`);
-      return res.end();
-    } catch (error) {
-      next(error);
-    }
-  }
-
   async joinGame(req: Request, res: Response, next: NextFunction) {
     try {
       const gameId = req.body.gameId;
 
       console.log(`Joining game ${gameId}...`);
 
+      // TODO use auth middleware
       const cookie = req.cookies[env.JWT_COOKIE_NAME];
       if (!cookie) {
         return res.status(403).end();
@@ -140,9 +127,8 @@ export class GameRoomController {
       throw new ApiError("Game is full", 400);
     }
 
-    const joinedPlayerIds = game.players.map((p) => p.id.toString());
-    const joinedPlayerIds2 = game.players.map((p) => p._id.toString());
-    const alreadyJoined = joinedPlayerIds2.includes(user.id!!);
+    const joinedPlayerIds = game.players.map((p) => p._id.toString());
+    const alreadyJoined = joinedPlayerIds.includes(user.id!!);
     if (alreadyJoined) {
       throw new ApiError("Already joined to game", 400);
     }
@@ -154,6 +140,7 @@ export class GameRoomController {
 
       console.log(`Leaving game ${gameId}...`);
 
+      // TODO use auth middleware
       const cookie = req.cookies[env.JWT_COOKIE_NAME];
       if (!cookie) {
         return res.status(403).end();

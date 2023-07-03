@@ -9,9 +9,9 @@ const CookieTest = ({}: CookieTestProps) => {
 
   async function generate() {
     try {
-      await axios.get(`/auth/test-cookie/gen`);
-      await axios.get(`/auth/test-cookie/secure/gen`);
-      await axios.get(`/auth/test-cookie/http/gen`);
+      await axios.get(`/cookie/test-cookie/gen`);
+      await axios.get(`/cookie/test-cookie/secure/gen`);
+      await axios.get(`/cookie/test-cookie/http/gen`);
       await axios.get(`/cookie`);
     } catch (error) {
       console.log("failed to generate");
@@ -20,7 +20,7 @@ const CookieTest = ({}: CookieTestProps) => {
 
   async function get() {
     try {
-      await axios.get(`/auth/test-cookie/get`);
+      await axios.get(`/cookie/test-cookie/get`);
     } catch (error) {
       console.log("failed to get");
     }
@@ -28,7 +28,7 @@ const CookieTest = ({}: CookieTestProps) => {
 
   async function post() {
     try {
-      await axios.post(`/auth/test-cookie/post`);
+      await axios.post(`/cookie/test-cookie/post`);
     } catch (error) {
       console.log("failed to post");
     }

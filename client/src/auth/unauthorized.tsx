@@ -6,10 +6,10 @@ import { useAppDispatch } from "../redux/hooks";
 import { signInAsGuestRequest } from "./api";
 
 type UnauthorizedProps = {
-  unAuthRoute?: string;
+  deniedRoute?: string;
 };
 
-const Unauthorized = ({ unAuthRoute }: UnauthorizedProps) => {
+const Unauthorized = ({ deniedRoute }: UnauthorizedProps) => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
@@ -18,7 +18,7 @@ const Unauthorized = ({ unAuthRoute }: UnauthorizedProps) => {
       const response = await signInAsGuestRequest();
       const { userId, username } = response.data;
       dispatch(login({ userId, username, isGuest: true }));
-      navigate(unAuthRoute || "/");
+      navigate(deniedRoute || "/");
     } catch (error) {
       handleError(error);
     }
@@ -27,6 +27,7 @@ const Unauthorized = ({ unAuthRoute }: UnauthorizedProps) => {
   return (
     <div>
       <h1>Not authorized, please log in</h1>
+      {/* TODO add denied route to passed state and redirect there after login */}
       <Button onClick={() => navigate("/")} variant="contained">
         Login
       </Button>

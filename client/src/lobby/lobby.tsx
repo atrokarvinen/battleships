@@ -14,7 +14,6 @@ import { useAppDispatch } from "../redux/hooks";
 import { selectGames } from "../redux/selectors";
 import {
   createGameRequest,
-  deleteAllGamesRequest,
   getGamesRequest,
   joinGameRequest,
   leaveGameRequest,
@@ -67,15 +66,6 @@ const Lobby = ({}: LobbyProps) => {
     }
   }
 
-  async function deleteAllGameRooms() {
-    try {
-      await deleteAllGamesRequest();
-      console.log("successfully deleted all games");
-    } catch (error) {
-      console.log("failed to delete all games: " + error);
-    }
-  }
-
   async function joinGame(gameId: string) {
     try {
       await joinGameRequest(gameId);
@@ -114,12 +104,6 @@ const Lobby = ({}: LobbyProps) => {
         flexDirection="column"
         justifyContent={"center"}
       >
-        <Button onClick={getGameRooms} variant="contained" sx={{ mb: 2 }}>
-          Refresh
-        </Button>
-        <Button onClick={deleteAllGameRooms} variant="contained" sx={{ mb: 2 }}>
-          Delete all
-        </Button>
         <Button onClick={() => setIsCreateGameOpen(true)} variant="contained">
           Create new game
         </Button>

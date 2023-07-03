@@ -2,8 +2,6 @@ import { CustomValidator, check } from "express-validator";
 
 const passwordsMatch: CustomValidator = (confirmPassword, meta) => {
   const body = meta.req.body;
-  console.log("body:", body);
-  console.log("confirmPassword:", confirmPassword);
   const isSame = body.password === confirmPassword;
   if (!isSame) {
     throw new Error("Passwords do not match");

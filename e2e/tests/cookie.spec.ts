@@ -2,7 +2,7 @@ import { expect, test } from "@playwright/test";
 import { post } from "./api-request";
 import { config } from "./config";
 
-test.describe.skip("Cookie", () => {
+test.describe.skip("test playwright and cookies interaction", () => {
   test("cookies are not passed with just request", async ({ page }) => {
     const request = page.request;
     await request.get(config.backendUrl + "/cookie");
