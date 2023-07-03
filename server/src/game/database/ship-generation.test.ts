@@ -1,5 +1,5 @@
-import { standardReserve, submarine } from "../ship-reserve";
-import { createRandomFleetLocations } from "../shipGeneration";
+import { standardReserve, submarine } from "../services/ship-reserve";
+import { createRandomFleetLocations } from "../services/shipGeneration";
 
 it("generates full game with players and ships", async () => {
   const fleet = createRandomFleetLocations();

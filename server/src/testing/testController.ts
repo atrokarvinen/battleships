@@ -1,10 +1,12 @@
 import { Request, Response } from "express";
 import { GameRoom } from "../database/gameRoom";
 import { User } from "../database/user";
-import { GameModel } from "../game/database/dbModel";
-import { pointsMatch } from "../game/database/dbService";
-import { ShipPart, Square } from "../game/database/model";
-import { GameSeed, Point } from "./models";
+import { GameModel } from "../game/database/dbSchema";
+import { Point } from "../game/models/point";
+import { ShipPart } from "../game/models/shipPart";
+import { Square } from "../game/models/square";
+import { pointsEqual } from "../game/services/board-utils";
+import { GameSeed } from "./models";
 
 export class TestController {
   deleteUserByName = async (req: Request, res: Response) => {
@@ -76,7 +78,7 @@ export class TestController {
       s.ship = ShipPart.UNKNOWN;
     });
     positions.forEach((pos) => {
-      const square = ships.find((s) => pointsMatch(s.point, pos));
+      const square = ships.find((s) => pointsEqual(s.point, pos));
       if (!square) {
         throw new Error(`square not found at ${pos.x}, ${pos.y}`);
       }

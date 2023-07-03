@@ -4,7 +4,7 @@ import { Server } from "socket.io";
 import { env } from "../core/env";
 import { GameRoom, IGameRoom } from "../database/gameRoom";
 import { IUser, User } from "../database/user";
-import { GameModel } from "../game/database/dbModel";
+import { GameModel } from "../game/database/dbSchema";
 import { ApiError } from "../middleware/errorHandleMiddleware";
 
 // TODO Check use of ids and equality comparisons

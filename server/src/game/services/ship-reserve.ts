@@ -1,17 +1,5 @@
-export type FleetReserve = {
-  fleets: Fleet[];
-  totalQuantity: number;
-};
-
-export type Fleet = {
-  quantity: number;
-  class: Ship;
-};
-
-export type Ship = {
-  name: string;
-  size: number;
-};
+import { FleetReserve } from "../models/fleetReserve";
+import { Ship } from "../models/ship";
 
 export const carrier: Ship = { name: "carrier", size: 6 };
 export const battleship: Ship = { name: "battleship", size: 4 };

@@ -48,33 +48,6 @@ export class GameController {
     }
   }
 
-  randomizeFirstPlayer(playerIds: string[]) {
-    const playerCount = playerIds.length;
-    const startingIndex = Math.round((Math.random() - 0.5) * playerCount);
-    const firstPlayerId = playerIds[startingIndex];
-    return firstPlayerId;
-  }
-
-  async endGame(req: Request, res: Response, next: NextFunction) {
-    try {
-      res.end();
-    } catch (error) {
-      next(error);
-    }
-  }
-
-  async resetGame(
-    req: Request<{}, {}, ResetGamePayload>,
-    res: Response,
-    next: NextFunction
-  ) {
-    try {
-      console.log("Not implemented");
-    } catch (error) {
-      next(error);
-    }
-  }
-
   async attackSquare(req: Request, res: Response, next: NextFunction) {
     try {
       const { point, attackerPlayerId, gameId } = req.body;
@@ -92,6 +65,31 @@ export class GameController {
       };
       this.io.emit("squareAttacked", attackResult);
       return res.json(attackResult);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  private randomizeFirstPlayer(playerIds: string[]) {
+    const playerCount = playerIds.length;
+    const startingIndex = Math.round((Math.random() - 0.5) * playerCount);
+    const firstPlayerId = playerIds[startingIndex];
+    return firstPlayerId;
+  }
+
+  async endGame(req: Request, res: Response, next: NextFunction) {
+    try {
+      console.log("Not implemented");
+      res.end();
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async resetGame(req: Request, res: Response, next: NextFunction) {
+    try {
+      console.log("Not implemented");
+      res.end();
     } catch (error) {
       next(error);
     }

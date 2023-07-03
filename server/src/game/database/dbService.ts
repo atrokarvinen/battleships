@@ -1,6 +1,13 @@
-import { createRandomFleetLocations } from "../shipGeneration";
-import { GameModel } from "./dbModel";
-import { Board, Game, GameState, Point, ShipPart, Square } from "./model";
+import { Game } from "../models/game";
+import { GameState } from "../models/gameState";
+import { ShipPart } from "../models/shipPart";
+import {
+  createEmptyBoardSquares,
+  pointEqualsToSquare,
+  pointsEqual,
+} from "../services/board-utils";
+import { createRandomFleetLocations } from "../services/shipGeneration";
+import { GameModel } from "./dbSchema";
 
 type GameDTO = Game & { id: string };
 
@@ -31,8 +38,10 @@ export class DbService {
     if (!enemy) {
       throw new Error(`Failed to find tracking board`);
     }
-    const attackedSquareOwnSide = own.attacks.find(pointMatches(point));
-    const attackedSquareEnemySide = enemy.ownShips.find(pointMatches(point));
+    const attackedSquareOwnSide = own.attacks.find(pointEqualsToSquare(point));
+    const attackedSquareEnemySide = enemy.ownShips.find(
+      pointEqualsToSquare(point)
+    );
     if (!attackedSquareOwnSide || !attackedSquareEnemySide) {
       throw new Error(`Failed to find square at point '${point}'`);
     }
@@ -111,13 +120,13 @@ export class DbService {
       placements.forEach((placement) => {
         const { takenPoints, isVertical, start, end } = placement;
         takenPoints.forEach((shipPoint) => {
-          const square = board.ownShips.find(pointMatches(shipPoint));
+          const square = board.ownShips.find(pointEqualsToSquare(shipPoint));
           if (!square) {
             const { x, y } = shipPoint;
             throw new Error(`Square (${x}, ${y}) not found`);
           }
-          const isStart = pointsMatch(start, shipPoint);
-          const isEnd = pointsMatch(end, shipPoint);
+          const isStart = pointsEqual(start, shipPoint);
+          const isEnd = pointsEqual(end, shipPoint);
 
           // Mutate square
           square.hasShip = true;
@@ -136,41 +145,3 @@ export class DbService {
     return gameDTO;
   }
 }
-
-export const createEmptyBoardSquares = (boardSize: number) => {
-  const arr = Array.from(Array(boardSize)).map((_, index) => index);
-  const squares: Square[] = arr
-    .map((row) => {
-      return arr.map((column) => {
-        const square: Square = {
-          ship: ShipPart.UNKNOWN,
-          hasBeenAttacked: false,
-          hasShip: false,
-          isVertical: false,
-          point: { x: column, y: row },
-        };
-        return square;
-      });
-    })
-    .flat();
-  return squares;
-};
-
-export const createEmptyBoard = (playerId: string) => {
-  const boardSize = 10;
-  const board: Board = {
-    playerId,
-    squares: createEmptyBoardSquares(boardSize),
-    ships: [],
-  };
-  return board;
-};
-
-export const pointsMatch = (pointA: Point, pointB: Point) => {
-  return pointA.x === pointB.x && pointA.y === pointB.y;
-};
-
-export const pointMatches = (pointA: Point) => (square: Square) => {
-  const pointB = square.point;
-  return pointsMatch(pointA, pointB);
-};

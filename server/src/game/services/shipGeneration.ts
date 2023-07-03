@@ -1,6 +1,7 @@
-import { generateEmptyBoardPoints } from "./board-utils";
-import { Point } from "./point";
-import { Ship, standardReserve } from "./ship-reserve";
+import { Point } from "../models/point";
+import { Ship } from "../models/ship";
+import { generateEmptyBoardPoints, pointsEqual } from "./board-utils";
+import { standardReserve } from "./ship-reserve";
 
 export type ShipPlacement = {
   takenPoints: Point[];
@@ -62,9 +63,7 @@ export const createRandomFleetLocations = () => {
         )
         .flat();
 
-      const freePoints = availablePoints.map((ap) => ap.point);
-
-      isValid = isValidPlacement(freePoints, takenPoints);
+      isValid = isValidPlacement(availablePoints, takenPoints);
       iter++;
     }
 
@@ -76,10 +75,8 @@ export const createRandomFleetLocations = () => {
     //   )} after (${iter}) iterations`
     // );
 
-    takenPoints.forEach((p) => {
-      availablePoints = availablePoints.filter(
-        (ap) => !(ap.point.x === p.x && ap.point.y === p.y)
-      );
+    takenPoints.forEach((tp) => {
+      availablePoints = availablePoints.filter((ap) => !pointsEqual(ap, tp));
     });
 
     const placement: ShipPlacement = {
