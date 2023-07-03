@@ -28,7 +28,7 @@ export const resetGameRequest = (payload: ResetGamePayload) => {
 };
 
 export const getGameByRoomIdRequest = (gameRoomId: string) => {
-  return axios.get(`/game/game-room/${gameRoomId}`);
+  return axios.get(`/game-room/${gameRoomId}/game`);
 };
 
 export const mapGameDtoToActiveGame = (game: GameDTO) => {

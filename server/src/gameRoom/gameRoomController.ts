@@ -4,6 +4,7 @@ import { Server } from "socket.io";
 import { env } from "../core/env";
 import { GameRoom, IGameRoom } from "../database/gameRoom";
 import { IUser, User } from "../database/user";
+import { GameModel } from "../game/database/dbModel";
 import { ApiError } from "../middleware/errorHandleMiddleware";
 
 // TODO Check use of ids and equality comparisons
@@ -47,6 +48,24 @@ export class GameRoomController {
         })),
       };
       return res.json(conv);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async getGameInRoom(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { id: gameRoomId } = req.params;
+      console.log(`Getting game in game room '${gameRoomId}'...`);
+      const game = await GameModel.findOne({ gameRoomId });
+      if (!game) {
+        return res
+          .status(404)
+          .json({ error: `Game in game room '${gameRoomId}' not found` });
+      }
+      console.log(`Found game in game room '${gameRoomId}'`);
+      const gameDto = game.toObject();
+      return res.json({ game: gameDto });
     } catch (error) {
       next(error);
     }

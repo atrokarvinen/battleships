@@ -19,23 +19,6 @@ export class GameController {
     this.io = io;
   }
 
-  async getGame(req: Request, res: Response, next: NextFunction) {
-    try {
-      const { gameRoomId } = req.params;
-      console.log(`Getting game of game room '${gameRoomId}'...`);
-      const game = await this.gameDbService.getGameByRoomId(gameRoomId);
-      if (!game) {
-        return res
-          .status(404)
-          .json({ error: `Game for game room '${gameRoomId}' not found` });
-      }
-      console.log(`Found game of game room '${gameRoomId}'`);
-      return res.json({ game });
-    } catch (error) {
-      next(error);
-    }
-  }
-
   async startGame(
     req: Request<{}, {}, StartGamePayload>,
     res: Response,

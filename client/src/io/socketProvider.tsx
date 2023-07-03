@@ -38,6 +38,7 @@ export type GamePlayerChangedPayload = {
   player?: Player;
 };
 
+// TODO Split listeners
 const SocketProvider = ({ children }: SocketProviderProps) => {
   const dispatch = useAppDispatch();
 

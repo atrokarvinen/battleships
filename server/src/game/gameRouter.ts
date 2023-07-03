@@ -5,23 +5,14 @@ import { GameController } from "./gameController";
 export const gameRouter = (io: Server) => {
   const router = Router();
 
-  const controller = new GameController(io);
+  const ctr = new GameController(io);
 
-  // Todo move to game room
-  router.get("/game-room/:gameRoomId", (req, res, next) =>
-    controller.getGame(req, res, next)
-  );
+  router.post("/start", (req, res, next) => ctr.startGame(req, res, next));
+  router.post("/reset", (req, res, next) => ctr.resetGame(req, res, next));
+  router.post("/attack", (req, res, next) => ctr.attackSquare(req, res, next));
 
-  router.post("/start", (req, res, next) =>
-    controller.startGame(req, res, next)
-  );
-  router.post("/end", controller.endGame);
-  router.post("/reset", (req, res, next) =>
-    controller.resetGame(req, res, next)
-  );
-  router.post("/attack", (req, res, next) =>
-    controller.attackSquare(req, res, next)
-  );
+  // TODO Implement
+  router.post("/end", ctr.endGame);
 
   return router;
 };

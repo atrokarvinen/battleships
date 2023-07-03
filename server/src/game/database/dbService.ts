@@ -5,12 +5,6 @@ import { Board, Game, GameState, Point, ShipPart, Square } from "./model";
 type GameDTO = Game & { id: string };
 
 export class DbService {
-  async getGameByRoomId(gameRoomId: string) {
-    const game = await GameModel.findOne({ gameRoomId });
-    const gameDto: GameDTO | undefined = game?.toObject();
-    return gameDto;
-  }
-
   async attackSquare({
     point,
     gameId,
@@ -68,12 +62,6 @@ export class DbService {
     const updatedGame = await game.save();
 
     return { shipHit, nextPlayerId, isGameOver };
-  }
-
-  async getGame(id: string) {
-    const dbGame = await GameModel.findById(id);
-    const game: Game | undefined = dbGame?.toObject();
-    return game;
   }
 
   async createGame(game: Game) {

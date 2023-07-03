@@ -52,7 +52,7 @@ export const addListeners = (io: Server) => {
       io.to(roomName).emit("chatMessageToClient", chatMessage);
     });
     socket.on("disconnect", () => {
-      console.log(`socket '${socketId}' disconnected`);
+      // console.log(`socket '${socketId}' disconnected`);
     });
   });
 };

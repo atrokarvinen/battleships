@@ -5,13 +5,13 @@ export const logRequestMiddleware = (
   res: Response,
   next: NextFunction
 ) => {
-  console.time("request");
+  // console.time("request");
   const { url, method } = req;
-  console.log(`Handling request [${method}] ${url}`);
+  // console.log(`Handling request [${method}] ${url}`);
   res.on("finish", () => {
     const { statusCode } = res;
     console.log(`Handled request [${method}] ${url}. Response: ${statusCode}`);
-    console.timeEnd("request");
+    // console.timeEnd("request");
   });
   next();
 };

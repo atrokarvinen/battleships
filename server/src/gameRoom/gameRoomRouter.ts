@@ -9,6 +9,9 @@ export const gameRoomRouter = (io: Server) => {
 
   router.get("/", (req, res, next) => ctr.getGameRooms(req, res, next));
   router.get("/:id", (req, res, next) => ctr.getGameRoom(req, res, next));
+  router.get("/:id/game", (req, res, next) =>
+    ctr.getGameInRoom(req, res, next)
+  );
 
   router.post("/", (req, res, next) => ctr.createGameRoom(req, res, next));
 
