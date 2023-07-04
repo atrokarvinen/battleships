@@ -1,15 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import { Server } from "socket.io";
+import { StartGamePayload } from "./api/startGamePayload";
 import { DbService } from "./database/dbService";
-
-export type StartGamePayload = {
-  gameRoomId: string;
-  playerIds: string[];
-};
-
-export type ResetGamePayload = {
-  gameRoomId: string;
-};
 
 export class GameController {
   private gameDbService = new DbService();
@@ -19,13 +11,9 @@ export class GameController {
     this.io = io;
   }
 
-  async startGame(
-    req: Request<{}, {}, StartGamePayload>,
-    res: Response,
-    next: NextFunction
-  ) {
+  async startGame(req: Request, res: Response, next: NextFunction) {
     try {
-      const { gameRoomId, playerIds } = req.body;
+      const { gameRoomId, playerIds }: StartGamePayload = req.body;
 
       console.log("Starting game:", req.body);
 

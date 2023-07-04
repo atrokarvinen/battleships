@@ -1,6 +1,4 @@
-import { Game } from "../models/game";
-import { GameState } from "../models/gameState";
-import { ShipPart } from "../models/shipPart";
+import { Game, GameState, ShipPart } from "../models";
 import {
   createEmptyBoardSquares,
   pointEqualsToSquare,

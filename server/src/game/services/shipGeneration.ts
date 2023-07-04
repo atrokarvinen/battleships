@@ -1,5 +1,4 @@
-import { Point } from "../models/point";
-import { Ship } from "../models/ship";
+import { Point, Ship } from "../models";
 import { generateEmptyBoardPoints, pointsEqual } from "./board-utils";
 import { standardReserve } from "./ship-reserve";
 

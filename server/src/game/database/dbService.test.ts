@@ -1,6 +1,5 @@
 import mongoose from "mongoose";
-import { Game } from "../models/game";
-import { GameState } from "../models/gameState";
+import { Game, GameState } from "../models";
 import { standardTotalShipSquares } from "../services/ship-reserve";
 import { GameModel } from "./dbSchema";
 import { DbService } from "./dbService";

@@ -1,4 +1,4 @@
-import { APIRequestContext, expect } from "@playwright/test";
+import { APIRequestContext, APIResponse, expect } from "@playwright/test";
 import { config } from "./config";
 
 /*
@@ -15,31 +15,34 @@ type APIRequest = {
   data?: any;
 };
 
-export const get = async ({ request, url }: APIRequest) => {
-  const options = await getOptions(request);
-  const response = await request.get(backendUrl + url, options);
-  expect(response.ok()).toBeTruthy();
-  return response;
-};
+type APIMethod = "get" | "put" | "post" | "delete";
 
-export const put = async ({ request, url, data }: APIRequest) => {
+export const get = (req: APIRequest) => apiRequest(req, "get");
+export const put = (req: APIRequest) => apiRequest(req, "put");
+export const post = (req: APIRequest) => apiRequest(req, "post");
+export const deleteRequest = (req: APIRequest) => apiRequest(req, "delete");
+
+const apiRequest = async (req: APIRequest, method: APIMethod) => {
+  const { request, url, data } = req;
   const options = await getOptions(request, data);
-  const response = await request.put(backendUrl + url, options);
-  expect(response.ok()).toBeTruthy();
-  return response;
-};
 
-export const post = async ({ request, url, data }: APIRequest) => {
-  const options = await getOptions(request, data);
-  const response = await request.post(backendUrl + url, options);
-  expect(response.ok()).toBeTruthy();
-  return response;
-};
-
-// 'delete' is a reserved word
-export const deleteRequest = async ({ request, url }: APIRequest) => {
-  const options = await getOptions(request);
-  const response = await request.delete(backendUrl + url, options);
+  let response: APIResponse;
+  switch (method) {
+    case "get":
+      response = await request.get(backendUrl + url, options);
+      break;
+    case "put":
+      response = await request.put(backendUrl + url, options);
+      break;
+    case "post":
+      response = await request.post(backendUrl + url, options);
+      break;
+    case "delete":
+      response = await request.delete(backendUrl + url, options);
+      break;
+    default:
+      throw new Error("Unknown method " + method);
+  }
   expect(response.ok()).toBeTruthy();
   return response;
 };
@@ -50,7 +53,7 @@ const getOptions = async (
 ) => {
   const jwt = await getJwtCookie(request);
   const headers = { ["Cookie"]: `${jwtCookieName}=${jwt}` };
-  const options = { headers, data };
+  const options = data ? { headers, data } : { headers };
   return options;
 };
 

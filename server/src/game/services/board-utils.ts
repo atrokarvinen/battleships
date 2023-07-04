@@ -1,7 +1,4 @@
-import { Board } from "../models/board";
-import { Point } from "../models/point";
-import { ShipPart } from "../models/shipPart";
-import { Square } from "../models/square";
+import { Board, Point, ShipPart, Square } from "../models";
 
 const boardSize = 10;
 const arr = Array.from(Array(boardSize)).map((_, index) => index);
