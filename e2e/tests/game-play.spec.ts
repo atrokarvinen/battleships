@@ -126,9 +126,9 @@ test("game start is broadcasted", async ({ page, gamePlayPage, browser }) => {
     user: { username: gamePlayPage.player1, password: defaultPassword },
   });
   await pageP2.goto(page.url());
+  await expect(pageP2.getByText("Battleships app")).toBeVisible();
 
   await gamePlayPage.startGame();
-  await pageP2.waitForTimeout(500);
   await expect(pageP2.getByTestId("ship-square")).toHaveCount(2);
 });
 
