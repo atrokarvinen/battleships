@@ -1,11 +1,10 @@
 import { NextFunction, Request, Response } from "express";
 import { Server } from "socket.io";
 import { GameRoom, IGameRoom } from "../database/gameRoom";
-import { IUser, User } from "../database/user";
+import { User } from "../database/user";
 import { GameModel } from "../game/database/dbSchema";
 import { ApiError } from "../middleware/errorHandleMiddleware";
 
-// TODO Check use of ids and equality comparisons
 export class GameRoomController {
   private io: Server;
 
@@ -15,7 +14,7 @@ export class GameRoomController {
 
   async getGameRooms(req: Request, res: Response, next: NextFunction) {
     try {
-      const games = await GameRoom.find({}).populate("players");
+      const games = await GameRoom.find({}).populate("players", "username");
       const gameDtos = games.map((g) => g.toObject());
       return res.json(gameDtos);
     } catch (error) {
@@ -26,7 +25,10 @@ export class GameRoomController {
   async getGameRoom(req: Request, res: Response, next: NextFunction) {
     try {
       const gameId = req.params.id;
-      const game = await GameRoom.findById(gameId).populate("players");
+      const game = await GameRoom.findById(gameId).populate(
+        "players",
+        "username"
+      );
       if (game === null) {
         return res.status(403).end();
       }
@@ -96,7 +98,7 @@ export class GameRoomController {
       if (!user) {
         return res.status(404).json({ error: `User '${userId}' not found` });
       }
-      this.validateGameJoin(game, user);
+      this.validateGameJoin(game, userId);
 
       game.players.push(user.id);
       await game.save();
@@ -116,14 +118,14 @@ export class GameRoomController {
     }
   }
 
-  validateGameJoin(game: IGameRoom, user: IUser) {
+  validateGameJoin(game: IGameRoom, userId: string) {
     const joinedCount = game.players.length;
     if (joinedCount >= 2) {
       throw new ApiError("Game is full", 400);
     }
 
     const joinedPlayerIds = game.players.map((p) => p._id.toString());
-    const alreadyJoined = joinedPlayerIds.includes(user.id!!);
+    const alreadyJoined = joinedPlayerIds.includes(userId);
     if (alreadyJoined) {
       throw new ApiError("Already joined to game", 400);
     }
