@@ -47,7 +47,7 @@ const Game = ({}: GameProps) => {
   const fetchGame = async () => {
     try {
       const response = await getGameByRoomIdRequest(gameRoomId);
-      const fetchedGame: GameDTO = response.data.game;
+      const fetchedGame: GameDTO = response.data;
       const activeGame = mapGameDtoToActiveGame(fetchedGame);
       console.log("fetchedGame:", fetchedGame);
       console.log("activeGame:", activeGame);

@@ -26,15 +26,15 @@ export const test = base.extend<GameFixture>({
 
     await gamePlayPage.cleanup(gameName, player1, player2);
 
-    const response = await createGameRoom(request, { title: gameName });
-    const createdGameRoom = await response.json();
-    const gameRoomId = createdGameRoom.id;
-    gamePlayPage.setGameRoomId(gameRoomId);
-
     await signUpAndSignIn({
       req: request,
       user: { username: player1, password: defaultPassword },
     });
+
+    const response = await createGameRoom(request, { title: gameName });
+    const createdGameRoom = await response.json();
+    const gameRoomId = createdGameRoom.id;
+    gamePlayPage.setGameRoomId(gameRoomId);
 
     await joinGame(request, { gameId: createdGameRoom.id });
     await gamePlayPage.addPlayerToGame(player2, gameRoomId);

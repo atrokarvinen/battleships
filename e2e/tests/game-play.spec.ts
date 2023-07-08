@@ -102,6 +102,7 @@ test("attacks are broadcasted", async ({ page, gamePlayPage, browser }) => {
     user: { username: gamePlayPage.player2, password: defaultPassword },
   });
   await pageP2.goto(page.url());
+  await expect(pageP2.getByText("Battleships app")).toBeVisible();
 
   await gamePlayPage.startGame();
   await gamePlayPage.seedGameDummyShips();

@@ -34,7 +34,7 @@ app.use(logRequestMiddleware);
 app.use("/cookie", cookieRouter);
 app.use("/auth", authRouter());
 app.use("/account", authMiddleware, accountRouter);
-app.use("/game-room", gameRoomRouter(io));
+app.use("/game-room", authMiddleware, gameRoomRouter(io));
 app.use("/game", gameRouter(io));
 app.use("/test", testEnvMiddleware, testRouter());
 

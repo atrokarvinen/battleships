@@ -1,4 +1,4 @@
-import { Game, GameState, ShipPart } from "../models";
+import { Game, GameState, Point, ShipPart } from "../models";
 import {
   createEmptyBoardSquares,
   pointEqualsToSquare,
@@ -8,17 +8,14 @@ import { createRandomFleetLocations } from "../services/shipGeneration";
 import { GameModel } from "./dbSchema";
 
 type GameDTO = Game & { id: string };
+type AttackSquare = {
+  point: Point;
+  attackerPlayerId: string;
+  gameId: string;
+};
 
 export class DbService {
-  async attackSquare({
-    point,
-    gameId,
-    attackerPlayerId,
-  }: {
-    point: any;
-    attackerPlayerId: string;
-    gameId: string;
-  }) {
+  async attackSquare({ point, gameId, attackerPlayerId }: AttackSquare) {
     const { x, y } = point;
     console.log(`Attacking point (${x}, ${y})`);
 
@@ -86,7 +83,6 @@ export class DbService {
     const game: Game = {
       gameRoomId,
       activePlayerId: playerIds[0],
-      // boards: playerIds.map((pId) => createEmptyBoard(pId)),
       playerInfos: playerIds.map((pId) => ({
         playerId: pId,
         attacks: createEmptyBoardSquares(10),

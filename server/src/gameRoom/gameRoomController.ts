@@ -1,7 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import jwt from "jsonwebtoken";
 import { Server } from "socket.io";
-import { env } from "../core/env";
 import { GameRoom, IGameRoom } from "../database/gameRoom";
 import { IUser, User } from "../database/user";
 import { GameModel } from "../game/database/dbSchema";
@@ -16,16 +14,10 @@ export class GameRoomController {
   }
 
   async getGameRooms(req: Request, res: Response, next: NextFunction) {
-    const games = await GameRoom.find({}).populate("players");
     try {
-      const convertedGames = games.map((g) => g.toObject());
-
-      // TODO refactor conversion hack
-      const conv = convertedGames.map((g) => ({
-        ...g,
-        players: g.players.map((gp: any) => ({ ...gp, name: gp.username })),
-      }));
-      return res.json(conv);
+      const games = await GameRoom.find({}).populate("players");
+      const gameDtos = games.map((g) => g.toObject());
+      return res.json(gameDtos);
     } catch (error) {
       return next(error);
     }
@@ -38,16 +30,8 @@ export class GameRoomController {
       if (game === null) {
         return res.status(403).end();
       }
-      const convertedGame = game.toObject();
-      // TODO Refactor conversion hack
-      const conv = {
-        ...convertedGame,
-        players: game.players.map((gp: any) => ({
-          id: gp.id.toString(),
-          username: gp.username,
-        })),
-      };
-      return res.json(conv);
+      const gameDto = game.toObject();
+      return res.json(gameDto);
     } catch (error) {
       next(error);
     }
@@ -65,7 +49,7 @@ export class GameRoomController {
       }
       console.log(`Found game in game room '${gameRoomId}'`);
       const gameDto = game.toObject();
-      return res.json({ game: gameDto });
+      return res.json(gameDto);
     } catch (error) {
       next(error);
     }
@@ -75,9 +59,9 @@ export class GameRoomController {
     try {
       const payload: IGameRoom = req.body;
       const createdGame = await GameRoom.create(payload);
-      const convertedGame = createdGame.toObject();
-      this.io.emit("gameCreated", convertedGame);
-      return res.json(convertedGame);
+      const gameDto = createdGame.toObject();
+      this.io.emit("gameCreated", gameDto);
+      return res.json(gameDto);
     } catch (error) {
       next(error);
     }
@@ -99,21 +83,13 @@ export class GameRoomController {
   async joinGame(req: Request, res: Response, next: NextFunction) {
     try {
       const gameId = req.body.gameId;
+      const userId = req.userId;
 
       console.log(`Joining game ${gameId}...`);
 
-      // TODO use auth middleware
-      const cookie = req.cookies[env.JWT_COOKIE_NAME];
-      if (!cookie) {
-        return res.status(403).end();
-      }
-
-      const token = jwt.verify(cookie, env.JWT_SECRET);
-      const userId = (token as any).userId;
-
       const game = await GameRoom.findById(gameId);
       if (!game) {
-        return res.status(404).end();
+        return res.status(404).json({ error: `Game '${userId}' not found` });
       }
 
       const user = await User.findById(userId);
@@ -156,21 +132,13 @@ export class GameRoomController {
   async leaveGame(req: Request, res: Response, next: NextFunction) {
     try {
       const gameId = req.body.gameId;
+      const userId = req.userId;
 
       console.log(`Leaving game ${gameId}...`);
 
-      // TODO use auth middleware
-      const cookie = req.cookies[env.JWT_COOKIE_NAME];
-      if (!cookie) {
-        return res.status(403).end();
-      }
-
-      const token = jwt.verify(cookie, env.JWT_SECRET);
-      const userId = (token as any).userId;
-
       const game = await GameRoom.findById(gameId);
       if (!game) {
-        return res.status(404).end();
+        return res.status(404).json({ error: `Game '${userId}' not found` });
       }
 
       const user = await User.findById(userId);

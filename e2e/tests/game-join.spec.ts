@@ -18,11 +18,11 @@ test.beforeEach(async ({ page }) => {
   await deleteGameRoomByTitle(request, title);
   await deleteUserByName(request, username);
 
-  await createGameRoom(request, { title });
   await signUpAndSignIn({
     req: request,
     user: { username, password: defaultPassword },
   });
+  await createGameRoom(request, { title });
 
   await page.goto(`${config.frontendUrl}/lobby`);
 });

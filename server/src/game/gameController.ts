@@ -19,6 +19,20 @@ export class GameController {
 
       const firstPlayerId = this.randomizeFirstPlayer(playerIds);
 
+      /* 
+        TODO GameRoom should have own Game and have a relation
+        Here:
+          - Create a game into the game room if does not exist
+          - If exists, reset game
+            - Empty board, attacks
+            - Reset winner, first player
+        
+        Separate endpoint:
+          - Populate with random ships
+            => easier testing
+
+      */
+
       await this.gameDbService.deleteGamesFromRoom(gameRoomId);
       const initialGame = await this.gameDbService.initializeGame(
         gameRoomId,
