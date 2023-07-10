@@ -5,6 +5,7 @@ const config = dotenv.config();
 export interface EnvConfig {
   CLIENT_ADDRESS: string;
   DB_CONNECTION_STRING: string;
+  DB_CONNECTION_STRING_TESTS: string;
   HOST_ADDRESS: string;
   HTTP_PORT: number;
   JWT_COOKIE_NAME: string;
@@ -20,6 +21,7 @@ const parseConfig = () => {
   const {
     CLIENT_ADDRESS,
     DB_CONNECTION_STRING,
+    DB_CONNECTION_STRING_TESTS,
     HOST_ADDRESS,
     HTTP_PORT,
     JWT_COOKIE_NAME,
@@ -31,6 +33,10 @@ const parseConfig = () => {
     DB_CONNECTION_STRING: toString(
       DB_CONNECTION_STRING,
       "DB_CONNECTION_STRING"
+    ),
+    DB_CONNECTION_STRING_TESTS: toString(
+      DB_CONNECTION_STRING_TESTS,
+      "DB_CONNECTION_STRING_TESTS"
     ),
     HOST_ADDRESS: toString(HOST_ADDRESS, "HOST_ADDRESS"),
     HTTP_PORT: toNumber(HTTP_PORT, "HTTP_PORT"),
