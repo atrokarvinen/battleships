@@ -1,4 +1,7 @@
+import { Types } from "mongoose";
 import { Game, GameState, Point, ShipPart } from "../models";
+import { GameDTO, IGame } from "../models/game";
+import { GameOptions } from "../models/gameOptions";
 import {
   createEmptyBoardSquares,
   pointEqualsToSquare,
@@ -7,7 +10,6 @@ import {
 import { createRandomFleetLocations } from "../services/shipGeneration";
 import { GameModel } from "./dbSchema";
 
-type GameDTO = Game & { id: string };
 type AttackSquare = {
   point: Point;
   attackerPlayerId: string;
@@ -74,15 +76,36 @@ export class DbService {
     return gameDTO;
   }
 
+  async createEmptyGame(options: GameOptions) {
+    const emptyGame = this.generateEmptyGame(options);
+    const created = await GameModel.create(emptyGame);
+    const gameDTO: GameDTO = created.toObject();
+    return gameDTO;
+  }
+
+  async resetGame(options: GameOptions) {
+    const gameRoomId = new Types.ObjectId(options.gameRoomId);
+    const game = await GameModel.findOne({ gameRoom: gameRoomId });
+
+    if (!game) {
+      throw new Error(`Game with game room id '${gameRoomId}' was not found`);
+    }
+    const emptyGame = this.generateEmptyGame(options);
+    const updatedGame = await game.updateOne(emptyGame);
+    const gameDto: GameDTO = updatedGame.toObject();
+    return gameDto;
+  }
+
   async deleteGamesFromRoom(gameRoomId: string) {
-    const result = await GameModel.deleteMany({ gameRoomId });
+    const gameRoom = new Types.ObjectId(gameRoomId);
+    const result = await GameModel.deleteMany({ gameRoom });
     console.log(`Deleted (${result.deletedCount}) games from game room`);
   }
 
-  async initializeGame(gameRoomId: string, playerIds: string[]) {
-    const game: Game = {
-      gameRoomId,
-      activePlayerId: playerIds[0],
+  generateEmptyGame({ gameRoomId, playerIds, firstPlayerId }: GameOptions) {
+    const game: IGame = {
+      gameRoom: new Types.ObjectId(gameRoomId),
+      activePlayerId: firstPlayerId,
       playerInfos: playerIds.map((pId) => ({
         playerId: pId,
         attacks: createEmptyBoardSquares(10),
@@ -90,13 +113,12 @@ export class DbService {
       })),
       playerIds,
       state: GameState.STARTED,
-      winnerId: "0",
     };
 
-    return this.createGame(game);
+    return game;
   }
 
-  async initializeRandomGame(gameId: string) {
+  async randomizePlacements(gameId: string) {
     const game = await GameModel.findById(gameId);
 
     if (!game) {

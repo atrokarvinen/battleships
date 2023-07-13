@@ -15,7 +15,7 @@ export type StartGamePayload = {
   playerIds: string[];
 };
 
-export type ResetGamePayload = {
+export type EndGamePayload = {
   gameRoomId: string;
 };
 
@@ -23,12 +23,20 @@ export const startGameRequest = (payload: StartGamePayload) => {
   return axios.post("/game/start", payload);
 };
 
-export const resetGameRequest = (payload: ResetGamePayload) => {
-  return axios.post("/game/reset", payload);
+export const endGameRequest = (payload: EndGamePayload) => {
+  return axios.post("/game/end", payload);
 };
 
 export const getGameByRoomIdRequest = (gameRoomId: string) => {
   return axios.get(`/game-room/${gameRoomId}/game`);
+};
+
+export const confirmPlacementsRequest = ({
+  gameRoomId,
+}: {
+  gameRoomId: string;
+}) => {
+  return axios.post(`/game/${gameRoomId}/confirm-placements`);
 };
 
 export const mapGameDtoToActiveGame = (game: GameDTO) => {

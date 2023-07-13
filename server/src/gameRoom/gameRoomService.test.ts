@@ -37,9 +37,9 @@ it("creates game", async () => {
 });
 
 it("gets game in game room", async () => {
-  const gameRoom = await GameRoom.create({ title: "test" });
+  const game = await GameModel.create({});
+  const gameRoom = await GameRoom.create({ title: "test", game: game._id });
   const gameRoomId = gameRoom.id;
-  const game = await GameModel.create({ gameRoomId });
 
   const fetchedGame = await service.getGameInRoom(gameRoomId);
   expect(fetchedGame).toStrictEqual(game.toObject());

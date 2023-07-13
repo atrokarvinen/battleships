@@ -1,4 +1,5 @@
 import { Request, Response } from "express";
+import { Types } from "mongoose";
 import { GameRoom } from "../database/gameRoom";
 import { User } from "../database/user";
 import { GameModel } from "../game/database/dbSchema";
@@ -24,15 +25,16 @@ export class TestController {
   deleteGamesFromGameRoom = async (req: Request, res: Response) => {
     const title = req.params.title;
     const gameRoom = await GameRoom.findOne({ title });
-    await GameModel.deleteMany({ gameRoomId: gameRoom?._id });
+    const gameRoomId = new Types.ObjectId(gameRoom?._id);
+    await GameModel.deleteMany({ gameRoomId });
     res.end();
   };
 
   seedGame = async (req: Request, res: Response) => {
     const seed: GameSeed = req.body;
     const { gameRoomId, shipPositions } = seed;
-
-    const game = await GameModel.findOne({ gameRoomId });
+    const gameRoom = new Types.ObjectId(gameRoomId);
+    const game = await GameModel.findOne({ gameRoom });
     if (!game) {
       return res
         .status(404)

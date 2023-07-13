@@ -1,6 +1,7 @@
 import { Schema, model } from "mongoose";
 import { toObjectOptions } from "../../database/dbOptions";
-import { Board, Game, PlayerInformation, Point, Square } from "../models";
+import { Board, PlayerInformation, Point, Square } from "../models";
+import { IGame } from "../models/game";
 import { Ship } from "./model";
 
 const pointSchema = new Schema<Point>(
@@ -45,9 +46,9 @@ const playerInfoSchema = new Schema<PlayerInformation>(
   { toObject: toObjectOptions }
 );
 
-const gameSchema = new Schema<Game>(
+const gameSchema = new Schema<IGame>(
   {
-    gameRoomId: String,
+    gameRoom: { ref: "gameRoom", type: Schema.Types.ObjectId },
     activePlayerId: String,
     winnerId: String,
     playerIds: [String],

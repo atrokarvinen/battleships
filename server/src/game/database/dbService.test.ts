@@ -69,7 +69,7 @@ describe("game db testing", () => {
 
   it("initializes a game", async () => {
     const playerIds = ["1", "2"];
-    const game = await service.initializeGame("1", playerIds);
+    const game = await service.generateEmptyGame("1", playerIds);
 
     expect(game.playerIds).toStrictEqual(playerIds);
     // expect(game.boards).toHaveLength(playerIds.length);
@@ -79,8 +79,8 @@ describe("game db testing", () => {
 
   it("initializes a random game", async () => {
     const playerIds = ["1", "2"];
-    const initialGame = await service.initializeGame("1", playerIds);
-    const game = await service.initializeRandomGame(initialGame.id);
+    const initialGame = await service.generateEmptyGame("1", playerIds);
+    const game = await service.randomizePlacements(initialGame.id);
 
     expect(game.playerInfos).toHaveLength(playerIds.length);
 

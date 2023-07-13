@@ -1,7 +1,7 @@
+import { Types } from "mongoose";
 import { GameRoom, IGameRoom } from "../database/gameRoom";
 import { User } from "../database/user";
-import { GameModel } from "../game/database/dbSchema";
-import { Game } from "../game/models";
+import { GameDTO } from "../game/models/game";
 import { ApiError } from "../middleware/errorHandleMiddleware";
 
 export class GameRoomService {
@@ -20,11 +20,21 @@ export class GameRoomService {
     return gameDto;
   }
 
+  async setGameInRoom(gameRoomId: string, id: string) {
+    const gameRoom = await GameRoom.findById(gameRoomId);
+    if (!gameRoom) {
+      throw new ApiError(`Game room '${gameRoomId}' not found`, 404);
+    }
+    gameRoom.game = new Types.ObjectId(id);
+    await gameRoom.save();
+  }
+
   async getGameInRoom(gameRoomId: string) {
     console.log(`Getting game in game room '${gameRoomId}'...`);
-    const game = await GameModel.findOne({ gameRoomId });
+    const gameRoom = await GameRoom.findById(gameRoomId).populate("game");
     console.log(`Found game in game room '${gameRoomId}'`);
-    const gameDto: Game | undefined = game?.toObject();
+    const gameRoomDto: any = gameRoom?.toObject();
+    const gameDto: GameDTO | undefined = gameRoomDto?.game;
     return gameDto;
   }
 

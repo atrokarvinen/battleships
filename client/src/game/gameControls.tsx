@@ -1,14 +1,11 @@
 import { Button, Stack } from "@mui/material";
-import {
-  openGameOverDialog,
-  setIsGameOver,
-  setWinnerPlayerId,
-} from "../redux/activeGameSlice";
+import { handleError } from "../api/errorHandling";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import { selectActivePlayerId, selectIsGameStarted } from "../redux/selectors";
 import {
+  confirmPlacementsRequest,
+  endGameRequest,
   mapGameDtoToActiveGame,
-  resetGameRequest,
   startGameRequest,
 } from "./api";
 import { GameDTO } from "./apiModel";
@@ -35,20 +32,17 @@ const GameControls = ({ gameRoomId, playerIds }: GameControlsProps) => {
   }
 
   async function endGame() {
-    const response = await resetGameRequest({ gameRoomId });
+    const response = await endGameRequest({ gameRoomId });
     // dispatch(end());
   }
 
-  function testGameOver() {
-    dispatch(setIsGameOver(true));
-    dispatch(openGameOverDialog());
-    dispatch(setWinnerPlayerId(player));
-  }
-
-  function resetGameOver() {
-    dispatch(setIsGameOver(false));
-    dispatch(setWinnerPlayerId(undefined));
-  }
+  const handleConfirm = async () => {
+    try {
+      const response = await confirmPlacementsRequest({ gameRoomId });
+    } catch (error) {
+      handleError(error);
+    }
+  };
 
   return (
     <Stack spacing={1} alignItems={"center"}>
@@ -68,11 +62,13 @@ const GameControls = ({ gameRoomId, playerIds }: GameControlsProps) => {
       >
         End
       </Button>
-      <Button sx={{ width: 100 }} variant="contained" onClick={testGameOver}>
-        Test game over
-      </Button>
-      <Button sx={{ width: 100 }} variant="contained" onClick={resetGameOver}>
-        Reset game over
+      <Button
+        sx={{ width: 100 }}
+        variant="contained"
+        onClick={handleConfirm}
+        disabled={!isGameStarted}
+      >
+        Confirm
       </Button>
     </Stack>
   );
