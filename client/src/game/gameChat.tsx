@@ -1,8 +1,8 @@
 import {
-  Box,
   List,
   ListItem,
   Paper,
+  Stack,
   TextField,
   Typography,
 } from "@mui/material";
@@ -50,8 +50,8 @@ const GameChat = ({ gameId, playerIds }: GameChatProps) => {
   }
 
   return (
-    <Box width={500}>
-      <Paper sx={{ height: 400 }}>
+    <Stack spacing={1}>
+      <Paper sx={{ height: 200 }}>
         <List>
           {messages.map((m, index) => {
             const time = new Date(m.timestamp).toLocaleTimeString("fi");
@@ -65,7 +65,7 @@ const GameChat = ({ gameId, playerIds }: GameChatProps) => {
                 ? "blue"
                 : "black";
             return (
-              <ListItem key={index}>
+              <ListItem key={index} alignItems="flex-start">
                 <Typography>{`${time}`}</Typography>
                 &nbsp;
                 <Typography color={color} fontWeight="bold">
@@ -87,7 +87,7 @@ const GameChat = ({ gameId, playerIds }: GameChatProps) => {
         onKeyDown={handleKeyDown}
         fullWidth
       />
-    </Box>
+    </Stack>
   );
 };
 

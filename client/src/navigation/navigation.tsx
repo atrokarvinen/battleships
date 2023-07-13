@@ -19,12 +19,15 @@ import Profile from "../lobby/profile";
 import { logout as logoutUser } from "../redux/authSlice";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import { selectIsLoggedIn } from "../redux/selectors";
+import NavigationMobile from "./navigationMobile";
+import { useBreakpoint } from "./useBreakpoint";
 
 type NavigationProps = {};
 
 const Navigation = ({}: NavigationProps) => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
+  const breakpoints = useBreakpoint();
   const colorMode = useContext(ColorModeContext);
 
   const isAuth = useAppSelector(selectIsLoggedIn);
@@ -41,6 +44,9 @@ const Navigation = ({}: NavigationProps) => {
     }
   };
 
+  if (breakpoints.sm) {
+    return <NavigationMobile />;
+  }
   return (
     <AppBar position="static">
       <Toolbar>

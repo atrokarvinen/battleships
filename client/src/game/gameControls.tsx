@@ -1,5 +1,6 @@
 import { Button, Stack } from "@mui/material";
 import { handleError } from "../api/errorHandling";
+import { useBreakpoint } from "../navigation/useBreakpoint";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import { selectActivePlayerId, selectIsGameStarted } from "../redux/selectors";
 import {
@@ -19,6 +20,7 @@ const GameControls = ({ gameRoomId, playerIds }: GameControlsProps) => {
   const dispatch = useAppDispatch();
   const player = useAppSelector(selectActivePlayerId);
   const isGameStarted = useAppSelector(selectIsGameStarted);
+  const { sm } = useBreakpoint();
 
   async function startGame() {
     const response = await startGameRequest({ gameRoomId, playerIds });
@@ -45,7 +47,7 @@ const GameControls = ({ gameRoomId, playerIds }: GameControlsProps) => {
   };
 
   return (
-    <Stack spacing={1} alignItems={"center"}>
+    <Stack spacing={1} direction={sm ? "row" : "row"} alignItems="center">
       <Button
         sx={{ width: 100 }}
         variant="contained"

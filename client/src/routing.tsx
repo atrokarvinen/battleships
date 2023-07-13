@@ -16,13 +16,7 @@ const Routing = ({}: RoutingProps) => {
   return (
     <BrowserRouter>
       <Navigation />
-      <Box
-        sx={{
-          maxWidth: "1280px",
-          width: { xs: 400, xl: 1280 },
-          height: "100%",
-        }}
-      >
+      <Box>
         <Routes>
           <Route element={<ProtectedRoute />}>
             <Route path="/lobby" element={<Lobby />} />

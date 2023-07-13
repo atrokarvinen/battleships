@@ -1,44 +1,42 @@
-import { Box, Typography } from "@mui/material";
-import cn from "classnames";
+import { Box, Stack } from "@mui/material";
 import PrimaryBoard from "../board/primaryBoard";
 import TrackingBoard from "../board/trackingBoard";
-import { useAppSelector } from "../redux/hooks";
-import { selectActivePlayerId } from "../redux/selectors";
-import styles from "./styles.module.scss";
+import { useBreakpoint } from "../navigation/useBreakpoint";
+import { PlayerName } from "./playerName";
+import RevealOpponentBoard from "./revealOpponentBoard";
 
 type PlayerAreaProps = {
-  name: string;
-  playerId: string;
+  player1Name: string;
+  player1Id: string;
+
+  player2Name: string;
+  player2Id: string;
+
   gameId: string;
 };
 
-const PlayerArea = ({ name, playerId, gameId }: PlayerAreaProps) => {
-  const playerIdToPlay = useAppSelector(selectActivePlayerId);
-  const isPlayersTurn = playerIdToPlay === playerId;
-  // const players = useAppSelector((state) => selectPlayersInGame(state, gameId));
-  // const player = players.find((p) => p.id === playerId);
-
-  // console.log("players:", players);
+const PlayerArea = ({
+  player1Name,
+  player1Id,
+  player2Name,
+  player2Id,
+  gameId,
+}: PlayerAreaProps) => {
+  const { sm } = useBreakpoint();
 
   return (
     <Box>
-      <Typography
-        variant="h6"
-        className={cn(styles.playerName, { [styles.active]: isPlayersTurn })}
-        data-testid="player-name"
-      >
-        {name}
-      </Typography>
-      <Box>
+      <Stack direction={sm ? "column" : "row"} spacing={2}>
         <Box>
-          <Typography>Primary board</Typography>
-          <PrimaryBoard gameId={gameId} playerId={playerId} />
+          <PlayerName name={player1Name} id={player1Id} />
+          <PrimaryBoard gameId={gameId} playerId={player1Id} />
         </Box>
         <Box>
-          <Typography>Tracking board</Typography>
-          <TrackingBoard gameId={gameId} playerId={playerId} />
+          <PlayerName name={player2Name} id={player2Id} />
+          <TrackingBoard gameId={gameId} playerId={player1Id} />
+          <RevealOpponentBoard />
         </Box>
-      </Box>
+      </Stack>
     </Box>
   );
 };

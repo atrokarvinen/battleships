@@ -1,10 +1,11 @@
-import { Box, FormControlLabel, Stack, Switch } from "@mui/material";
-import { useContext, useEffect, useState } from "react";
+import { Stack } from "@mui/material";
+import { useContext, useEffect } from "react";
 import { useParams } from "react-router";
 import { handleError } from "../api/errorHandling";
 import { SocketContext } from "../io/socketProvider";
 import { getGameRequest } from "../lobby/api";
 import { GameRoom } from "../lobby/gameRoom";
+import { useBreakpoint } from "../navigation/useBreakpoint";
 import { setActiveGame } from "../redux/activeGameSlice";
 import { addNewGameRoom } from "../redux/gameRoomSlice";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
@@ -14,10 +15,10 @@ import { getGameByRoomIdRequest, mapGameDtoToActiveGame } from "./api";
 import { GameDTO } from "./apiModel";
 import GameChat from "./gameChat";
 import GameControls from "./gameControls";
+import GameMobile from "./gameMobile";
 import GameOverDialog from "./gameOverDialog";
 import InfoBoard from "./infoBoard";
 import PlayerArea from "./playerArea";
-import styles from "./styles.module.scss";
 
 type GameProps = {};
 
@@ -33,11 +34,9 @@ const Game = ({}: GameProps) => {
 
   const socket = useContext(SocketContext);
 
-  const showOpponentInitialValue = false;
-  const [showOpponent, setShowOpponent] = useState(showOpponentInitialValue);
-
   const game = useAppSelector(selectActiveGame);
   const gameRoom = useAppSelector((state) => selectGame(state, gameRoomId));
+  const { sm } = useBreakpoint();
 
   useEffect(() => {
     fetchGame();
@@ -85,43 +84,26 @@ const Game = ({}: GameProps) => {
   // console.log("playerId:", playerId);
   // console.log("self:", self);
 
+  if (sm) {
+    return <GameMobile />;
+  }
   return (
-    <Box className={styles.game} mt={2} data-testid="active-game">
-      <Stack spacing={3} minWidth={300}>
-        <InfoBoard gameRoomId={gameRoomId} />
-        <GameControls
-          gameRoomId={gameRoomId}
-          playerIds={gameRoom?.players.map((p) => p.id) ?? []}
-        />
-      </Stack>
+    <Stack direction="column" mt={2} data-testid="active-game" spacing={1}>
+      <GameOverDialog />
+      <InfoBoard gameRoomId={gameRoomId} />
       <PlayerArea
         gameId={game.id}
-        name={self?.username ?? ""}
-        playerId={self?.id ?? ""}
+        player1Name={self?.username ?? ""}
+        player1Id={self?.id ?? ""}
+        player2Name={opponent?.username ?? "-"}
+        player2Id={opponent?.id ?? ""}
       />
-      <div style={{ margin: 10 }}></div>
-      <Stack direction={"column"}>
-        <FormControlLabel
-          control={
-            <Switch
-              defaultChecked={showOpponentInitialValue}
-              value={showOpponent}
-              onChange={(e) => setShowOpponent(e.target.checked)}
-            />
-          }
-          label="Show opponent board"
-        />
-        {showOpponent && (
-          <PlayerArea
-            gameId={game.id}
-            name={opponent?.username ?? ""}
-            playerId={opponent?.id ?? "1"}
-          />
-        )}
-      </Stack>
+      <GameControls
+        gameRoomId={gameRoomId}
+        playerIds={gameRoom?.players.map((p) => p.id) ?? []}
+      />
       <GameChat gameId={gameRoomId} playerIds={playerIds} />
-      <GameOverDialog />
-    </Box>
+    </Stack>
   );
 };
 
