@@ -33,8 +33,8 @@ export class GameRoomService {
     console.log(`Getting game in game room '${gameRoomId}'...`);
     const gameRoom = await GameRoom.findById(gameRoomId).populate("game");
     console.log(`Found game in game room '${gameRoomId}'`);
-    const gameRoomDto: any = gameRoom?.toObject();
-    const gameDto: GameDTO | undefined = gameRoomDto?.game;
+    const gameRoomDto = gameRoom?.toObject();
+    const gameDto: GameDTO | undefined = gameRoomDto?.game as any;
     return gameDto;
   }
 

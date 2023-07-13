@@ -13,15 +13,12 @@ export type IGame = {
   state: GameState;
 };
 
-export type GameDTO = Game & { id: string };
-
-export type Game = {
+export type GameDTO = {
+  id: string;
   gameRoomId: string;
-
-  activePlayerId: string;
+  activePlayerId?: string;
   playerIds: string[];
   playerInfos: PlayerInformation[];
-  winnerId: string;
-
+  winnerId?: string;
   state: GameState;
 };

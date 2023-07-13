@@ -1,7 +1,6 @@
 export { Board } from "./board";
 export { Fleet } from "./fleet";
 export { FleetReserve } from "./fleetReserve";
-export { Game } from "./game";
 export { GameState } from "./gameState";
 export { PlayerInformation } from "./playerInformation";
 export { Point } from "./point";

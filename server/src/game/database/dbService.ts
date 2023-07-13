@@ -1,5 +1,5 @@
 import { Types } from "mongoose";
-import { Game, GameState, Point, ShipPart } from "../models";
+import { GameState, Point, ShipPart } from "../models";
 import { GameDTO, IGame } from "../models/game";
 import { GameOptions } from "../models/gameOptions";
 import {
@@ -70,7 +70,7 @@ export class DbService {
     return { shipHit, nextPlayerId, isGameOver };
   }
 
-  async createGame(game: Game) {
+  async createGame(game: IGame) {
     const created = await GameModel.create(game);
     const gameDTO: GameDTO = created.toObject();
     return gameDTO;
@@ -78,9 +78,7 @@ export class DbService {
 
   async createEmptyGame(options: GameOptions) {
     const emptyGame = this.generateEmptyGame(options);
-    const created = await GameModel.create(emptyGame);
-    const gameDTO: GameDTO = created.toObject();
-    return gameDTO;
+    return await this.createGame(emptyGame);
   }
 
   async resetGame(options: GameOptions) {
