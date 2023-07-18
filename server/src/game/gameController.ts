@@ -2,11 +2,11 @@ import { NextFunction, Request, Response } from "express";
 import { Server } from "socket.io";
 import { GameRoomService } from "../gameRoom/gameRoomService";
 import { StartGamePayload } from "./api/startGamePayload";
-import { DbService } from "./database/dbService";
 import { GameOptions } from "./models/gameOptions";
+import { GameService } from "./services/gameService";
 
 export class GameController {
-  private gameDbService = new DbService();
+  private gameDbService = new GameService();
   private gameRoomService = new GameRoomService();
   private io: Server;
 

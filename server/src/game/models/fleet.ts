@@ -1,6 +1,6 @@
-import { Ship } from "./ship";
+import { FleetShip } from "./fleetShip";
 
 export type Fleet = {
   quantity: number;
-  class: Ship;
+  class: FleetShip;
 };

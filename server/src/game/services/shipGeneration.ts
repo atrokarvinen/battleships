@@ -1,10 +1,10 @@
-import { Point, Ship } from "../models";
+import { FleetShip, Point } from "../models";
 import { generateEmptyBoardPoints, pointsEqual } from "./board-utils";
 import { standardReserve } from "./ship-reserve";
 
 export type ShipPlacement = {
   takenPoints: Point[];
-  ship: Ship;
+  ship: FleetShip;
   start: Point;
   end: Point;
   isVertical: boolean;

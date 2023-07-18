@@ -1,9 +1,9 @@
-import { FleetReserve, Ship } from "../models";
+import { FleetReserve, FleetShip } from "../models";
 
-export const carrier: Ship = { name: "carrier", size: 6 };
-export const battleship: Ship = { name: "battleship", size: 4 };
-export const cruiser: Ship = { name: "cruiser", size: 3 };
-export const submarine: Ship = { name: "submarine", size: 2 };
+export const carrier: FleetShip = { name: "carrier", size: 6 };
+export const battleship: FleetShip = { name: "battleship", size: 4 };
+export const cruiser: FleetShip = { name: "cruiser", size: 3 };
+export const submarine: FleetShip = { name: "submarine", size: 2 };
 
 export const standardCarrierQuantity = 1;
 export const standardBattleshipQuantity = 2;

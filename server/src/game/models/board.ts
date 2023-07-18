@@ -1,5 +1,5 @@
+import { FleetShip } from "./fleetShip";
 import { Point } from "./point";
-import { Ship } from "./ship";
 import { Square } from "./square";
 
 export type Board = {
@@ -10,6 +10,6 @@ export type Board = {
   missedPoints?: Point[];
   destroyedPoints?: Point[];
 
-  ships: Ship[];
+  ships: FleetShip[];
   squares: Square[];
 };

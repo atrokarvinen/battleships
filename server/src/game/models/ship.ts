@@ -1,4 +1,7 @@
+import { Point } from "./point";
+
 export type Ship = {
-  name: string;
-  size: number;
+  length: number;
+  start: Point;
+  isVertical: boolean;
 };

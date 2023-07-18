@@ -1,8 +1,13 @@
 import { Schema, model } from "mongoose";
 import { toObjectOptions } from "../../database/dbOptions";
-import { Board, PlayerInformation, Point, Square } from "../models";
-import { IGame } from "../models/game";
-import { Ship } from "./model";
+import {
+  Board,
+  IGame,
+  PlayerInformation,
+  Point,
+  Ship,
+  Square,
+} from "../models";
 
 const pointSchema = new Schema<Point>(
   {

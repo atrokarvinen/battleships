@@ -21,6 +21,7 @@ test.beforeEach(async ({ page }) => {
     user: { username, password: defaultPassword },
   });
   await page.goto(`${frontendUrl}/lobby`);
+  await page.waitForURL(`${frontendUrl}/lobby`);
 });
 
 test.afterEach(async ({ request }) => {

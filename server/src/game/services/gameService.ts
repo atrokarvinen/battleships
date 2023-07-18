@@ -1,22 +1,21 @@
 import { Types } from "mongoose";
-import { GameState, Point, ShipPart } from "../models";
-import { GameDTO, IGame } from "../models/game";
-import { GameOptions } from "../models/gameOptions";
+import { GameModel } from "../database/dbSchema";
+import {
+  AttackSquare,
+  GameDTO,
+  GameOptions,
+  GameState,
+  IGame,
+  ShipPart,
+} from "../models";
 import {
   createEmptyBoardSquares,
   pointEqualsToSquare,
   pointsEqual,
-} from "../services/board-utils";
-import { createRandomFleetLocations } from "../services/shipGeneration";
-import { GameModel } from "./dbSchema";
+} from "./board-utils";
+import { createRandomFleetLocations } from "./shipGeneration";
 
-type AttackSquare = {
-  point: Point;
-  attackerPlayerId: string;
-  gameId: string;
-};
-
-export class DbService {
+export class GameService {
   async attackSquare({ point, gameId, attackerPlayerId }: AttackSquare) {
     const { x, y } = point;
     console.log(`Attacking point (${x}, ${y})`);
