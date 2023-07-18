@@ -18,7 +18,7 @@ const isValidPlacement = (freePoints: Point[], shipPoints: Point[]) => {
 };
 
 export const createRandomFleetLocations = () => {
-  const points = generateEmptyBoardPoints();
+  const points = generateEmptyBoardPoints(10);
   let availablePoints = [...points];
 
   const allShips = standardReserve.fleets

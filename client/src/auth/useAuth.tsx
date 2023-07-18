@@ -28,7 +28,6 @@ export const useAuth = () => {
     }
 
     try {
-      // TODO Guest is not persisted, should be part of JWT to work
       const request = isGuest ? getGuestAccountInfo : getAccountInfo;
       const response = await request();
       const { userId, username } = response.data;

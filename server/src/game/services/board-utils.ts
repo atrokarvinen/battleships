@@ -1,8 +1,7 @@
 import { Board, Point, ShipPart, Square } from "../models";
 
-const boardSize = 10;
-const arr = Array.from(Array(boardSize)).map((_, index) => index);
-export const generateEmptyBoardPoints = (): Point[] => {
+export const generateEmptyBoardPoints = (boardSize: number): Point[] => {
+  const arr = Array.from(Array(boardSize)).map((_, index) => index);
   return arr
     .map((y) =>
       arr.map((x) => {
@@ -12,23 +11,18 @@ export const generateEmptyBoardPoints = (): Point[] => {
     .flat();
 };
 
-// TODO identical to above method 'generateEmptyBoardPoints'?
 export const createEmptyBoardSquares = (boardSize: number) => {
-  const arr = Array.from(Array(boardSize)).map((_, index) => index);
-  const squares: Square[] = arr
-    .map((row) => {
-      return arr.map((column) => {
-        const square: Square = {
-          ship: ShipPart.UNKNOWN,
-          hasBeenAttacked: false,
-          hasShip: false,
-          isVertical: false,
-          point: { x: column, y: row },
-        };
-        return square;
-      });
-    })
-    .flat();
+  const points = generateEmptyBoardPoints(boardSize);
+  const squares: Square[] = points.map((point) => {
+    const square: Square = {
+      ship: ShipPart.UNKNOWN,
+      hasBeenAttacked: false,
+      hasShip: false,
+      isVertical: false,
+      point,
+    };
+    return square;
+  });
   return squares;
 };
 

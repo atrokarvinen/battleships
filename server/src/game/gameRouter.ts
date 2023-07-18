@@ -15,7 +15,6 @@ export const gameRouter = (io: Server) => {
   router.post("/attack", (req, res, next) => ctr.attackSquare(req, res, next));
   router.post("/end", (req, res, next) => ctr.endGame(req, res, next));
 
-  // TODO Implement
   router.post("/reset", (req, res, next) => ctr.resetGame(req, res, next));
 
   return router;

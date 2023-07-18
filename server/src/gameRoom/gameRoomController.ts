@@ -76,14 +76,9 @@ export class GameRoomController {
       const gameRoomId = req.body.gameId;
       const userId = req.userId;
 
-      // TODO probably not need to send username, should be derived from userId
-      const username = await this.gameRoomService.joinGame(gameRoomId, userId);
+      await this.gameRoomService.joinGame(gameRoomId, userId);
 
-      this.io.emit("gameJoined", {
-        gameId: gameRoomId,
-        playerId: userId,
-        player: { id: userId, username },
-      });
+      this.io.emit("gameJoined", { gameId: gameRoomId, playerId: userId });
       return res.end();
     } catch (error) {
       next(error);

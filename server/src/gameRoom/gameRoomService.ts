@@ -70,9 +70,7 @@ export class GameRoomService {
     user.games.push(gameRoom.id);
     await user.save();
 
-    console.log(`User '${userId}' joined game ${gameRoom.title}`);
-
-    return user.username;
+    console.log(`User '${user.username}' joined game ${gameRoom.title}`);
   }
 
   async leaveGame(gameRoomId: string, userId: string) {
