@@ -6,8 +6,8 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { useState } from "react";
-import { socket } from "../io/socket";
+import { useContext, useState } from "react";
+import { SocketContext } from "../io/socketProvider";
 import { useAppSelector } from "../redux/hooks";
 import {
   selectChatMessages,
@@ -26,6 +26,7 @@ const GameChat = ({ gameId, playerIds }: GameChatProps) => {
   const [typedMessage, setTypedMessage] = useState("");
 
   const messages = useAppSelector(selectChatMessages);
+  const socket = useContext(SocketContext);
 
   async function sendMessage() {
     if (!typedMessage) {
