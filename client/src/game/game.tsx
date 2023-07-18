@@ -13,7 +13,6 @@ import { addPlayer } from "../redux/playerSlice";
 import { selectActiveGame, selectGame, selectUserId } from "../redux/selectors";
 import { getGameByRoomIdRequest, mapGameDtoToActiveGame } from "./api";
 import { GameDTO } from "./apiModel";
-import GameChat from "./gameChat";
 import GameControls from "./gameControls";
 import GameMobile from "./gameMobile";
 import GameOverDialog from "./gameOverDialog";
@@ -102,7 +101,7 @@ const Game = ({}: GameProps) => {
         gameRoomId={gameRoomId}
         playerIds={gameRoom?.players.map((p) => p.id) ?? []}
       />
-      <GameChat gameId={gameRoomId} playerIds={playerIds} />
+      {/* <GameChat gameId={gameRoomId} playerIds={playerIds} /> */}
     </Stack>
   );
 };

@@ -13,5 +13,7 @@ export const testRouter = () => {
 
   router.post("/games/seed", controller.seedGame);
 
+  router.get("/game/:gameId/opponent/:opponentId/ships", controller.getShips);
+
   return router;
 };

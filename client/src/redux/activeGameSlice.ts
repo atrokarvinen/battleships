@@ -28,6 +28,8 @@ export type ActiveGameState = {
 
   boards: Board[];
   attacks: Attack[];
+
+  showOpponentBoard: boolean;
 };
 
 export const initialState: ActiveGameState = {
@@ -38,6 +40,8 @@ export const initialState: ActiveGameState = {
   showGameOverDialog: false,
   boards: [],
   attacks: [],
+
+  showOpponentBoard: false,
 };
 
 const activeGameSlice = createSlice({
@@ -136,6 +140,51 @@ const activeGameSlice = createSlice({
       enemySquare.attackResult = AttackResult.Miss;
       enemySquare.defendResult = AttackResult.Miss;
     },
+    setShowOpponentBoard: (state, action: PayloadAction<boolean>) => {
+      state.showOpponentBoard = action.payload;
+    },
+    setOpponentShipLocations: (
+      state,
+      action: PayloadAction<{
+        points: BoardPoint[];
+        playerId: string;
+      }>
+    ) => {
+      const { points, playerId } = action.payload;
+      const opponent = state.attacks.find(
+        (board) => board.playerId !== playerId
+      );
+      if (!opponent) return;
+      opponent.points.forEach((point) => {
+        const foundPoint = points.find(
+          (p) => p.point.x === point.point.x && p.point.y === point.point.y
+        );
+        if (
+          !foundPoint ||
+          foundPoint.shipPart === ShipPart.None ||
+          foundPoint.shipPart === ShipPart.Unknown
+        )
+          return;
+        console.log(
+          "setting point (%d,%d) to %s",
+          point.point.x,
+          point.point.y,
+          ShipPart[foundPoint.shipPart]
+        );
+        point.shipPart = foundPoint.shipPart;
+      });
+    },
+    resetOpponentShipLocations: (state, action: PayloadAction<string>) => {
+      const opponent = state.attacks.find(
+        (board) => board.playerId !== action.payload
+      );
+      if (!opponent) return;
+      opponent.points
+        .filter((p) => p.attackResult === AttackResult.None)
+        .forEach((point) => {
+          point.shipPart = ShipPart.None;
+        });
+    },
   },
 });
 
@@ -154,6 +203,9 @@ export const {
   swapPlayerIdToPlay,
   sinkShip,
   missShip,
+  setShowOpponentBoard,
+  setOpponentShipLocations,
+  resetOpponentShipLocations,
 } = activeGameSlice.actions;
 
 export const activeGameReducer = activeGameSlice.reducer;

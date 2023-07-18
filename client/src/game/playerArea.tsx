@@ -34,7 +34,9 @@ const PlayerArea = ({
         <Box>
           <PlayerName name={player2Name} id={player2Id} />
           <TrackingBoard gameId={gameId} playerId={player1Id} />
-          <RevealOpponentBoard />
+          {process.env.NODE_ENV === "development" && (
+            <RevealOpponentBoard opponentId={player2Id} gameId={gameId} />
+          )}
         </Box>
       </Stack>
     </Box>

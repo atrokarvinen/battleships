@@ -39,31 +39,23 @@ export const confirmPlacementsRequest = ({
   return axios.post(`/game/${gameRoomId}/confirm-placements`);
 };
 
+export const getOpponentShipLocationsRequest = (
+  gameId: string,
+  opponentId: string
+) => {
+  return axios.get(`/test/game/${gameId}/opponent/${opponentId}/ships`);
+};
+
 export const mapGameDtoToActiveGame = (game: GameDTO) => {
   const activeGame: ActiveGameState = {
+    showOpponentBoard: false,
     boards: game.playerInfos.map((board) => ({
       playerId: board.playerId,
-      points: board.ownShips.map((square) => {
-        const boardPoint: BoardPoint = {
-          point: square.point,
-          attackResult: determineAttackResult(square),
-          defendResult: determineAttackResult(square),
-          shipPart: determineShipPart(square),
-        };
-        return boardPoint;
-      }),
+      points: mapSquaresToBoardPoint(board.ownShips),
     })),
     attacks: game.playerInfos.map((board) => ({
       playerId: board.playerId,
-      points: board.attacks.map((square) => {
-        const boardPoint: BoardPoint = {
-          point: square.point,
-          attackResult: determineAttackResult(square),
-          defendResult: determineAttackResult(square),
-          shipPart: determineShipPart(square),
-        };
-        return boardPoint;
-      }),
+      points: mapSquaresToBoardPoint(board.attacks),
     })),
     id: game.id,
     isGameStarted: game.state === GameState.STARTED,
@@ -79,6 +71,19 @@ export const mapGameDtoToActiveGame = (game: GameDTO) => {
   };
 
   return activeGame;
+};
+
+export const mapSquaresToBoardPoint = (squares: Square[]) => {
+  const boardPoints: BoardPoint[] = squares.map((square) => {
+    const boardPoint: BoardPoint = {
+      point: square.point,
+      attackResult: determineAttackResult(square),
+      defendResult: determineAttackResult(square),
+      shipPart: determineShipPart(square),
+    };
+    return boardPoint;
+  });
+  return boardPoints;
 };
 
 const determineAttackResult = (square: Square) => {

@@ -30,6 +30,7 @@ export const selectGame = (state: RootState, id: string | undefined) =>
 
 // Active Game
 export const selectActiveGame = (state: RootState) => state.activeGame;
+export const selectActiveGameId = (state: RootState) => state.activeGame.id;
 export const selectActivePlayers = (state: RootState) =>
   state.activeGame.players;
 export const selectActivePlayerId = (state: RootState) =>
@@ -40,6 +41,8 @@ export const selectIsGameOver = (state: RootState) =>
   state.activeGame.isGameOver;
 export const selectShowGameOverDialog = (state: RootState) =>
   state.activeGame.showGameOverDialog;
+export const selectShowOpponentShips = (state: RootState) =>
+  state.activeGame.showOpponentBoard;
 
 // Players
 export const selectPlayerById = (state: RootState, id: string) => {

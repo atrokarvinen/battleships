@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import { Types } from "mongoose";
 import { GameRoom } from "../database/gameRoom";
 import { User } from "../database/user";
@@ -73,6 +73,24 @@ export class TestController {
     await game.save();
     return res.end();
   };
+
+  async getShips(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { gameId, opponentId } = req.params;
+      const game = await GameModel.findById(gameId);
+      if (!game) {
+        return res.status(404).json({ error: "game not found" }).end();
+      }
+      const opponent = game.playerInfos.find((p) => p.playerId === opponentId);
+      if (!opponent) {
+        return res.status(404).json({ error: "opponent not found" }).end();
+      }
+      const ships = opponent.ownShips;
+      return res.json(ships);
+    } catch (error) {
+      next(error);
+    }
+  }
 
   setPositions(positions: Point[], ships: Square[]) {
     ships.forEach((s) => {
