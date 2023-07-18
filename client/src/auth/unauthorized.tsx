@@ -27,8 +27,10 @@ const Unauthorized = ({ deniedRoute }: UnauthorizedProps) => {
   return (
     <div>
       <h1>Not authorized, please log in</h1>
-      {/* TODO add denied route to passed state and redirect there after login */}
-      <Button onClick={() => navigate("/")} variant="contained">
+      <Button
+        onClick={() => navigate("/login", { state: { deniedRoute } })}
+        variant="contained"
+      >
         Login
       </Button>
       <Button onClick={handleGuestLogin} variant="outlined">

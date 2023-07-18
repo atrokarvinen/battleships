@@ -1,6 +1,6 @@
 import { Box, Button, Dialog, DialogContent, DialogTitle } from "@mui/material";
 import { useState } from "react";
-import { useNavigate } from "react-router";
+import { useLocation, useNavigate } from "react-router";
 import { handleError } from "../api/errorHandling";
 import { FormError } from "../api/formError";
 import { FormErrorMap } from "../api/models";
@@ -22,6 +22,7 @@ const Login = ({}: LoginProps) => {
   const [signUpErrors, setSignUpErrors] = useState<FormErrorMap>({});
   const [signInError, setSignInError] = useState("");
 
+  const location = useLocation();
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
@@ -55,7 +56,8 @@ const Login = ({}: LoginProps) => {
       );
       dispatch(login({ userId, username, isGuest: false }));
 
-      navigate("/lobby");
+      const redirectUrl = location.state?.deniedRoute ?? "/lobby";
+      navigate(redirectUrl);
     } catch (error) {
       handleSignInError(error);
     }
