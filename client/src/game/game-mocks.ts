@@ -27,7 +27,7 @@ export const handlers = [
     };
     return res(ctx.json(response));
   }),
-  rest.get(`${baseURL}/game/game-room/${123}`, (req, res, ctx) => {
+  rest.get(`${baseURL}/game-room/${123}/game`, (req, res, ctx) => {
     const response: GameDTO = {
       id: "55",
       activePlayerId: "1",
@@ -39,7 +39,7 @@ export const handlers = [
       state: GameState.UNKNOWN,
       winnerId: "",
     };
-    return res(ctx.json({ game: response }));
+    return res(ctx.json(response));
   }),
 
   rest.post(`${baseURL}/game/attack`, (req, res, ctx) => {
