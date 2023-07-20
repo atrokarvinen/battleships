@@ -1,5 +1,6 @@
-import { ReactElement, createContext } from "react";
+import { ReactElement, createContext, useEffect } from "react";
 import { io } from "socket.io-client";
+import { axios } from "../api/axios";
 import { useGameEvents } from "./useGameEvents";
 import { useGameRoomEvents } from "./useGameRoomEvents";
 
@@ -13,6 +14,19 @@ export const SocketContext = createContext(socket);
 const SocketProvider = ({ children }: SocketProviderProps) => {
   useGameRoomEvents(socket);
   useGameEvents(socket);
+
+  useEffect(() => {
+    socket.on("connect", onConnect);
+
+    return () => {
+      socket.off("connect", onConnect);
+    };
+  }, []);
+
+  const onConnect = () => {
+    console.log("setting socket id %s to axios header", socket.id);
+    axios.defaults.headers.common["Socket-Id"] = socket.id;
+  };
 
   return (
     <SocketContext.Provider value={socket}>{children}</SocketContext.Provider>

@@ -1,6 +1,7 @@
 import { Button, Stack } from "@mui/material";
 import { handleError } from "../api/errorHandling";
 import { useBreakpoint } from "../navigation/useBreakpoint";
+import { setActiveGame } from "../redux/activeGameSlice";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import { selectActivePlayerId, selectIsGameStarted } from "../redux/selectors";
 import {
@@ -28,9 +29,7 @@ const GameControls = ({ gameRoomId, playerIds }: GameControlsProps) => {
     const startedGame: GameDTO = response.data;
     const activeGame = mapGameDtoToActiveGame(startedGame);
     console.log("started game:", activeGame);
-
-    // Response received as event
-    // dispatch(setActiveGame(activeGame));
+    dispatch(setActiveGame(activeGame));
   }
 
   async function endGame() {

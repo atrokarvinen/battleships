@@ -33,9 +33,9 @@ export class GameController {
       }
       const startedGame = await this.gameDbService.randomizePlacements(game.id);
 
-      this.io.emit("gameStarted", startedGame);
-      res.json(startedGame);
       console.log("Started game:", startedGame.id);
+      this.io.except(req.socketId).emit("gameStarted", startedGame);
+      return res.json(startedGame);
     } catch (error) {
       next(error);
     }
@@ -67,7 +67,7 @@ export class GameController {
         point,
         playerId: attackerPlayerId,
       };
-      this.io.emit("squareAttacked", attackResult);
+      this.io.except(req.socketId).emit("squareAttacked", attackResult);
       return res.json(attackResult);
     } catch (error) {
       next(error);

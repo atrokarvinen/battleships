@@ -53,7 +53,7 @@ export class GameRoomController {
     try {
       const payload: IGameRoom = req.body;
       const gameDto = await this.gameRoomService.createGameRoom(payload);
-      this.io.emit("gameCreated", gameDto);
+      this.io.except(req.socketId).emit("gameCreated", gameDto);
       return res.json(gameDto);
     } catch (error) {
       next(error);
@@ -64,7 +64,7 @@ export class GameRoomController {
     try {
       const gameRoomId = req.params.id;
       await this.gameRoomService.deleteGameRoom(gameRoomId);
-      this.io.emit("gameDeleted", gameRoomId);
+      this.io.except(req.socketId).emit("gameDeleted", gameRoomId);
       return res.end();
     } catch (error) {
       next(error);
@@ -78,8 +78,9 @@ export class GameRoomController {
 
       await this.gameRoomService.joinGame(gameRoomId, userId);
 
-      this.io.emit("gameJoined", { gameId: gameRoomId, playerId: userId });
-      return res.end();
+      const response = { gameId: gameRoomId, playerId: userId };
+      this.io.except(req.socketId).emit("gameJoined", response);
+      return res.json(response);
     } catch (error) {
       next(error);
     }
@@ -94,8 +95,9 @@ export class GameRoomController {
 
       await this.gameRoomService.leaveGame(gameRoomId, userId);
 
-      this.io.emit("gameLeft", { gameId: gameRoomId, playerId: userId });
-      return res.end();
+      const response = { gameId: gameRoomId, playerId: userId };
+      this.io.except(req.socketId).emit("gameLeft", response);
+      return res.json(response);
     } catch (error) {
       next(error);
     }

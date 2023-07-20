@@ -9,8 +9,14 @@ import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router";
 import { handleError } from "../api/errorHandling";
-import { setGameRooms } from "../redux/gameRoomSlice";
+import {
+  addNewGameRoom,
+  joinGame,
+  leaveGame,
+  setGameRooms,
+} from "../redux/gameRoomSlice";
 import { useAppDispatch } from "../redux/hooks";
+import { addPlayerToGame, removePlayerFromGame } from "../redux/playerSlice";
 import { selectGames } from "../redux/selectors";
 import {
   createGameRequest,
@@ -48,10 +54,11 @@ const Lobby = ({}: LobbyProps) => {
 
     try {
       const response = await createGameRequest(data);
-      console.log("created game: " + JSON.stringify(response.data));
+      console.log("Game %s created", response.data);
+      dispatch(addNewGameRoom(response.data));
       setIsCreateGameOpen(false);
     } catch (error) {
-      console.log("failed to create game: " + error);
+      handleError(error);
     }
   }
 
@@ -62,24 +69,28 @@ const Lobby = ({}: LobbyProps) => {
       console.log("fetched games count: " + games.length);
       dispatch(setGameRooms(games));
     } catch (error) {
-      console.log("failed to get all games: " + error);
+      handleError(error);
     }
   }
 
-  async function joinGame(gameId: string) {
+  async function onJoinGame(gameId: string) {
     try {
-      await joinGameRequest(gameId);
+      const response = await joinGameRequest(gameId);
       navigate(`/game/${gameId}`);
       onGameDetailsClosed();
+      dispatch(joinGame(response.data));
+      dispatch(addPlayerToGame(response.data));
     } catch (error) {
       handleError(error);
     }
   }
 
-  async function leaveGame(gameId: string) {
+  async function onLeaveGame(gameId: string) {
     try {
-      await leaveGameRequest(gameId);
+      const response = await leaveGameRequest(gameId);
       onGameDetailsClosed();
+      dispatch(leaveGame(response.data));
+      dispatch(removePlayerFromGame(response.data));
     } catch (error) {
       handleError(error);
     }
@@ -113,8 +124,8 @@ const Lobby = ({}: LobbyProps) => {
         gameId={selectedGameRoomId}
         onClose={onGameDetailsClosed}
         onGo={(gameId) => navigate(`/game/${gameId}`)}
-        onJoin={joinGame}
-        onLeave={leaveGame}
+        onJoin={onJoinGame}
+        onLeave={onLeaveGame}
       />
 
       <Dialog

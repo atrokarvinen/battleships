@@ -9,7 +9,8 @@ import {
   Stack,
 } from "@mui/material";
 import { handleError } from "../api/errorHandling";
-import { useAppSelector } from "../redux/hooks";
+import { deleteGameRoom } from "../redux/gameRoomSlice";
+import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import { selectGame, selectUserId } from "../redux/selectors";
 import { deleteGameRequest } from "./api";
 
@@ -28,6 +29,7 @@ const GameDetails = ({
   onJoin,
   onLeave,
 }: GameDetailsProps) => {
+  const dispatch = useAppDispatch();
   const game = useAppSelector((state) => selectGame(state, gameId));
   const userId = useAppSelector(selectUserId);
 
@@ -45,6 +47,7 @@ const GameDetails = ({
     try {
       await deleteGameRequest(gameId);
       console.log("successfully deleted game " + gameId);
+      dispatch(deleteGameRoom(gameId));
       onClose();
     } catch (error) {
       handleError(error);

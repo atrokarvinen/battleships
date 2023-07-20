@@ -14,6 +14,7 @@ import { gameRoomRouter } from "./src/gameRoom/gameRoomRouter";
 import { authMiddleware } from "./src/middleware/authMiddleware";
 import { errorHandleMiddleware } from "./src/middleware/errorHandleMiddleware";
 import { logRequestMiddleware } from "./src/middleware/logRequestMiddleware";
+import { socketMiddleware } from "./src/middleware/socketMiddleware";
 import { unknownRouteMiddleware } from "./src/middleware/unknownRouteMiddleware";
 import { addListeners } from "./src/socket/socket";
 import { testEnvMiddleware } from "./src/testing/testEnvMiddleware";
@@ -30,6 +31,7 @@ const io = new Server(httpServer, { cors: { origin: "*" } });
 addListeners(io);
 
 app.use(logRequestMiddleware);
+app.use(socketMiddleware);
 
 app.use("/cookie", cookieRouter);
 app.use("/auth", authRouter());
