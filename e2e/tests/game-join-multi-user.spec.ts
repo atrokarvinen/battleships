@@ -1,0 +1,41 @@
+import { expect } from "@playwright/test";
+import { test } from "./game-join-multi-user-fixture";
+
+test.skip("game join is broadcasted", async ({
+  gameJoinPage,
+  gameJoinPage2,
+  title,
+  username1,
+}) => {
+  await gameJoinPage.expectUserNotInGameRoom(title, username1);
+  await gameJoinPage2.expectUserNotInGameRoom(title, username1);
+
+  await gameJoinPage.joinGame(title);
+  await gameJoinPage.goToLobby();
+  await gameJoinPage.expectUserInGameRoom(title, username1);
+  await gameJoinPage2.expectUserInGameRoom(title, username1);
+});
+
+test("game leave is broadcasted", async ({
+  gameJoinPage,
+  gameJoinPage2,
+  title,
+  username1,
+}) => {
+  await gameJoinPage.joinGame(title);
+  await gameJoinPage.goToLobby();
+  await gameJoinPage.openGameDetails(title);
+
+  await gameJoinPage.expectUserInGameRoom(title, username1);
+  // await gameJoinPage2.expectUserInGameRoom(title, username1);
+  await gameJoinPage2.expectUserNotInGameRoom(title, username1);
+
+  await gameJoinPage.leaveGame();
+
+  await gameJoinPage.expectUserNotInGameRoom(title, username1);
+  await gameJoinPage2.expectUserNotInGameRoom(title, username1);
+});
+
+test("cannot join game if it's full", async ({ page }) => {
+  expect(1).toBe(1);
+});

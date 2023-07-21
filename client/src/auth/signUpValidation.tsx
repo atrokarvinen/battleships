@@ -5,7 +5,7 @@ export const schema = yup.object().shape({
     .string()
     .required("Username is required")
     .min(3, "Username must be at least 3 characters")
-    .max(25, "Username must be at most 25 characters"),
+    .max(50, "Username must be at most 50 characters"),
   password: yup
     .string()
     .required("Password is required")

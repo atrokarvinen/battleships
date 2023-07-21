@@ -1,4 +1,4 @@
-import { APIRequestContext, APIResponse, expect } from "@playwright/test";
+import { APIRequestContext, APIResponse } from "@playwright/test";
 import { config } from "./config";
 
 /*
@@ -43,7 +43,6 @@ const apiRequest = async (req: APIRequest, method: APIMethod) => {
     default:
       throw new Error("Unknown method " + method);
   }
-  expect(response.ok()).toBeTruthy();
   return response;
 };
 
@@ -53,7 +52,8 @@ const getOptions = async (
 ) => {
   const jwt = await getJwtCookie(request);
   const headers = { ["Cookie"]: `${jwtCookieName}=${jwt}` };
-  const options = data ? { headers, data } : { headers };
+  const baseOptions = { headers, failOnStatusCode: true };
+  const options = data ? { ...baseOptions, data } : baseOptions;
   return options;
 };
 

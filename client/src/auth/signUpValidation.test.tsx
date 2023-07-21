@@ -17,8 +17,8 @@ it.each([
   { username: "", error: "Username is required" },
   { username: "sm", error: "Username must be at least 3 characters" },
   {
-    username: "very looooooooooooooooooooooong name",
-    error: "Username must be at most 25 characters",
+    username: "very loooooooooooooooooooooooooooooooooooooooooooooooong name",
+    error: "Username must be at most 50 characters",
   },
 ])("username $username throws $error", async ({ username, error }) => {
   const form: SignUpForm = { ...validValues, username };

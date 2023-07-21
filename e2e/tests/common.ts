@@ -1,11 +1,12 @@
 import { APIRequestContext } from "@playwright/test";
+import { v4 as uuid } from "uuid";
 import { deleteRequest, post } from "./api-request";
 import { GameSeed, JoinGamePayload, LoginInfo } from "./models";
 
 // Make sure the name is unique to prevent parallel tests from
 // clashing with each other.
 export const uniquefy = (name: string) => {
-  return `${name}-${Date.now()}`;
+  return `${name}-${uuid()}`;
 };
 
 export const signUpAndSignIn = async (payload: LoginInfo) => {

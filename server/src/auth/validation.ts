@@ -14,7 +14,7 @@ export const signUpValidation = [
   check("username")
     .notEmpty().withMessage("Cannot be empty")
     .isLength({ min: 3 }).withMessage("Too short. Min 3 characters")
-    .isLength({ max: 25 }).withMessage("Too long. Max 25 characters"),
+    .isLength({ max: 50 }).withMessage("Too long. Max 50 characters"),
   check("password")
     .notEmpty().withMessage("Cannot be empty")
     .isLength({ min: 8 }).withMessage("Too short. Min 8 characters")
