@@ -1,13 +1,6 @@
 import { Schema, model } from "mongoose";
 import { toObjectOptions } from "../../database/dbOptions";
-import {
-  Board,
-  IGame,
-  PlayerInformation,
-  Point,
-  Ship,
-  Square,
-} from "../models";
+import { Board, IGame, IPlayer, Point, Ship, Square } from "../models";
 
 const pointSchema = new Schema<Point>(
   {
@@ -42,7 +35,7 @@ const boardSchema = new Schema<Board>(
   { toObject: toObjectOptions }
 );
 
-const playerInfoSchema = new Schema<PlayerInformation>(
+const playerInfoSchema = new Schema<IPlayer>(
   {
     playerId: String,
     attacks: [squareSchema],
@@ -56,9 +49,8 @@ const gameSchema = new Schema<IGame>(
     gameRoom: { ref: "gameRoom", type: Schema.Types.ObjectId },
     activePlayerId: String,
     winnerId: String,
-    playerIds: [String],
     state: Number,
-    playerInfos: [playerInfoSchema],
+    players: [playerInfoSchema],
   },
   { toObject: toObjectOptions }
 );

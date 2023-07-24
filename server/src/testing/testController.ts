@@ -54,12 +54,8 @@ export class TestController {
     const playerName2 = shipPositions[1].playerId;
     const player1 = await User.findOne({ username: playerName1 });
     const player2 = await User.findOne({ username: playerName2 });
-    const p1 = game.playerInfos.find(
-      (p) => p.playerId === player1?.id?.toString()
-    );
-    const p2 = game.playerInfos.find(
-      (p) => p.playerId === player2?.id?.toString()
-    );
+    const p1 = game.players.find((p) => p.playerId === player1?.id?.toString());
+    const p2 = game.players.find((p) => p.playerId === player2?.id?.toString());
     if (!p1 || !p2) {
       return res
         .status(404)
@@ -81,7 +77,9 @@ export class TestController {
       if (!game) {
         return res.status(404).json({ error: "game not found" }).end();
       }
-      const opponent = game.playerInfos.find((p) => p.playerId === opponentId);
+      const opponent = game.players.find(
+        (p) => p.playerId.toString() === opponentId
+      );
       if (!opponent) {
         return res.status(404).json({ error: "opponent not found" }).end();
       }

@@ -1,10 +1,7 @@
 import { Stack } from "@mui/material";
-import { useContext } from "react";
 import { useParams } from "react-router";
-import { SocketContext } from "../io/socketProvider";
-import { useAppDispatch, useAppSelector } from "../redux/hooks";
+import { useAppSelector } from "../redux/hooks";
 import { selectActiveGame, selectGame, selectUserId } from "../redux/selectors";
-import GameChat from "./gameChat";
 import GameControls from "./gameControls";
 import GameOverDialog from "./gameOverDialog";
 import InfoBoard from "./infoBoard";
@@ -17,12 +14,9 @@ type RouteParams = {
 };
 
 const GameMobile = ({}: GameMobileProps) => {
-  const dispatch = useAppDispatch();
   const params = useParams<RouteParams>();
   const playerId = useAppSelector(selectUserId);
   const gameRoomId = params.id!;
-
-  const socket = useContext(SocketContext);
 
   const game = useAppSelector(selectActiveGame);
   const gameRoom = useAppSelector((state) => selectGame(state, gameRoomId));
@@ -31,11 +25,8 @@ const GameMobile = ({}: GameMobileProps) => {
     return <div>{`Unknown game id: '${gameRoomId}'`}</div>;
   }
 
-  // TODO need to set p1 and p2 in database
   const self = gameRoom.players.find((p) => p.id === playerId);
   const opponent = gameRoom.players.find((p) => p.id !== playerId);
-
-  const playerIds = game.players.map((p) => p.id);
 
   console.log("[GameMobile]");
 
@@ -55,7 +46,6 @@ const GameMobile = ({}: GameMobileProps) => {
         player2Name={opponent?.username ?? "-"}
         player2Id={opponent?.id ?? ""}
       />
-      <GameChat gameId={gameRoomId} playerIds={playerIds} />
       <GameOverDialog />
     </Stack>
   );

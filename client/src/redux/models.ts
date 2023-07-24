@@ -13,3 +13,12 @@ export type AddShipPayload = {
   playerId: string;
   boardId: string;
 };
+
+export type AttackResultPayload = {
+  hasShip: boolean;
+  isGameOver: boolean;
+  point: Point;
+  nextPlayerId: string;
+  attackerPlayerId: string;
+  winnerPlayerId?: string;
+};

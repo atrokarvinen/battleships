@@ -49,23 +49,19 @@ export const getOpponentShipLocationsRequest = (
 export const mapGameDtoToActiveGame = (game: GameDTO) => {
   const activeGame: ActiveGameState = {
     showOpponentBoard: false,
-    boards: game.playerInfos.map((board) => ({
+    boards: game.players.map((board) => ({
       playerId: board.playerId,
       points: mapSquaresToBoardPoint(board.ownShips),
     })),
-    attacks: game.playerInfos.map((board) => ({
+    attacks: game.players.map((board) => ({
       playerId: board.playerId,
       points: mapSquaresToBoardPoint(board.attacks),
     })),
     id: game.id,
     isGameStarted: game.state === GameState.STARTED,
-    isGameOver:
-      game.winnerId === game.playerIds[0] ||
-      game.winnerId === game.playerIds[1],
-    players: game.playerIds.map((pId, index) => ({
-      id: pId,
-      username: "player #" + index,
-    })),
+    isGameOver: game.players
+      .map((p) => p.playerId)
+      .includes(game.winnerPlayerId),
     activePlayerId: game.activePlayerId,
     showGameOverDialog: false,
   };

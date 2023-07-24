@@ -18,21 +18,23 @@ import { createRandomFleetLocations } from "./shipGeneration";
 export class GameService {
   async attackSquare({ point, gameId, attackerPlayerId }: AttackSquare) {
     const { x, y } = point;
-    console.log(`Attacking point (${x}, ${y})`);
+    console.log(`Attacking point (${x}, ${y})...`);
 
     const game = await GameModel.findById(gameId);
     if (!game) {
       throw new Error(`Failed to find game '${gameId}'`);
     }
-    // TODO refactor wording
-    const infos = game.playerInfos;
-    const own = infos.find((b) => b.playerId === attackerPlayerId);
-    const enemy = infos.find((b) => b.playerId !== attackerPlayerId);
+
+    const players = game.players;
+    const own = players.find((p) => p.playerId.toString() === attackerPlayerId);
+    const enemy = players.find(
+      (p) => p.playerId.toString() !== attackerPlayerId
+    );
     if (!own) {
-      throw new Error(`Failed to find primary board of '${attackerPlayerId}'`);
+      throw new Error(`Failed to find player '${attackerPlayerId}'`);
     }
     if (!enemy) {
-      throw new Error(`Failed to find tracking board`);
+      throw new Error(`Failed to find enemy of player '${attackerPlayerId}'`);
     }
     const attackedSquareOwnSide = own.attacks.find(pointEqualsToSquare(point));
     const attackedSquareEnemySide = enemy.ownShips.find(
@@ -48,8 +50,7 @@ export class GameService {
     attackedSquareEnemySide.hasBeenAttacked = true;
 
     const shipHit = attackedSquareEnemySide.hasShip;
-    const otherPlayer = game.playerIds.find((pId) => pId !== attackerPlayerId);
-    const nextPlayerId = shipHit ? attackerPlayerId : otherPlayer!;
+    const nextPlayerId = shipHit ? attackerPlayerId : enemy.playerId.toString();
 
     game.activePlayerId = nextPlayerId;
 
@@ -103,12 +104,11 @@ export class GameService {
     const game: IGame = {
       gameRoom: new Types.ObjectId(gameRoomId),
       activePlayerId: firstPlayerId,
-      playerInfos: playerIds.map((pId) => ({
-        playerId: pId,
+      players: playerIds.map((pId) => ({
+        playerId: new Types.ObjectId(pId),
         attacks: createEmptyBoardSquares(10),
         ownShips: createEmptyBoardSquares(10),
       })),
-      playerIds,
       state: GameState.STARTED,
     };
 
@@ -122,18 +122,12 @@ export class GameService {
       throw new Error(`Game '${gameId}' was not found`);
     }
 
-    const players = game.playerIds;
-    players.forEach((playerId) => {
-      const board = game.playerInfos.find((b) => b.playerId === playerId);
-      if (!board) {
-        throw new Error(`Board of player '${playerId}' was not found`);
-      }
-
+    game.players.forEach((player) => {
       const placements = createRandomFleetLocations();
       placements.forEach((placement) => {
         const { takenPoints, isVertical, start, end } = placement;
         takenPoints.forEach((shipPoint) => {
-          const square = board.ownShips.find(pointEqualsToSquare(shipPoint));
+          const square = player.ownShips.find(pointEqualsToSquare(shipPoint));
           if (!square) {
             const { x, y } = shipPoint;
             throw new Error(`Square (${x}, ${y}) not found`);

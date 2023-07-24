@@ -50,6 +50,6 @@ export const test = base.extend<GameFixture>({
     await use(gamePlayPage);
 
     // Clean up the fixture.
-    await gamePlayPage.cleanup(gameName, player1, player2);
+    // await gamePlayPage.cleanup(gameName, player1, player2);
   },
 });

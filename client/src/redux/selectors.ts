@@ -31,8 +31,6 @@ export const selectGame = (state: RootState, id: string | undefined) =>
 // Active Game
 export const selectActiveGame = (state: RootState) => state.activeGame;
 export const selectActiveGameId = (state: RootState) => state.activeGame.id;
-export const selectActivePlayers = (state: RootState) =>
-  state.activeGame.players;
 export const selectActivePlayerId = (state: RootState) =>
   state.activeGame.activePlayerId;
 export const selectIsGameStarted = (state: RootState) =>

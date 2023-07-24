@@ -33,7 +33,7 @@ export type Square = {
   isVertical: boolean;
 };
 
-export type PlayerInformation = {
+export type PlayerDTO = {
   playerId: string;
   ownShips: Square[];
   attacks: Square[];
@@ -60,10 +60,9 @@ export enum GameState {
 export type GameDTO = {
   id: string;
   activePlayerId: string;
-  playerIds: string[];
-  winnerId: string;
+  winnerPlayerId: string;
 
   state: GameState;
 
-  playerInfos: PlayerInformation[];
+  players: PlayerDTO[];
 };

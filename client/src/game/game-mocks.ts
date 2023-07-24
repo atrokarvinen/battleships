@@ -31,13 +31,12 @@ export const handlers = [
     const response: GameDTO = {
       id: "55",
       activePlayerId: "1",
-      playerIds: ["1", "2"],
-      playerInfos: [
+      players: [
         { playerId: "1", ownShips: [defaultSquare], attacks: [defaultSquare] },
         { playerId: "2", ownShips: [defaultSquare], attacks: [defaultSquare] },
       ],
       state: GameState.UNKNOWN,
-      winnerId: "",
+      winnerPlayerId: "",
     };
     return res(ctx.json(response));
   }),

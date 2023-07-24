@@ -3,12 +3,7 @@ import { BoardPoint, Point } from "../board/point";
 import { ShipPart } from "../board/square-ship-part";
 import { AttackResult } from "../board/square/attack-result";
 import { Board } from "./boardSlice";
-import { AttackShipPayload } from "./models";
-
-export type ActiveGamePlayer = {
-  id: string;
-  username: string;
-};
+import { AttackResultPayload } from "./models";
 
 export type Attack = {
   playerId: string;
@@ -18,7 +13,6 @@ export type Attack = {
 export type ActiveGameState = {
   id: string;
 
-  players: ActiveGamePlayer[];
   activePlayerId?: string;
   winnerPlayerId?: string;
 
@@ -34,7 +28,6 @@ export type ActiveGameState = {
 
 export const initialState: ActiveGameState = {
   id: "1",
-  players: [],
   isGameStarted: false,
   isGameOver: false,
   showGameOverDialog: false,
@@ -48,97 +41,22 @@ const activeGameSlice = createSlice({
   initialState,
   name: "activeGame",
   reducers: {
-    start(state) {
-      console.log("[ActiveGame] starting new game...");
-
-      // Make up starting player
-      if (state.players.length < 2) {
-        console.log(
-          "Failed to start game. Player count < 2. Players:",
-          state.players
-        );
-        return;
-      }
-      const startingPlayer =
-        Math.random() < 0.5 ? state.players[0] : state.players[1];
-      state.activePlayerId = startingPlayer.id;
-
-      // Initialize boards
-    },
-    end(state) {},
     setActiveGame(state, action: PayloadAction<ActiveGameState>) {
       state.activePlayerId = action.payload.activePlayerId;
       state.id = action.payload.id;
-      state.players = action.payload.players;
       state.boards = action.payload.boards;
       state.isGameStarted = action.payload.isGameStarted;
       state.isGameOver = action.payload.isGameOver;
       state.attacks = action.payload.attacks;
-    },
-    swapPlayerIdToPlay(state) {
-      const playerIds = state.players.map((p) => p.id);
-      const notActivePlayer = playerIds.find(
-        (id) => id !== state.activePlayerId
-      );
-      state.activePlayerId = notActivePlayer!;
     },
     setIsGameOver(state, action: PayloadAction<boolean>) {
       const isOver = action.payload;
       console.log(`Setting game over to (${isOver})...`);
       state.isGameOver = isOver;
     },
-    setWinnerPlayerId(state, action: PayloadAction<string | undefined>) {
-      console.log(`Setting player id '${action.payload}' to winner...`);
-      state.winnerPlayerId = action.payload;
-    },
-    openGameOverDialog(state) {
-      console.log("opening game over dialog...");
-      state.showGameOverDialog = true;
-    },
     closeGameOverDialog(state) {
       console.log("closing game over dialog...");
       state.showGameOverDialog = false;
-    },
-    sinkShip: (state, action: PayloadAction<AttackShipPayload>) => {
-      const { attackerPlayerId, point: sinkPoint } = action.payload;
-      console.log("Sinking ship at ", sinkPoint);
-      // TODO refactor wording
-      const enemy = state.boards.find(
-        (board) => board.playerId !== attackerPlayerId
-      );
-      const own = state.attacks.find(
-        (board) => board.playerId === attackerPlayerId
-      );
-      if (!enemy || !own) return;
-      const enemySquare = enemy.points.find(pointMatches(sinkPoint));
-      const attackedSquare = own.points.find(pointMatches(sinkPoint));
-      if (!enemySquare || !attackedSquare) return;
-      attackedSquare.shipPart = enemySquare.shipPart;
-      attackedSquare.attackResult = AttackResult.Hit;
-      attackedSquare.defendResult = AttackResult.Hit;
-      enemySquare.attackResult = AttackResult.Hit;
-      enemySquare.defendResult = AttackResult.Hit;
-
-      console.log(`attacked square: ${ShipPart[attackedSquare.shipPart]}`);
-    },
-    missShip: (state, action: PayloadAction<AttackShipPayload>) => {
-      const { attackerPlayerId, point: missPoint } = action.payload;
-      console.log("Missing ship at ", missPoint);
-      const enemy = state.boards.find(
-        (board) => board.playerId !== attackerPlayerId
-      );
-      // TODO refactor wording
-      const own = state.attacks.find(
-        (board) => board.playerId === attackerPlayerId
-      );
-      if (!own || !enemy) return;
-      const enemySquare = enemy.points.find(pointMatches(missPoint));
-      const attackedSquare = own.points.find(pointMatches(missPoint));
-      if (!attackedSquare || !enemySquare) return;
-      attackedSquare.attackResult = AttackResult.Miss;
-      attackedSquare.defendResult = AttackResult.Miss;
-      enemySquare.attackResult = AttackResult.Miss;
-      enemySquare.defendResult = AttackResult.Miss;
     },
     setShowOpponentBoard: (state, action: PayloadAction<boolean>) => {
       state.showOpponentBoard = action.payload;
@@ -185,6 +103,40 @@ const activeGameSlice = createSlice({
           point.shipPart = ShipPart.None;
         });
     },
+    attackSquare: (state, action: PayloadAction<AttackResultPayload>) => {
+      const {
+        attackerPlayerId,
+        hasShip,
+        isGameOver,
+        nextPlayerId,
+        point,
+        winnerPlayerId,
+      } = action.payload;
+
+      console.log("Sinking ship at ", point);
+      const own = state.attacks.find((x) => x.playerId === attackerPlayerId);
+      const enemy = state.boards.find((x) => x.playerId !== attackerPlayerId);
+      if (!enemy || !own) return;
+      const enemySquare = enemy.points.find(pointMatches(point));
+      const attackedSquare = own.points.find(pointMatches(point));
+      if (!enemySquare || !attackedSquare) return;
+      // TODO Cannot show ship shape
+      attackedSquare.shipPart = enemySquare.shipPart;
+      const result = hasShip ? AttackResult.Hit : AttackResult.Miss;
+      attackedSquare.attackResult = result;
+      attackedSquare.defendResult = result;
+      enemySquare.attackResult = result;
+      enemySquare.defendResult = result;
+
+      console.log(`attacked square: ${ShipPart[attackedSquare.shipPart]}`);
+
+      state.activePlayerId = nextPlayerId;
+      state.winnerPlayerId = winnerPlayerId;
+      state.isGameOver = isGameOver;
+      if (isGameOver) {
+        state.showGameOverDialog = true;
+      }
+    },
   },
 });
 
@@ -193,19 +145,13 @@ export const pointMatches = (point: Point) => (boardPoint: BoardPoint) => {
 };
 
 export const {
-  start,
-  end,
   setActiveGame,
   setIsGameOver,
-  openGameOverDialog,
   closeGameOverDialog,
-  setWinnerPlayerId,
-  swapPlayerIdToPlay,
-  sinkShip,
-  missShip,
   setShowOpponentBoard,
   setOpponentShipLocations,
   resetOpponentShipLocations,
+  attackSquare,
 } = activeGameSlice.actions;
 
 export const activeGameReducer = activeGameSlice.reducer;

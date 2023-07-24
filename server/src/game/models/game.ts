@@ -1,13 +1,12 @@
 import { Types } from "mongoose";
 import { GameState } from "./gameState";
-import { PlayerInformation } from "./playerInformation";
+import { IPlayer, PlayerDTO } from "./player";
 
 export type IGame = {
   gameRoom: Types.ObjectId;
 
   activePlayerId?: string;
-  playerIds: string[];
-  playerInfos: PlayerInformation[];
+  players: IPlayer[];
   winnerId?: string;
 
   state: GameState;
@@ -18,7 +17,7 @@ export type GameDTO = {
   gameRoomId: string;
   activePlayerId?: string;
   playerIds: string[];
-  playerInfos: PlayerInformation[];
+  playerInfos: PlayerDTO[];
   winnerId?: string;
   state: GameState;
 };

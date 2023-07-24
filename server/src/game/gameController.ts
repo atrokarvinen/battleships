@@ -65,7 +65,8 @@ export class GameController {
         nextPlayerId: result.nextPlayerId,
         isGameOver: result.isGameOver,
         point,
-        playerId: attackerPlayerId,
+        attackerPlayerId,
+        winnerPlayerId: result.isGameOver ? attackerPlayerId : undefined,
       };
       this.io.except(req.socketId).emit("squareAttacked", attackResult);
       return res.json(attackResult);

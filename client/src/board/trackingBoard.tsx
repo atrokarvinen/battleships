@@ -1,5 +1,6 @@
 import { handleError } from "../api/errorHandling";
-import { useAppSelector } from "../redux/hooks";
+import { attackSquare } from "../redux/activeGameSlice";
+import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import {
   selectActivePlayerId,
   selectEnemyPoints,
@@ -11,7 +12,6 @@ import Square from "./square";
 import { AttackResult } from "./square/attack-result";
 import { StaticSquares } from "./staticSquares";
 import styles from "./styles.module.scss";
-import { useAttackResultHandler } from "./useAttackResultHandler";
 
 type TrackingBoardProps = {
   gameId: string;
@@ -19,7 +19,7 @@ type TrackingBoardProps = {
 };
 
 const TrackingBoard = ({ gameId, playerId }: TrackingBoardProps) => {
-  const { handleAttack } = useAttackResultHandler();
+  const dispatch = useAppDispatch();
   const points = useAppSelector((state) => selectEnemyPoints(state, playerId));
   const playerIdToPlay = useAppSelector(selectActivePlayerId);
   const isGameOver = useAppSelector(selectIsGameOver);
@@ -68,7 +68,7 @@ const TrackingBoard = ({ gameId, playerId }: TrackingBoardProps) => {
         attackerPlayerId: playerId,
         gameId,
       });
-      handleAttack(response.data);
+      dispatch(attackSquare(response.data));
     } catch (error) {
       handleError(error);
     }
