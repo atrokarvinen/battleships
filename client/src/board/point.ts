@@ -10,5 +10,4 @@ export type BoardPoint = {
   point: Point;
   shipPart: ShipPart;
   attackResult: AttackResult;
-  defendResult: AttackResult;
 };

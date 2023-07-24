@@ -1,0 +1,68 @@
+.square {
+  border: 1px solid black;
+
+  $squareSize: 30px;
+  height: $squareSize;
+  width: $squareSize;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.square:hover {
+  background-color: lightblue;
+}
+
+.ship {
+  height: 100%;
+  width: 100%;
+  background-color: black;
+}
+
+$shipMargin: 10%;
+$shipSize: 80%;
+
+.shipStartVertical {
+  margin-top: 2 * $shipMargin;
+  width: $shipSize;
+}
+.shipMiddleVertical {
+  width: $shipSize;
+}
+.shipEndVertical {
+  width: $shipSize;
+  border-radius: 0 0 50% 50%;
+}
+
+.shipStartHorizontal {
+  margin-left: $shipMargin;
+  height: $shipSize;
+}
+.shipMiddleHorizontal {
+  height: $shipSize;
+}
+.shipEndHorizontal {
+  height: $shipSize;
+  border-radius: 0 50% 50% 0;
+}
+
+.attacked {
+  background-color: red;
+}
+
+.missed {
+  background-color: gray;
+  height: 100%;
+  width: 100%;
+}
+
+.sunk {
+  background-color: orange;
+}
+
+.defendMiss {
+  height: 100%;
+  width: 100%;
+  background-color: gray;
+}

@@ -100,9 +100,11 @@ const SignUp = (props: SignUpProps) => {
             Submit
           </Button>
         </Box>
-        <Button onClick={onAutoFill} variant="outlined" sx={{ mt: 1 }}>
-          Auto-fill
-        </Button>
+        {process.env.NODE_ENV === "development" && (
+          <Button onClick={onAutoFill} variant="outlined" sx={{ mt: 1 }}>
+            Auto-fill
+          </Button>
+        )}
       </Box>
     </form>
   );

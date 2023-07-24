@@ -74,7 +74,6 @@ export const mapSquaresToBoardPoint = (squares: Square[]) => {
     const boardPoint: BoardPoint = {
       point: square.point,
       attackResult: determineAttackResult(square),
-      defendResult: determineAttackResult(square),
       shipPart: determineShipPart(square),
     };
     return boardPoint;

@@ -124,9 +124,7 @@ const activeGameSlice = createSlice({
       attackedSquare.shipPart = enemySquare.shipPart;
       const result = hasShip ? AttackResult.Hit : AttackResult.Miss;
       attackedSquare.attackResult = result;
-      attackedSquare.defendResult = result;
       enemySquare.attackResult = result;
-      enemySquare.defendResult = result;
 
       console.log(`attacked square: ${ShipPart[attackedSquare.shipPart]}`);
 

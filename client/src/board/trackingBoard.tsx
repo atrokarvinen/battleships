@@ -8,8 +8,8 @@ import {
 } from "../redux/selectors";
 import { attackSquareRequest } from "./api";
 import { Point } from "./point";
-import Square from "./square";
 import { AttackResult } from "./square/attack-result";
+import PrimarySquare from "./square/primarySquare";
 import { StaticSquares } from "./staticSquares";
 import styles from "./styles.module.scss";
 
@@ -79,7 +79,7 @@ const TrackingBoard = ({ gameId, playerId }: TrackingBoardProps) => {
       <StaticSquares />
       <div className={styles.playArea}>
         {points.map((point, index) => (
-          <Square key={index} squareClicked={squareClicked} {...point} />
+          <PrimarySquare key={index} squareClicked={squareClicked} {...point} />
         ))}
       </div>
     </div>

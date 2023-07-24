@@ -29,7 +29,7 @@ const PlayerArea = ({
       <Stack direction={sm ? "column" : "row"} spacing={2}>
         <Box>
           <PlayerName name={player1Name} id={player1Id} />
-          <PrimaryBoard gameId={gameId} playerId={player1Id} />
+          <PrimaryBoard playerId={player1Id} />
         </Box>
         <Box>
           <PlayerName name={player2Name} id={player2Id} />
