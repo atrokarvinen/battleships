@@ -68,7 +68,8 @@ const TrackingBoard = ({ gameId, playerId }: TrackingBoardProps) => {
         attackerPlayerId: playerId,
         gameId,
       });
-      dispatch(attackSquare(response.data));
+      const payload = { ...response.data, isOwnGuess: true };
+      dispatch(attackSquare(payload));
     } catch (error) {
       handleError(error);
     }

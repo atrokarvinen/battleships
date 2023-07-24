@@ -65,4 +65,6 @@ export type GameDTO = {
   state: GameState;
 
   players: PlayerDTO[];
+  primaryBoard: any;
+  trackingBoard: any;
 };

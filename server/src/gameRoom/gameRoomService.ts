@@ -1,10 +1,14 @@
 import { Types } from "mongoose";
 import { GameRoom, IGameRoom } from "../database/gameRoom";
 import { User, UserDTO } from "../database/user";
+import { GameOptions } from "../game/models";
 import { GameDTO } from "../game/models/game";
+import { GameCreationService } from "../game/services/gameCreationService";
 import { ApiError } from "../middleware/errorHandleMiddleware";
 
 export class GameRoomService {
+  private gameCreationService: GameCreationService = new GameCreationService();
+
   async getGameRooms() {
     const games = await GameRoom.find({}).populate("players", "username");
     const gameDtos: IGameRoom[] = games.map((g) => g.toObject());
@@ -39,8 +43,18 @@ export class GameRoomService {
   }
 
   async createGameRoom(payload: IGameRoom) {
-    const createdGame = await GameRoom.create(payload);
-    const gameDto: IGameRoom = createdGame.toObject();
+    const createdGameRoom = await GameRoom.create(payload);
+
+    // Initialize an empty game to the newly created room
+    const options: GameOptions = {
+      gameRoomId: createdGameRoom.id,
+      playerIds: [],
+    };
+    const newGame = await this.gameCreationService.createEmptyGame(options);
+    createdGameRoom.game = new Types.ObjectId(newGame.id);
+    const initializedGameRoom = await createdGameRoom.save();
+
+    const gameDto: IGameRoom = initializedGameRoom.toObject();
     return gameDto;
   }
 

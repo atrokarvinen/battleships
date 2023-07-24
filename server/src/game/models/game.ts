@@ -16,8 +16,7 @@ export type GameDTO = {
   id: string;
   gameRoomId: string;
   activePlayerId?: string;
-  playerIds: string[];
-  playerInfos: PlayerDTO[];
+  players: PlayerDTO[];
   winnerId?: string;
   state: GameState;
 };

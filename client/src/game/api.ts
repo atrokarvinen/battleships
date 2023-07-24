@@ -49,14 +49,14 @@ export const getOpponentShipLocationsRequest = (
 export const mapGameDtoToActiveGame = (game: GameDTO) => {
   const activeGame: ActiveGameState = {
     showOpponentBoard: false,
-    boards: game.players.map((board) => ({
-      playerId: board.playerId,
-      points: mapSquaresToBoardPoint(board.ownShips),
-    })),
-    attacks: game.players.map((board) => ({
-      playerId: board.playerId,
-      points: mapSquaresToBoardPoint(board.attacks),
-    })),
+    primaryBoard: {
+      playerId: "not needed",
+      points: mapSquaresToBoardPoint(game.primaryBoard),
+    },
+    trackingBoard: {
+      playerId: "not needed",
+      points: mapSquaresToBoardPoint(game.trackingBoard),
+    },
     id: game.id,
     isGameStarted: game.state === GameState.STARTED,
     isGameOver: game.players
@@ -70,6 +70,7 @@ export const mapGameDtoToActiveGame = (game: GameDTO) => {
 };
 
 export const mapSquaresToBoardPoint = (squares: Square[]) => {
+  if (!squares) return [];
   const boardPoints: BoardPoint[] = squares.map((square) => {
     const boardPoint: BoardPoint = {
       point: square.point,
@@ -108,6 +109,9 @@ const determineShipPart = (square: Square): ShipPart => {
     } else if (square.ship === ApiShipPart.END) {
       return ShipPart.EndHorizontal;
     }
+  }
+  if (square.hasShip && square.hasBeenAttacked) {
+    return ShipPart.EnemyExplosion;
   }
   return ShipPart.None;
 };

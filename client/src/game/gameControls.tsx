@@ -34,7 +34,8 @@ const GameControls = ({ gameRoomId, playerIds }: GameControlsProps) => {
 
   async function endGame() {
     const response = await endGameRequest({ gameRoomId });
-    // dispatch(end());
+    const activeGame = mapGameDtoToActiveGame(response.data);
+    dispatch(setActiveGame(activeGame));
   }
 
   const handleConfirm = async () => {

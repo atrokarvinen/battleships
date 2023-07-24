@@ -54,17 +54,13 @@ export const selectWinnerPlayer = (state: RootState) => {
 };
 
 // Board
-export const selectPoints = (state: RootState, playerId: string) => {
-  const board = state.activeGame.boards.find(
-    (board) => board.playerId === playerId
-  );
+export const selectOwnPoints = (state: RootState, playerId: string) => {
+  const board = state.activeGame.primaryBoard;
   if (!board) return [];
   return board.points;
 };
 export const selectEnemyPoints = (state: RootState, playerId: string) => {
-  const board = state.activeGame.attacks.find(
-    (board) => board.playerId === playerId
-  );
+  const board = state.activeGame.trackingBoard;
   if (!board) return [];
   return board.points;
 };

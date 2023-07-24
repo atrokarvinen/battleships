@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import { Server } from "socket.io";
 import { GameRoomService } from "../gameRoom/gameRoomService";
 import { StartGamePayload } from "./api/startGamePayload";
+import { GameDTO } from "./models";
 import { GameOptions } from "./models/gameOptions";
 import { GameService } from "./services/gameService";
 
@@ -31,15 +32,43 @@ export class GameController {
         console.log("Resetting old game");
         game = await this.gameDbService.resetGame(options);
       }
-      const startedGame = await this.gameDbService.randomizePlacements(game.id);
+      const startedGame = await this.gameDbService.startWithRandomPlacements(
+        game.id
+      );
+
+      // Return only information that is visible to the player
+      const requester = startedGame.players.find(
+        (p) => p.playerId === req.userId
+      );
+      const opponent = startedGame.players.find(
+        (p) => p.playerId !== req.userId
+      );
+
+      const selfInfo = this.filterGameInfo(requester!.playerId, startedGame);
+      const opponentInfo = this.filterGameInfo(opponent!.playerId, startedGame);
 
       console.log("Started game:", startedGame.id);
-      this.io.except(req.socketId).emit("gameStarted", startedGame);
-      return res.json(startedGame);
+      this.io.except(req.socketId).emit("gameStarted", opponentInfo);
+      return res.json(selfInfo);
     } catch (error) {
       next(error);
     }
   }
+
+  filterGameInfo = (requesterId: string, gameDto: GameDTO) => {
+    const requester = gameDto.players.find((p) => p.playerId === requesterId);
+    const notPlayingInGame = !requester;
+    if (notPlayingInGame) {
+      return gameDto;
+    }
+    const filteredGameDto = {
+      ...gameDto,
+      players: [],
+      primaryBoard: requester.ownShips,
+      trackingBoard: requester.attacks,
+    };
+    return filteredGameDto;
+  };
 
   async confirmPlacements(req: Request, res: Response, next: NextFunction) {
     try {
@@ -87,7 +116,11 @@ export class GameController {
   async endGame(req: Request, res: Response, next: NextFunction) {
     try {
       const { gameRoomId } = req.body;
-      const game = await this.gameDbService.deleteGamesFromRoom(gameRoomId);
+      const currentGame = await this.gameRoomService.getGameInRoom(gameRoomId);
+      const game = await this.gameDbService.resetGame({
+        gameRoomId,
+        playerIds: currentGame!.players.map((p) => p.playerId),
+      });
       res.json(game);
     } catch (error) {
       next(error);

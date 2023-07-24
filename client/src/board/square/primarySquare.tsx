@@ -35,6 +35,8 @@ const PrimarySquare = ({
         return styles.shipMiddleVertical;
       case ShipPart.EndVertical:
         return styles.shipEndVertical;
+      case ShipPart.EnemyExplosion:
+        return styles.enemyExplosion;
       default:
         return "";
     }

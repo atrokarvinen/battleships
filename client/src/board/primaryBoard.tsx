@@ -1,5 +1,5 @@
 import { useAppSelector } from "../redux/hooks";
-import { selectPoints } from "../redux/selectors";
+import { selectOwnPoints } from "../redux/selectors";
 import PrimarySquare from "./square/primarySquare";
 import { StaticSquares } from "./staticSquares";
 import styles from "./styles.module.scss";
@@ -9,7 +9,7 @@ type PrimaryBoardProps = {
 };
 
 const PrimaryBoard = ({ playerId }: PrimaryBoardProps) => {
-  const points = useAppSelector((state) => selectPoints(state, playerId));
+  const points = useAppSelector((state) => selectOwnPoints(state, playerId));
 
   const squareClicked = () => {
     console.log("clicked primary board. nothing happens");

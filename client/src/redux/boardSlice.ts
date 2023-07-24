@@ -1,6 +1,6 @@
 import type { PayloadAction } from "@reduxjs/toolkit";
 import { createSlice } from "@reduxjs/toolkit";
-import { BoardPoint, Point } from "../board/point";
+import { BoardPoint } from "../board/point";
 import { generateEmptyBoardPoints } from "../board/redux/board-utils";
 import { ShipPart } from "../board/square-ship-part";
 import { AttackResult } from "../board/square/attack-result";
@@ -32,7 +32,6 @@ export const initialState: BoardState = {
 
 export const boardSlice = createSlice({
   name: "board",
-  // `createSlice` will infer the state type from the `initialState` argument
   initialState,
   reducers: {
     addShip: (state, action: PayloadAction<AddShipPayload>) => {
@@ -49,17 +48,12 @@ export const boardSlice = createSlice({
       state.boards.forEach((board) => {
         board.points.forEach((p) => {
           p.attackResult = AttackResult.None;
-          p.defendResult = AttackResult.None;
           p.shipPart = ShipPart.None;
         });
       });
     },
   },
 });
-
-const pointMatches = (point: Point) => (boardPoint: BoardPoint) => {
-  return boardPoint.point.x === point.x && boardPoint.point.y === point.y;
-};
 
 export const { addShip, resetBoard, attackShip, setBoardState } =
   boardSlice.actions;

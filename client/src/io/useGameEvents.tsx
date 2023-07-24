@@ -25,7 +25,8 @@ export const useGameEvents = (socket: Socket) => {
     });
     socket.on("squareAttacked", (attackResult) => {
       console.log("[Socket client] square attacked:", attackResult);
-      dispatch(attackSquare(attackResult));
+      const payload = { ...attackResult, isOwnGuess: false };
+      dispatch(attackSquare(payload));
     });
   };
 

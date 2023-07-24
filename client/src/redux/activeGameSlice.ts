@@ -20,8 +20,10 @@ export type ActiveGameState = {
   isGameOver: boolean;
   showGameOverDialog: boolean;
 
-  boards: Board[];
-  attacks: Attack[];
+  // boards: Board[];
+  // attacks: Attack[];
+  primaryBoard: Board;
+  trackingBoard: Board;
 
   showOpponentBoard: boolean;
 };
@@ -31,8 +33,11 @@ export const initialState: ActiveGameState = {
   isGameStarted: false,
   isGameOver: false,
   showGameOverDialog: false,
-  boards: [],
-  attacks: [],
+  // boards: [],
+  // attacks: [],
+
+  primaryBoard: undefined as any,
+  trackingBoard: undefined as any,
 
   showOpponentBoard: false,
 };
@@ -44,10 +49,15 @@ const activeGameSlice = createSlice({
     setActiveGame(state, action: PayloadAction<ActiveGameState>) {
       state.activePlayerId = action.payload.activePlayerId;
       state.id = action.payload.id;
-      state.boards = action.payload.boards;
       state.isGameStarted = action.payload.isGameStarted;
       state.isGameOver = action.payload.isGameOver;
-      state.attacks = action.payload.attacks;
+
+      // state.boards = action.payload.boards;
+      // state.attacks = action.payload.attacks;
+
+      // TODO Not implemented
+      state.primaryBoard = action.payload.primaryBoard;
+      state.trackingBoard = action.payload.trackingBoard;
     },
     setIsGameOver(state, action: PayloadAction<boolean>) {
       const isOver = action.payload;
@@ -69,10 +79,7 @@ const activeGameSlice = createSlice({
       }>
     ) => {
       const { points, playerId } = action.payload;
-      const opponent = state.attacks.find(
-        (board) => board.playerId !== playerId
-      );
-      if (!opponent) return;
+      const opponent = state.trackingBoard;
       opponent.points.forEach((point) => {
         const foundPoint = points.find(
           (p) => p.point.x === point.point.x && p.point.y === point.point.y
@@ -83,20 +90,11 @@ const activeGameSlice = createSlice({
           foundPoint.shipPart === ShipPart.Unknown
         )
           return;
-        console.log(
-          "setting point (%d,%d) to %s",
-          point.point.x,
-          point.point.y,
-          ShipPart[foundPoint.shipPart]
-        );
         point.shipPart = foundPoint.shipPart;
       });
     },
     resetOpponentShipLocations: (state, action: PayloadAction<string>) => {
-      const opponent = state.attacks.find(
-        (board) => board.playerId !== action.payload
-      );
-      if (!opponent) return;
+      const opponent = state.trackingBoard;
       opponent.points
         .filter((p) => p.attackResult === AttackResult.None)
         .forEach((point) => {
@@ -105,28 +103,29 @@ const activeGameSlice = createSlice({
     },
     attackSquare: (state, action: PayloadAction<AttackResultPayload>) => {
       const {
-        attackerPlayerId,
         hasShip,
         isGameOver,
         nextPlayerId,
         point,
         winnerPlayerId,
+        isOwnGuess,
       } = action.payload;
 
       console.log("Sinking ship at ", point);
-      const own = state.attacks.find((x) => x.playerId === attackerPlayerId);
-      const enemy = state.boards.find((x) => x.playerId !== attackerPlayerId);
-      if (!enemy || !own) return;
-      const enemySquare = enemy.points.find(pointMatches(point));
-      const attackedSquare = own.points.find(pointMatches(point));
-      if (!enemySquare || !attackedSquare) return;
-      // TODO Cannot show ship shape
-      attackedSquare.shipPart = enemySquare.shipPart;
-      const result = hasShip ? AttackResult.Hit : AttackResult.Miss;
-      attackedSquare.attackResult = result;
-      enemySquare.attackResult = result;
+      const board = isOwnGuess ? state.trackingBoard : state.primaryBoard;
+      const attackedSquare = board.points.find(pointMatches(point));
+      if (!attackedSquare) return;
 
-      console.log(`attacked square: ${ShipPart[attackedSquare.shipPart]}`);
+      let shipPart = ShipPart.None;
+      if (hasShip && isOwnGuess) {
+        shipPart = ShipPart.EnemyExplosion;
+      } else if (hasShip && !isOwnGuess) {
+        shipPart = attackedSquare.shipPart;
+      }
+      attackedSquare.shipPart = shipPart;
+      attackedSquare.attackResult = hasShip
+        ? AttackResult.Hit
+        : AttackResult.Miss;
 
       state.activePlayerId = nextPlayerId;
       state.winnerPlayerId = winnerPlayerId;

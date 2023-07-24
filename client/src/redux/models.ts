@@ -21,4 +21,6 @@ export type AttackResultPayload = {
   nextPlayerId: string;
   attackerPlayerId: string;
   winnerPlayerId?: string;
+
+  isOwnGuess: boolean;
 };

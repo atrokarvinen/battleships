@@ -43,7 +43,21 @@ export class GameRoomController {
           .json({ error: `Game in game room '${gameRoomId}' not found` });
       }
       console.log(`Found game in game room '${gameRoomId}'`);
-      return res.json(gameDto);
+
+      // Return only information that is visible to the player
+      const requester = gameDto.players.find((p) => p.playerId === req.userId);
+      const notPlayingInGame = !requester;
+      if (notPlayingInGame) {
+        return res.json(gameDto);
+      }
+      const filteredGameDto = {
+        ...gameDto,
+        players: [],
+        primaryBoard: requester.ownShips,
+        trackingBoard: requester.attacks,
+      };
+
+      return res.json(filteredGameDto);
     } catch (error) {
       next(error);
     }

@@ -6,16 +6,13 @@ import {
   GameOptions,
   GameState,
   IGame,
-  ShipPart,
 } from "../models";
-import {
-  createEmptyBoardSquares,
-  pointEqualsToSquare,
-  pointsEqual,
-} from "./board-utils";
-import { createRandomFleetLocations } from "./shipGeneration";
+import { pointEqualsToSquare } from "./board-utils";
+import { GameCreationService } from "./gameCreationService";
 
 export class GameService {
+  private gameCreationService: GameCreationService = new GameCreationService();
+
   async attackSquare({ point, gameId, attackerPlayerId }: AttackSquare) {
     const { x, y } = point;
     console.log(`Attacking point (${x}, ${y})...`);
@@ -43,8 +40,6 @@ export class GameService {
     if (!attackedSquareOwnSide || !attackedSquareEnemySide) {
       throw new Error(`Failed to find square at point '${point}'`);
     }
-    attackedSquareOwnSide.ship = attackedSquareEnemySide.ship;
-    attackedSquareOwnSide.isVertical = attackedSquareEnemySide.isVertical;
     attackedSquareOwnSide.hasShip = attackedSquareEnemySide.hasShip;
     attackedSquareOwnSide.hasBeenAttacked = true;
     attackedSquareEnemySide.hasBeenAttacked = true;
@@ -70,15 +65,12 @@ export class GameService {
     return { shipHit, nextPlayerId, isGameOver };
   }
 
-  async createGame(game: IGame) {
-    const created = await GameModel.create(game);
-    const gameDTO: GameDTO = created.toObject();
-    return gameDTO;
+  createGame(game: IGame) {
+    return this.gameCreationService.createGame(game);
   }
 
-  async createEmptyGame(options: GameOptions) {
-    const emptyGame = this.generateEmptyGame(options);
-    return await this.createGame(emptyGame);
+  createEmptyGame(options: GameOptions) {
+    return this.gameCreationService.createEmptyGame(options);
   }
 
   async resetGame(options: GameOptions) {
@@ -88,9 +80,19 @@ export class GameService {
     if (!game) {
       throw new Error(`Game with game room id '${gameRoomId}' was not found`);
     }
-    const emptyGame = this.generateEmptyGame(options);
-    const updatedGame = await game.updateOne(emptyGame);
-    const gameDto: GameDTO = updatedGame.toObject();
+    const emptyGame = this.gameCreationService.generateEmptyGame(options);
+    await game.updateOne(emptyGame);
+
+    game.activePlayerId = undefined;
+    await game.save();
+
+    const gameDto = await this.getGame(game.id);
+    return gameDto!;
+  }
+
+  async getGame(gameId: string) {
+    const game = await GameModel.findById(gameId);
+    const gameDto: GameDTO | undefined = game?.toObject();
     return gameDto;
   }
 
@@ -100,52 +102,17 @@ export class GameService {
     console.log(`Deleted (${result.deletedCount}) games from game room`);
   }
 
-  generateEmptyGame({ gameRoomId, playerIds, firstPlayerId }: GameOptions) {
-    const game: IGame = {
-      gameRoom: new Types.ObjectId(gameRoomId),
-      activePlayerId: firstPlayerId,
-      players: playerIds.map((pId) => ({
-        playerId: new Types.ObjectId(pId),
-        attacks: createEmptyBoardSquares(10),
-        ownShips: createEmptyBoardSquares(10),
-      })),
-      state: GameState.STARTED,
-    };
-
-    return game;
-  }
-
-  async randomizePlacements(gameId: string) {
+  async startWithRandomPlacements(gameId: string) {
     const game = await GameModel.findById(gameId);
 
     if (!game) {
       throw new Error(`Game '${gameId}' was not found`);
     }
 
-    game.players.forEach((player) => {
-      const placements = createRandomFleetLocations();
-      placements.forEach((placement) => {
-        const { takenPoints, isVertical, start, end } = placement;
-        takenPoints.forEach((shipPoint) => {
-          const square = player.ownShips.find(pointEqualsToSquare(shipPoint));
-          if (!square) {
-            const { x, y } = shipPoint;
-            throw new Error(`Square (${x}, ${y}) not found`);
-          }
-          const isStart = pointsEqual(start, shipPoint);
-          const isEnd = pointsEqual(end, shipPoint);
+    this.gameCreationService.randomizePlacements(game);
+    game.state = GameState.STARTED;
 
-          // Mutate square
-          square.hasShip = true;
-          square.ship = isStart
-            ? ShipPart.START
-            : isEnd
-            ? ShipPart.END
-            : ShipPart.MIDDLE;
-          square.isVertical = isVertical;
-        });
-      });
-    });
+    game.activePlayerId = game.players[0].playerId.toString();
 
     const updated = await game.save();
     const gameDTO: GameDTO = updated.toObject();

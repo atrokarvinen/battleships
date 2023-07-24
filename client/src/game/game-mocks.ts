@@ -37,6 +37,8 @@ export const handlers = [
       ],
       state: GameState.UNKNOWN,
       winnerPlayerId: "",
+      primaryBoard: {},
+      trackingBoard: {},
     };
     return res(ctx.json(response));
   }),
