@@ -1,7 +1,11 @@
-import { Player } from "../redux/playerSlice";
 
 export type GameRoom = {
   id: string;
   title: string;
-  players: Player[];
+  players: GameRoomPlayer[];
+};
+
+export type GameRoomPlayer = {
+  id: string;
+  username: string;
 };

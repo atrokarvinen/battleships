@@ -1,5 +1,11 @@
-import { Schema, model, Types } from "mongoose";
+import { Schema, Types, model } from "mongoose";
 import { toObjectOptions } from "./dbOptions";
+
+export type UserDTO = {
+  id: string;
+  username: string;
+  gamesJoined: string[];
+};
 
 export interface IUser {
   id?: string;
@@ -7,14 +13,14 @@ export interface IUser {
   username: string;
   password: string;
 
-  games: Types.ObjectId[];
+  gamesJoined: Types.ObjectId[];
 }
 
 const userSchema = new Schema<IUser>(
   {
     username: { type: String, required: true },
     password: { type: String, required: true },
-    games: [{ ref: "game", type: Schema.Types.ObjectId }],
+    gamesJoined: [{ ref: "game", type: Schema.Types.ObjectId }],
   },
   { toObject: toObjectOptions }
 );

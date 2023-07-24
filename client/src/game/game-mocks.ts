@@ -20,8 +20,8 @@ export const handlers = [
     const response: GameRoom = {
       id: "123",
       players: [
-        { id: "1", username: "Player 1", gamesJoined: [] },
-        { id: "2", username: "Player 2", gamesJoined: [] },
+        { id: "1", username: "Player 1" },
+        { id: "2", username: "Player 2" },
       ],
       title: "Test Game Room",
     };

@@ -29,6 +29,7 @@ export class AuthController {
       const createdUser = await User.create({
         username: username,
         password: hashedPassword,
+        gamesJoined: [],
       });
 
       console.log(`Signed up user '${username}'.`);
@@ -69,7 +70,11 @@ export class AuthController {
           sameSite: "none",
           secure: true,
         })
-        .json({ username: username, userId: user.id, gamesJoined: [] });
+        .json({
+          username: username,
+          userId: user.id,
+          gamesJoined: user.gamesJoined,
+        });
     } catch (error) {
       next(error);
     }

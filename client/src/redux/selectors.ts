@@ -3,14 +3,14 @@ import { BoardPoint } from "../board/point";
 import { RootState } from "./store";
 
 // Players
-export const selectPlayers = (state: RootState) => state.players.players;
+export const selectPlayers = (state: RootState) =>
+  Object.values(state.players.byId);
 export const selectPlayersInGame = (state: RootState, gameId: string) => {
   console.log("Selecting players in game...");
-  return state.players.players.filter((p) =>
-    p.gamesJoined.some((id) => id === gameId)
-  );
+  const players = Object.values(state.players.byId);
+  return players.filter((p) => p.gamesJoined.some((id) => id === gameId));
 };
-export const selectPlayerIds = (state: RootState) => state.players.playerIds;
+export const selectPlayerIds = (state: RootState) => state.players.allIds;
 
 // Chat
 export const selectChatMessages = (state: RootState) => state.chat.messages;
@@ -46,12 +46,12 @@ export const selectShowOpponentShips = (state: RootState) =>
 
 // Players
 export const selectPlayerById = (state: RootState, id: string) => {
-  const player = state.players.players.find((p) => p.id === id);
-  return player;
+  return state.players.byId[id];
 };
 export const selectWinnerPlayer = (state: RootState) => {
   const winnerId = state.activeGame.winnerPlayerId;
-  const winner = state.players.players.find((p) => p.id === winnerId);
+  if (!winnerId) return undefined;
+  const winner = state.players.byId[winnerId];
   return winner;
 };
 

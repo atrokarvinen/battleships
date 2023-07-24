@@ -1,6 +1,6 @@
 import { Types } from "mongoose";
 import { GameRoom, IGameRoom } from "../database/gameRoom";
-import { User } from "../database/user";
+import { User, UserDTO } from "../database/user";
 import { GameDTO } from "../game/models/game";
 import { ApiError } from "../middleware/errorHandleMiddleware";
 
@@ -58,7 +58,7 @@ export class GameRoomService {
       throw new ApiError(`Game room '${gameRoomId}' not found`, 404);
     }
 
-    const user = await User.findById(userId);
+    const user = await User.findById(userId).select("-password");
     if (!user) {
       throw new ApiError(`User '${userId}' not found`, 404);
     }
@@ -67,10 +67,12 @@ export class GameRoomService {
     gameRoom.players.push(user.id);
     await gameRoom.save();
 
-    user.games.push(gameRoom.id);
+    user.gamesJoined.push(gameRoom.id);
     await user.save();
 
     console.log(`User '${user.username}' joined game ${gameRoom.title}`);
+    const joinedPlayer: UserDTO = user.toObject();
+    return joinedPlayer;
   }
 
   async leaveGame(gameRoomId: string, userId: string) {
@@ -89,7 +91,7 @@ export class GameRoomService {
     gameRoom.players = gameRoom.players.filter((p) => !p.equals(user.id));
     await gameRoom.save();
 
-    user.games = user.games.filter((g) => !g.equals(gameRoom.id));
+    user.gamesJoined = user.gamesJoined.filter((g) => !g.equals(gameRoom.id));
     await user.save();
 
     console.log(`User '${userId}' left game ${gameRoom.title}`);

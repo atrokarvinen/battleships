@@ -24,3 +24,7 @@ export const joinGameRequest = (gameId: string) => {
 export const leaveGameRequest = (gameId: string) => {
   return axios.post("/game-room/player/leave", { gameId });
 };
+
+export const getAllPlayersRequest = () => {
+  return axios.get("/player");
+};

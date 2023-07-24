@@ -8,7 +8,7 @@ import {
 } from "../redux/gameRoomSlice";
 import { useAppDispatch } from "../redux/hooks";
 import { addPlayerToGame, removePlayerFromGame } from "../redux/playerSlice";
-import { GamePlayerChangedPayload } from "./models";
+import { PlayerJoinedPayload, PlayerLeftPayload } from "./models";
 
 export const useGameRoomEvents = (socket: Socket) => {
   const dispatch = useAppDispatch();
@@ -30,13 +30,13 @@ export const useGameRoomEvents = (socket: Socket) => {
       console.log(`Game '${gameId}' deleted`);
       dispatch(deleteGameRoom(gameId));
     });
-    socket.on("gameJoined", (payload: GamePlayerChangedPayload) => {
-      const { gameId, playerId } = payload;
-      console.log(`Player ${playerId} joined game ${gameId}`);
+    socket.on("gameJoined", (payload: PlayerJoinedPayload) => {
+      const { gameId, player } = payload;
+      console.log(`Player ${player.username} joined game ${gameId}`);
       dispatch(joinGame(payload));
-      dispatch(addPlayerToGame(payload));
+      dispatch(addPlayerToGame({ gameId, playerId: player.id }));
     });
-    socket.on("gameLeft", (payload: GamePlayerChangedPayload) => {
+    socket.on("gameLeft", (payload: PlayerLeftPayload) => {
       const { gameId, playerId } = payload;
       console.log(`Player ${playerId} left game ${gameId}`);
       dispatch(leaveGame(payload));

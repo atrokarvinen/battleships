@@ -76,9 +76,9 @@ export class GameRoomController {
       const gameRoomId = req.body.gameId;
       const userId = req.userId;
 
-      await this.gameRoomService.joinGame(gameRoomId, userId);
+      const player = await this.gameRoomService.joinGame(gameRoomId, userId);
 
-      const response = { gameId: gameRoomId, playerId: userId };
+      const response = { gameId: gameRoomId, player };
       this.io.except(req.socketId).emit("gameJoined", response);
       return res.json(response);
     } catch (error) {

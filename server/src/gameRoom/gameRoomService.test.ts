@@ -58,7 +58,7 @@ it("joins player to game room", async () => {
   expect(playerIds).toContain(userId);
 
   const joiningPlayer = await User.findById(userId);
-  const gameRoomIds = joiningPlayer?.games.map((g) => g.toString());
+  const gameRoomIds = joiningPlayer?.gamesJoined.map((g) => g.toString());
   expect(gameRoomIds).toContain(gameRoomId);
 });
 

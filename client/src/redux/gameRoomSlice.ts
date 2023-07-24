@@ -1,7 +1,7 @@
 import type { PayloadAction } from "@reduxjs/toolkit";
 import { createSlice } from "@reduxjs/toolkit";
 import _ from "lodash";
-import { GamePlayerChangedPayload } from "../io/models";
+import { PlayerJoinedPayload, PlayerLeftPayload } from "../io/models";
 import { GameRoom } from "../lobby/gameRoom";
 
 export interface GameState {
@@ -37,18 +37,17 @@ export const gameRoomSlice = createSlice({
       state.byId = _.omitBy(state.byId, (x) => x.id === gameId);
       state.allIds = state.allIds.filter((id) => id !== gameId);
     },
-    joinGame: (state, action: PayloadAction<GamePlayerChangedPayload>) => {
-      const { gameId, playerId } = action.payload;
+    joinGame: (state, action: PayloadAction<PlayerJoinedPayload>) => {
+      const { gameId, player } = action.payload;
       console.log("[Redux] Joining game " + gameId);
       const game = state.byId[gameId];
       if (!game) return;
       game.players.push({
-        id: playerId,
-        username: "username",
-        gamesJoined: [gameId],
+        id: player.id,
+        username: player.username,
       });
     },
-    leaveGame: (state, action: PayloadAction<GamePlayerChangedPayload>) => {
+    leaveGame: (state, action: PayloadAction<PlayerLeftPayload>) => {
       const { gameId, playerId } = action.payload;
       console.log("[Redux] Leaving game " + gameId);
       const game = state.byId[gameId];

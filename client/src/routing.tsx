@@ -1,6 +1,7 @@
 import { Box } from "@mui/material";
 import { Navigate, Route, Routes } from "react-router";
 import { BrowserRouter } from "react-router-dom";
+import { useGetInitialData } from "./api/useGetInitialData";
 import CookieTest from "./auth/cookie-test";
 import Login from "./auth/login";
 import ProtectedRoute from "./auth/protectedRoute";
@@ -13,6 +14,8 @@ import SocketTest from "./test/socket-test";
 type RoutingProps = {};
 
 const Routing = ({}: RoutingProps) => {
+  useGetInitialData();
+
   return (
     <BrowserRouter>
       <Navigation />
@@ -28,7 +31,6 @@ const Routing = ({}: RoutingProps) => {
           <Route path="/mui-test" element={<MuiTest />} />
           <Route path="/socket" element={<SocketTest />} />
           <Route path="/" element={<Navigate replace to="/login" />} />
-          {/* <Route path="/" element={<Navigate replace to="/socket" />} /> */}
         </Routes>
       </Box>
     </BrowserRouter>

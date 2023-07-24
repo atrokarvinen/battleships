@@ -1,4 +1,5 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
+import _ from "lodash";
 
 export type Player = {
   id: string;
@@ -7,8 +8,8 @@ export type Player = {
 };
 
 export type PlayerState = {
-  playerIds: string[];
-  players: Player[];
+  byId: { [id: string]: Player };
+  allIds: string[];
 };
 
 export type GameJoinedPayload = {
@@ -17,8 +18,8 @@ export type GameJoinedPayload = {
 };
 
 export const initialState: PlayerState = {
-  playerIds: [],
-  players: [],
+  byId: {},
+  allIds: [],
 };
 
 const playerSlice = createSlice({
@@ -27,23 +28,30 @@ const playerSlice = createSlice({
   reducers: {
     addPlayer(state, action: PayloadAction<Player>) {
       const player = action.payload;
-      state.playerIds.push(player.id);
-      state.players.push(player);
+      state.byId[player.id] = player;
+      if (!state.allIds.find((id) => id === player.id)) {
+        state.allIds.push(player.id);
+      }
+    },
+    addPlayers(state, action: PayloadAction<Player[]>) {
+      const players = action.payload;
+      state.byId = _.keyBy(players, (player) => player.id);
+      state.allIds = players.map((player) => player.id);
     },
     removePlayer(state, action: PayloadAction<string>) {
       const playerId = action.payload;
-      state.playerIds = state.playerIds.filter((id) => id !== playerId);
-      state.players = state.players.filter((p) => p.id !== playerId);
+      state.byId = _.omitBy(state.byId, (x) => x.id === playerId);
+      state.allIds = state.allIds.filter((id) => id !== playerId);
     },
     addPlayerToGame(state, action: PayloadAction<GameJoinedPayload>) {
       const { gameId, playerId } = action.payload;
-      const player = state.players.find((p) => p.id === playerId);
+      const player = state.byId[playerId];
       if (!player) return state;
       player.gamesJoined.push(gameId);
     },
     removePlayerFromGame(state, action: PayloadAction<GameJoinedPayload>) {
       const { gameId, playerId } = action.payload;
-      const player = state.players.find((p) => p.id === playerId);
+      const player = state.byId[playerId];
       if (!player) return state;
       player.gamesJoined = player.gamesJoined.filter((id) => id !== gameId);
     },
@@ -52,6 +60,7 @@ const playerSlice = createSlice({
 
 export const {
   addPlayer,
+  addPlayers,
   removePlayer,
   addPlayerToGame,
   removePlayerFromGame,

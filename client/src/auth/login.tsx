@@ -46,14 +46,8 @@ const Login = ({}: LoginProps) => {
       const response = await signInRequest(data);
       console.log(`sign in response data:`, response.data);
 
-      const { userId, username } = response.data;
-      dispatch(
-        addPlayer({
-          id: userId,
-          username: username,
-          gamesJoined: response.data.gamesJoined,
-        })
-      );
+      const { userId, username, gamesJoined } = response.data;
+      dispatch(addPlayer({ id: userId, username, gamesJoined }));
       dispatch(login({ userId, username, isGuest: false }));
 
       const redirectUrl = location.state?.deniedRoute ?? "/lobby";
