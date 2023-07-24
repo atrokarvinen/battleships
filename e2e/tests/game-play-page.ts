@@ -10,6 +10,8 @@ import {
 import { defaultPassword } from "./defaults";
 import { GameSeed } from "./models";
 
+export const STANDARD_SHIP_SQUARE_COUNT = 26;
+
 export class GamePlayPage {
   readonly page: Page;
   readonly context: BrowserContext;
@@ -44,7 +46,12 @@ export class GamePlayPage {
   startGame = async () => {
     await expect(this.page.getByTestId("ship-square")).toBeHidden();
     await this.page.getByRole("button", { name: /start/i }).click();
-    await expect(this.page.getByTestId("ship-square")).toHaveCount(2);
+  };
+
+  verifyGameHasStarted = async () => {
+    await expect(this.page.getByTestId("ship-square")).toHaveCount(
+      STANDARD_SHIP_SQUARE_COUNT
+    );
   };
 
   addPlayerToGame = async (username: string, gameRoomId: string) => {

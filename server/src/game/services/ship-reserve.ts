@@ -8,14 +8,14 @@ export const submarine: FleetShip = { name: "submarine", size: 2 };
 export const standardCarrierQuantity = 1;
 export const standardBattleshipQuantity = 2;
 export const standardCruiserQuantity = 2;
-// export const standardSubmarineQuantity = 3;
-export const standardSubmarineQuantity = 1;
+export const standardSubmarineQuantity = 3;
+// export const standardSubmarineQuantity = 1;
 
 export const standardReserve: FleetReserve = {
   fleets: [
-    // { quantity: standardCarrierQuantity, class: carrier },
-    // { quantity: standardBattleshipQuantity, class: battleship },
-    // { quantity: standardCruiserQuantity, class: cruiser },
+    { quantity: standardCarrierQuantity, class: carrier },
+    { quantity: standardBattleshipQuantity, class: battleship },
+    { quantity: standardCruiserQuantity, class: cruiser },
     { quantity: standardSubmarineQuantity, class: submarine },
   ],
   totalQuantity:

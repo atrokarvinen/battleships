@@ -2,12 +2,14 @@ import { expect } from "@playwright/test";
 import { signIn } from "./common";
 import { defaultPassword } from "./defaults";
 import { test } from "./game-play-fixture";
+import { STANDARD_SHIP_SQUARE_COUNT } from "./game-play-page";
 
 test("starts game", async ({ page, gamePlayPage }) => {
   await expect(page.getByRole("button", { name: /start/i })).toBeVisible();
 
   await gamePlayPage.startGame();
 
+  await gamePlayPage.verifyGameHasStarted();
   await gamePlayPage.verifyPlayerTurnActive(gamePlayPage.player1);
 });
 
@@ -130,7 +132,9 @@ test("game start is broadcasted", async ({ page, gamePlayPage, browser }) => {
   await expect(pageP2.getByText("Battleships app")).toBeVisible();
 
   await gamePlayPage.startGame();
-  await expect(pageP2.getByTestId("ship-square")).toHaveCount(2);
+  await expect(pageP2.getByTestId("ship-square")).toHaveCount(
+    STANDARD_SHIP_SQUARE_COUNT
+  );
 });
 
 test("ends game", async ({ page }) => {
