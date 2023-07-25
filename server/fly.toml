@@ -1,0 +1,23 @@
+# See https://fly.io/docs/reference/configuration/ for information about how to use this file.
+
+app = "battleships-app"
+primary_region = "arn"
+
+[build]
+  dockerfile = "Dockerfile"
+  ignorefile = ".dockerignore"
+
+[env]
+  CLIENT_ADDRESS = "http://127.0.0.1:5173"
+  HOST_ADDRESS = "0.0.0.0"
+  HTTP_PORT = "8080"
+  JWT_COOKIE_NAME = "jwt-cookie"
+  NODE_ENV = "production"
+
+[http_service]
+  internal_port = 8080
+  force_https = true
+  auto_stop_machines = true
+  auto_start_machines = true
+  min_machines_running = 0
+  processes = ["app"]
