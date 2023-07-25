@@ -1,6 +1,7 @@
 import { ReactElement, createContext, useEffect } from "react";
 import { io } from "socket.io-client";
 import { axios } from "../api/axios";
+import { config } from "../config/config";
 import { useGameEvents } from "./useGameEvents";
 import { useGameRoomEvents } from "./useGameRoomEvents";
 
@@ -8,7 +9,7 @@ type SocketProviderProps = { children: ReactElement };
 
 console.log("Connecting socket...");
 
-const socket = io("ws://localhost:3001", { autoConnect: true });
+const socket = io(config.backendBaseUrl, { autoConnect: true });
 export const SocketContext = createContext(socket);
 
 const SocketProvider = ({ children }: SocketProviderProps) => {
