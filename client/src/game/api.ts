@@ -63,6 +63,7 @@ export const mapGameDtoToActiveGame = (game: GameDTO) => {
       .map((p) => p.playerId)
       .includes(game.winnerPlayerId),
     activePlayerId: game.activePlayerId,
+    winnerPlayerId: game.winnerPlayerId,
     showGameOverDialog: false,
   };
 

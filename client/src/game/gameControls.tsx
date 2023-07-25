@@ -1,7 +1,7 @@
 import { Button, Stack } from "@mui/material";
 import { handleError } from "../api/errorHandling";
 import { useBreakpoint } from "../navigation/useBreakpoint";
-import { setActiveGame } from "../redux/activeGameSlice";
+import { gameOver, setActiveGame } from "../redux/activeGameSlice";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import { selectActivePlayerId, selectIsGameStarted } from "../redux/selectors";
 import {
@@ -35,7 +35,9 @@ const GameControls = ({ gameRoomId, playerIds }: GameControlsProps) => {
   async function endGame() {
     const response = await endGameRequest({ gameRoomId });
     const activeGame = mapGameDtoToActiveGame(response.data);
+    const { winnerPlayerId } = activeGame;
     dispatch(setActiveGame(activeGame));
+    dispatch(gameOver(winnerPlayerId || "N/A"));
   }
 
   const handleConfirm = async () => {
@@ -64,14 +66,16 @@ const GameControls = ({ gameRoomId, playerIds }: GameControlsProps) => {
       >
         End
       </Button>
-      <Button
-        sx={{ width: 100 }}
-        variant="contained"
-        onClick={handleConfirm}
-        disabled={!isGameStarted}
-      >
-        Confirm
-      </Button>
+      {process.env.NODE_ENV === "development" && (
+        <Button
+          sx={{ width: 100 }}
+          variant="contained"
+          onClick={handleConfirm}
+          disabled={!isGameStarted}
+        >
+          Confirm
+        </Button>
+      )}
     </Stack>
   );
 };

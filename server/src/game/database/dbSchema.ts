@@ -48,7 +48,7 @@ const gameSchema = new Schema<IGame>(
   {
     gameRoom: { ref: "gameRoom", type: Schema.Types.ObjectId },
     activePlayerId: String,
-    winnerId: String,
+    winnerPlayerId: String,
     state: Number,
     players: [playerInfoSchema],
   },

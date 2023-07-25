@@ -51,13 +51,9 @@ const activeGameSlice = createSlice({
       state.id = action.payload.id;
       state.isGameStarted = action.payload.isGameStarted;
       state.isGameOver = action.payload.isGameOver;
-
-      // state.boards = action.payload.boards;
-      // state.attacks = action.payload.attacks;
-
-      // TODO Not implemented
       state.primaryBoard = action.payload.primaryBoard;
       state.trackingBoard = action.payload.trackingBoard;
+      state.winnerPlayerId = action.payload.winnerPlayerId;
     },
     setIsGameOver(state, action: PayloadAction<boolean>) {
       const isOver = action.payload;
@@ -134,6 +130,11 @@ const activeGameSlice = createSlice({
         state.showGameOverDialog = true;
       }
     },
+    gameOver: (state, action: PayloadAction<string>) => {
+      state.winnerPlayerId = action.payload
+      state.isGameOver = true;
+      state.showGameOverDialog = true;
+    },
   },
 });
 
@@ -149,6 +150,7 @@ export const {
   setOpponentShipLocations,
   resetOpponentShipLocations,
   attackSquare,
+  gameOver
 } = activeGameSlice.actions;
 
 export const activeGameReducer = activeGameSlice.reducer;

@@ -6,8 +6,8 @@ export type IGame = {
   gameRoom: Types.ObjectId;
 
   activePlayerId?: string;
+  winnerPlayerId?: string;
   players: IPlayer[];
-  winnerId?: string;
 
   state: GameState;
 };
@@ -16,7 +16,7 @@ export type GameDTO = {
   id: string;
   gameRoomId: string;
   activePlayerId?: string;
+  winnerPlayerId?: string;
   players: PlayerDTO[];
-  winnerId?: string;
   state: GameState;
 };

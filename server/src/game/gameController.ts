@@ -121,6 +121,9 @@ export class GameController {
         gameRoomId,
         playerIds: currentGame!.players.map((p) => p.playerId),
       });
+      const otherPlayer = game.players.find((p) => p.playerId !== req.userId)
+      game.winnerPlayerId = otherPlayer?.playerId;
+      this.io.except(req.socketId).emit("gameEnded", game);
       res.json(game);
     } catch (error) {
       next(error);

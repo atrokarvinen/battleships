@@ -1,11 +1,11 @@
 import { Types } from "mongoose";
 import { GameModel } from "../database/dbSchema";
 import {
-  AttackSquare,
-  GameDTO,
-  GameOptions,
-  GameState,
-  IGame,
+    AttackSquare,
+    GameDTO,
+    GameOptions,
+    GameState,
+    IGame,
 } from "../models";
 import { pointEqualsToSquare } from "./board-utils";
 import { GameCreationService } from "./gameCreationService";
@@ -54,7 +54,7 @@ export class GameService {
       .every((x) => x.hasBeenAttacked);
 
     if (isGameOver) {
-      game.winnerId = attackerPlayerId;
+      game.winnerPlayerId = attackerPlayerId;
     }
 
     console.log("Point attacked. hasShip:", attackedSquareEnemySide.hasShip);

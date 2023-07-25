@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { Socket } from "socket.io-client";
 import { mapGameDtoToActiveGame } from "../game/api";
 import { GameDTO } from "../game/apiModel";
-import { attackSquare, setActiveGame } from "../redux/activeGameSlice";
+import { attackSquare, gameOver, setActiveGame } from "../redux/activeGameSlice";
 import { useAppDispatch } from "../redux/hooks";
 
 export const useGameEvents = (socket: Socket) => {
@@ -23,6 +23,13 @@ export const useGameEvents = (socket: Socket) => {
       const activeGame = mapGameDtoToActiveGame(startedGame);
       dispatch(setActiveGame(activeGame));
     });
+    socket.on("gameEnded", (game) => {
+      console.log("[Socket client] game ended:", game);
+      const resetGame: GameDTO = game;
+      const activeGame = mapGameDtoToActiveGame(resetGame);
+      dispatch(setActiveGame(activeGame));
+      dispatch(gameOver(activeGame.winnerPlayerId || "N/A"));
+    });
     socket.on("squareAttacked", (attackResult) => {
       console.log("[Socket client] square attacked:", attackResult);
       const payload = { ...attackResult, isOwnGuess: false };
@@ -32,6 +39,7 @@ export const useGameEvents = (socket: Socket) => {
 
   const unSubscribeEvents = () => {
     socket.off("gameStarted");
+    socket.off("gameEnded");
     socket.off("squareAttacked");
   };
 };

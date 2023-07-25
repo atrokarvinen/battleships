@@ -28,10 +28,9 @@ const GameMobile = ({}: GameMobileProps) => {
   const self = gameRoom.players.find((p) => p.id === playerId);
   const opponent = gameRoom.players.find((p) => p.id !== playerId);
 
-  console.log("[GameMobile]");
-
   return (
-    <Stack direction={"column"} mt={2} data-testid="active-game">
+    <Stack data-testid="active-game" direction="column" mt={2} mb={2} spacing={1} >
+      <GameOverDialog />
       <Stack spacing={3} direction={"column"}>
         <InfoBoard gameRoomId={gameRoomId} />
         <GameControls
