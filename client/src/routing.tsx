@@ -17,7 +17,7 @@ const Routing = ({}: RoutingProps) => {
   useGetInitialData();
 
   return (
-    <BrowserRouter>
+    <BrowserRouter basename="battleships">
       <Navigation />
       <Box>
         <Routes>
