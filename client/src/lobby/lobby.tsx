@@ -102,7 +102,7 @@ const Lobby = ({}: LobbyProps) => {
 
   return (
     <Grid container spacing={3} padding={2}>
-      <Grid item xs={10}>
+      <Grid item xs={12}>
         <GamesTable
           games={gameRooms}
           onGameClicked={(gameId) => setSelectedGameRoomId(gameId)}
@@ -112,10 +112,10 @@ const Lobby = ({}: LobbyProps) => {
       <Grid
         item
         display="flex"
-        flexDirection="column"
-        justifyContent={"center"}
+        justifyContent="center"
+        xs={12}
       >
-        <Button onClick={() => setIsCreateGameOpen(true)} variant="contained">
+        <Button onClick={() => setIsCreateGameOpen(true)} variant="contained" sx={{maxWidth: 250}}>
           Create new game
         </Button>
       </Grid>

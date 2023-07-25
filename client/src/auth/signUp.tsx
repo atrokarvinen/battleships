@@ -1,5 +1,5 @@
 import { yupResolver } from "@hookform/resolvers/yup";
-import { Box, Button, TextField } from "@mui/material";
+import { Box, Button, Stack, TextField } from "@mui/material";
 import { FormEvent, useEffect, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { FormErrorMap } from "../api/models";
@@ -52,15 +52,7 @@ const SignUp = (props: SignUpProps) => {
 
   return (
     <form onSubmit={(e) => onSubmit(e)}>
-      <Box
-        sx={{
-          width: "350px",
-          "& .MuiTextField-root": { mt: 1 },
-          "& button": { width: "150px" },
-          display: "flex",
-          flexDirection: "column",
-        }}
-      >
+      <Stack direction="column" spacing={1}>
         <TextField
           id="sign-up-username"
           label="Username"
@@ -105,7 +97,7 @@ const SignUp = (props: SignUpProps) => {
             Auto-fill
           </Button>
         )}
-      </Box>
+      </Stack>
     </form>
   );
 };

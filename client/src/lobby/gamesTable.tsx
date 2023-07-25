@@ -31,14 +31,13 @@ const GamesTable = ({ games, onGameClicked }: GamesTableProps) => {
       <Table>
         <TableHead>
           <TableRow>
-            <StyledTableCell>Id</StyledTableCell>
             <StyledTableCell>Title</StyledTableCell>
             <StyledTableCell>Player 1</StyledTableCell>
             <StyledTableCell>Player 2</StyledTableCell>
           </TableRow>
         </TableHead>
         <TableBody>
-          {games.map((game, id) => {
+          {games.map((game) => {
             return (
               <TableRow
                 key={game.id}
@@ -47,7 +46,6 @@ const GamesTable = ({ games, onGameClicked }: GamesTableProps) => {
                 onClick={() => onGameClicked(game.id)}
                 sx={{ ":hover": { cursor: "pointer" } }}
               >
-                <TableCell>{id + 1}</TableCell>
                 <TableCell>{game.title}</TableCell>
                 <TableCell>
                   {game.players.length > 0 ? game.players[0].username : ""}

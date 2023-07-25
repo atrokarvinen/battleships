@@ -123,11 +123,13 @@ const Login = ({}: LoginProps) => {
       >
         <DialogTitle>Sign up</DialogTitle>
         <DialogContent>
-          <SignUp
-            onCancel={closeSignUpForm}
-            onSubmit={handleSignUpSubmit}
-            errors={signUpErrors}
-          />
+          <Box pt={1} pb={1}>
+            <SignUp
+              onCancel={closeSignUpForm}
+              onSubmit={handleSignUpSubmit}
+              errors={signUpErrors}
+            />
+          </Box>
         </DialogContent>
       </Dialog>
     </Box>
