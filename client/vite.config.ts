@@ -7,14 +7,10 @@ import { defineConfig } from "vite";
 // https://vitejs.dev/config/
 export default defineConfig({
   base: "/battleships",
-  root: "./src",
   server: {
     port: 5173,
     host: "localhost",
     open: true,
-  },
-  build: {
-    outDir: "./dist",
   },
   plugins: [react()],
   test: {
