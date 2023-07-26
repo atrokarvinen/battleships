@@ -1,5 +1,5 @@
 import { Types } from "mongoose";
-import { GameRoom, IGameRoom } from "../database/gameRoom";
+import { GameRoom, GameRoomDTO, IGameRoom } from "../database/gameRoom";
 import { User, UserDTO } from "../database/user";
 import { GameOptions } from "../game/models";
 import { GameDTO } from "../game/models/game";
@@ -18,9 +18,9 @@ export class GameRoomService {
   async getGameRoom(gameId: string) {
     const game = await GameRoom.findById(gameId).populate(
       "players",
-      "username"
+      "-password"
     );
-    const gameDto: IGameRoom | undefined = game?.toObject();
+    const gameDto: GameRoomDTO | undefined = game?.toObject();
     return gameDto;
   }
 
@@ -36,7 +36,6 @@ export class GameRoomService {
   async getGameInRoom(gameRoomId: string) {
     console.log(`Getting game in game room '${gameRoomId}'...`);
     const gameRoom = await GameRoom.findById(gameRoomId).populate("game");
-    console.log(`Found game in game room '${gameRoomId}'`);
     const gameRoomDto = gameRoom?.toObject();
     const gameDto: GameDTO | undefined = gameRoomDto?.game as any;
     return gameDto;
@@ -60,22 +59,16 @@ export class GameRoomService {
 
   async deleteGameRoom(gameRoomId: string) {
     console.log(`Deleting game room '${gameRoomId}'...`);
-    await GameRoom.findByIdAndDelete(gameRoomId);
-    console.log(`Deleted game room '${gameRoomId}'`);
+    const gameRoom = await GameRoom.findByIdAndDelete(gameRoomId);
+    console.log(`Deleted game room '${gameRoom?.title}'`);
   }
 
   async joinGame(gameRoomId: string, userId: string) {
     console.log(`Joining game ${gameRoomId}...`);
 
-    const gameRoom = await GameRoom.findById(gameRoomId);
-    if (!gameRoom) {
-      throw new ApiError(`Game room '${gameRoomId}' not found`, 404);
-    }
+    const gameRoom = await this.getGameRoomDocument(gameRoomId);
+    const user = await this.getUserDocument(userId);
 
-    const user = await User.findById(userId).select("-password");
-    if (!user) {
-      throw new ApiError(`User '${userId}' not found`, 404);
-    }
     this.validateGameJoin(gameRoom, userId);
 
     gameRoom.players.push(user.id);
@@ -92,15 +85,8 @@ export class GameRoomService {
   async leaveGame(gameRoomId: string, userId: string) {
     console.log(`Leaving game ${gameRoomId}...`);
 
-    const gameRoom = await GameRoom.findById(gameRoomId);
-    if (!gameRoom) {
-      throw new ApiError(`Game room '${gameRoomId}' not found`, 404);
-    }
-
-    const user = await User.findById(userId);
-    if (!user) {
-      throw new ApiError(`User '${userId}' not found`, 404);
-    }
+    const gameRoom = await this.getGameRoomDocument(gameRoomId);
+    const user = await this.getUserDocument(userId);
 
     gameRoom.players = gameRoom.players.filter((p) => !p.equals(user.id));
     await gameRoom.save();
@@ -108,10 +94,26 @@ export class GameRoomService {
     user.gamesJoined = user.gamesJoined.filter((g) => !g.equals(gameRoom.id));
     await user.save();
 
-    console.log(`User '${userId}' left game ${gameRoom.title}`);
+    console.log(`User '${user.username}' left game ${gameRoom.title}`);
   }
 
-  validateGameJoin(game: IGameRoom, userId: string) {
+  private async getUserDocument(userId: string) {
+    const user = await User.findById(userId).select("-password");
+    if (!user) {
+      throw new ApiError(`User '${userId}' not found`, 404);
+    }
+    return user;
+  }
+
+  private async getGameRoomDocument(gameRoomId: string) {
+    const gameRoom = await GameRoom.findById(gameRoomId);
+    if (!gameRoom) {
+      throw new ApiError(`Game room '${gameRoomId}' not found`, 404);
+    }
+    return gameRoom;
+  }
+
+  private validateGameJoin(game: IGameRoom, userId: string) {
     const joinedCount = game.players.length;
     if (joinedCount >= 2) {
       throw new ApiError("Game is full", 400);

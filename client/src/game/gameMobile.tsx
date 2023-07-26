@@ -35,7 +35,6 @@ const GameMobile = ({}: GameMobileProps) => {
         <InfoBoard gameRoomId={gameRoomId} />
         <GameControls
           gameRoomId={gameRoomId}
-          playerIds={gameRoom?.players.map((p) => p.id) ?? []}
         />
       </Stack>
       <PlayerArea

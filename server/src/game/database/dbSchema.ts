@@ -35,13 +35,13 @@ const boardSchema = new Schema<Board>(
   { toObject: toObjectOptions }
 );
 
-const playerInfoSchema = new Schema<IPlayer>(
+const playerSchema = new Schema<IPlayer>(
   {
     playerId: String,
     attacks: [squareSchema],
     ownShips: [squareSchema],
   },
-  { toObject: toObjectOptions }
+  { toObject: toObjectOptions}
 );
 
 const gameSchema = new Schema<IGame>(
@@ -50,7 +50,7 @@ const gameSchema = new Schema<IGame>(
     activePlayerId: String,
     winnerPlayerId: String,
     state: Number,
-    players: [playerInfoSchema],
+    players: [playerSchema],
   },
   { toObject: toObjectOptions }
 );

@@ -17,12 +17,17 @@ export class GameController {
 
   async startGame(req: Request, res: Response, next: NextFunction) {
     try {
-      const { gameRoomId, playerIds }: StartGamePayload = req.body;
+      const { gameRoomId }: StartGamePayload = req.body;
 
       console.log("Starting game:", req.body);
 
-      const firstPlayerId = this.randomizeFirstPlayer(playerIds);
+      const gameRoom = await this.gameRoomService.getGameRoom(gameRoomId);
+      if (!gameRoom) {
+        return res.status(404).json({ error: `Game room not found` });
+      }
       let game = await this.gameRoomService.getGameInRoom(gameRoomId);
+      const playerIds = gameRoom.players.map((p) => p.id);
+      const firstPlayerId = this.randomizeFirstPlayer(playerIds);
       const options: GameOptions = { gameRoomId, playerIds, firstPlayerId };
       if (!game) {
         console.log("Creating new game");
@@ -121,7 +126,7 @@ export class GameController {
         gameRoomId,
         playerIds: currentGame!.players.map((p) => p.playerId),
       });
-      const otherPlayer = game.players.find((p) => p.playerId !== req.userId)
+      const otherPlayer = game.players.find((p) => p.playerId !== req.userId);
       game.winnerPlayerId = otherPlayer?.playerId;
       this.io.except(req.socketId).emit("gameEnded", game);
       res.json(game);

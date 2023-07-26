@@ -1,11 +1,11 @@
 import { Types } from "mongoose";
 import { GameModel } from "../database/dbSchema";
 import {
-    AttackSquare,
-    GameDTO,
-    GameOptions,
-    GameState,
-    IGame,
+  AttackSquare,
+  GameDTO,
+  GameOptions,
+  GameState,
+  IGame,
 } from "../models";
 import { pointEqualsToSquare } from "./board-utils";
 import { GameCreationService } from "./gameCreationService";
@@ -56,10 +56,7 @@ export class GameService {
     if (isGameOver) {
       game.winnerPlayerId = attackerPlayerId;
     }
-
-    console.log("Point attacked. hasShip:", attackedSquareEnemySide.hasShip);
-    console.log("Is game over:", isGameOver);
-
+    
     const updatedGame = await game.save();
 
     return { shipHit, nextPlayerId, isGameOver };

@@ -51,6 +51,7 @@ test("ends game when all ships are destroyed", async ({
   gamePlayPage,
 }) => {
   await gamePlayPage.startGame();
+  await gamePlayPage.verifyGameHasStarted();
   await gamePlayPage.seedGameDummyShips();
   await page.reload();
 

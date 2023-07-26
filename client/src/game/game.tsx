@@ -50,7 +50,6 @@ const Game = ({}: GameProps) => {
       />
       <GameControls
         gameRoomId={gameRoomId}
-        playerIds={gameRoom?.players.map((p) => p.id) ?? []}
       />
     </Stack>
   );

@@ -10,14 +10,8 @@ import {
   Square,
 } from "./apiModel";
 
-export type StartGamePayload = {
-  gameRoomId: string;
-  playerIds: string[];
-};
-
-export type EndGamePayload = {
-  gameRoomId: string;
-};
+export type StartGamePayload = { gameRoomId: string };
+export type EndGamePayload = { gameRoomId: string };
 
 export const startGameRequest = (payload: StartGamePayload) => {
   return axios.post("/game/start", payload);

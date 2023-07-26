@@ -25,10 +25,9 @@ const SignUp = (props: SignUpProps) => {
 
   function onSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    const handler = handleSubmit((data) => {
-      console.log("submitted login: " + JSON.stringify(data));
-      props.onSubmit(data);
-    });
+    const handler = handleSubmit((data) => 
+      props.onSubmit(data)
+    );
     handler();
   }
 

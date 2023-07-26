@@ -3,7 +3,7 @@ import { handleError } from "../api/errorHandling";
 import { useBreakpoint } from "../navigation/useBreakpoint";
 import { gameOver, setActiveGame } from "../redux/activeGameSlice";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
-import { selectActivePlayerId, selectIsGameStarted } from "../redux/selectors";
+import { selectIsGameStarted } from "../redux/selectors";
 import {
   confirmPlacementsRequest,
   endGameRequest,
@@ -12,19 +12,15 @@ import {
 } from "./api";
 import { GameDTO } from "./apiModel";
 
-type GameControlsProps = {
-  gameRoomId: string;
-  playerIds: string[];
-};
+type GameControlsProps = { gameRoomId: string };
 
-const GameControls = ({ gameRoomId, playerIds }: GameControlsProps) => {
+const GameControls = ({ gameRoomId }: GameControlsProps) => {
   const dispatch = useAppDispatch();
-  const player = useAppSelector(selectActivePlayerId);
   const isGameStarted = useAppSelector(selectIsGameStarted);
   const { sm } = useBreakpoint();
 
   async function startGame() {
-    const response = await startGameRequest({ gameRoomId, playerIds });
+    const response = await startGameRequest({ gameRoomId });
 
     const startedGame: GameDTO = response.data;
     const activeGame = mapGameDtoToActiveGame(startedGame);

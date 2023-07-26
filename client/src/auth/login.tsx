@@ -41,10 +41,8 @@ const Login = ({}: LoginProps) => {
   }
 
   async function handleSignInSubmit(data: LoginForm) {
-    console.log("submitted login: " + JSON.stringify(data));
     try {
       const response = await signInRequest(data);
-      console.log(`sign in response data:`, response.data);
 
       const { userId, username, gamesJoined } = response.data;
       dispatch(addPlayer({ id: userId, username, gamesJoined }));

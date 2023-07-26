@@ -1,4 +1,4 @@
-import { Request, Response, NextFunction } from "express";
+import { NextFunction, Request, Response } from "express";
 
 export type ApiErrorArgs = {
   status: number;
@@ -31,7 +31,7 @@ export const errorHandleMiddleware = (
   if (error instanceof ApiError) {
     return res.status(error.status).json({ error: error.errorMessage });
   } else {
-    console.log(`[ErrorMiddleware] Caught exception: ${error.message}`);
+    console.log(`[ErrorMiddleware] Caught exception: ${error}`);
     return res.status(500).json({ error: "Internal server error" });
   }
   next(error);
