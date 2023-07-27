@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import jwt from "jsonwebtoken";
+import { JWT_COOKIE_NAME } from "../core/constants";
 import { env } from "../core/env";
 
 export const authMiddleware = (
@@ -7,7 +8,7 @@ export const authMiddleware = (
   res: Response,
   next: NextFunction
 ) => {
-  const cookieName = env.JWT_COOKIE_NAME;
+  const cookieName = JWT_COOKIE_NAME;
   const cookie = req.cookies[cookieName];
   if (!cookie) {
     const error = `Expected to find an auth cookie '${cookieName}'`;

@@ -22,12 +22,14 @@ export class GameRoomController {
 
   async getGameRoom(req: Request, res: Response, next: NextFunction) {
     try {
-      const gameId = req.params.id;
-      const gameDto = await this.gameRoomService.getGameRoom(gameId);
-      if (!gameDto) {
-        return res.status(403).end();
+      const gameRoomId = req.params.id;
+      const gameRoomDto = await this.gameRoomService.getGameRoom(gameRoomId);
+      if (!gameRoomDto) {
+        return res
+          .status(404)
+          .json({ error: `Game room '${gameRoomId}' not found` });
       }
-      return res.json(gameDto);
+      return res.json(gameRoomDto);
     } catch (error) {
       next(error);
     }
@@ -79,7 +81,7 @@ export class GameRoomController {
       const gameRoomId = req.params.id;
       await this.gameRoomService.deleteGameRoom(gameRoomId);
       this.io.except(req.socketId).emit("gameDeleted", gameRoomId);
-      return res.end();
+      res.end();
     } catch (error) {
       next(error);
     }

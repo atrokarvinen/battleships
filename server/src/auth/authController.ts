@@ -1,6 +1,7 @@
 import bcrypt from "bcrypt";
 import { NextFunction, Request, Response } from "express";
 import jwt from "jsonwebtoken";
+import { JWT_COOKIE_NAME } from "../core/constants";
 import { env } from "../core/env";
 import { ValidationFailure } from "../core/validationFailure";
 import { User } from "../database/user";
@@ -60,7 +61,7 @@ export class AuthController {
       }
 
       const token = this.createToken(user.id);
-      const cookieName = env.JWT_COOKIE_NAME;
+      const cookieName = JWT_COOKIE_NAME;
 
       console.log(`Successfully signed in user '${username}'`);
       res
@@ -85,7 +86,7 @@ export class AuthController {
       const username = getRandomGuestName();
       const userId = generateGuid();
       const token = this.createToken(userId);
-      const cookieName = env.JWT_COOKIE_NAME;
+      const cookieName = JWT_COOKIE_NAME;
 
       console.log(`Successfully created guest user '${username}'`);
       res
@@ -104,7 +105,7 @@ export class AuthController {
   async signOut(req: Request, res: Response, next: NextFunction) {
     try {
       console.log(`Logging out user '${req.userId}'...`);
-      const cookieName = env.JWT_COOKIE_NAME;
+      const cookieName = JWT_COOKIE_NAME;
       res.clearCookie(cookieName).end();
     } catch (error) {
       next(error);

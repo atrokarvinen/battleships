@@ -32,6 +32,7 @@ test("changes player order when fails to attack", async ({
   gamePlayPage,
 }) => {
   await gamePlayPage.startGame();
+  await gamePlayPage.verifyGameHasStarted();
   await gamePlayPage.seedGameDummyShips();
   await page.reload();
   await gamePlayPage.verifyPlayerTurnActive(gamePlayPage.player1);
@@ -71,6 +72,7 @@ test("loads the game when page is refreshed", async ({
   gamePlayPage,
 }) => {
   await gamePlayPage.startGame();
+  await gamePlayPage.verifyGameHasStarted();
   await gamePlayPage.seedGameDummyShips();
   await page.reload();
 
@@ -80,6 +82,7 @@ test("loads the game when page is refreshed", async ({
 
 test("cannot attack when not own turn", async ({ page, gamePlayPage }) => {
   await gamePlayPage.startGame();
+  await gamePlayPage.verifyGameHasStarted();
   await gamePlayPage.seedGameDummyShips();
   await page.reload();
 
@@ -108,6 +111,7 @@ test("attacks are broadcasted", async ({ page, gamePlayPage, browser }) => {
   await expect(pageP2.getByText("Battleships app")).toBeVisible();
 
   await gamePlayPage.startGame();
+  await gamePlayPage.verifyGameHasStarted();
   await gamePlayPage.seedGameDummyShips();
   await page.reload();
 

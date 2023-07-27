@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { env } from "../core/env";
+import { JWT_COOKIE_NAME } from "../core/constants";
 import {
   genCookie,
   genHttpOnlyCookie,
@@ -10,7 +10,7 @@ import {
 
 export const cookieRouter = Router();
 
-const cookieName = env.JWT_COOKIE_NAME;
+const cookieName = JWT_COOKIE_NAME;
 
 cookieRouter.get("/", (req, res) => {
   res.cookie(cookieName, "cookieValue", {

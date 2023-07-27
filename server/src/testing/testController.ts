@@ -39,13 +39,11 @@ export class TestController {
       return res
         .status(404)
         .json({ error: `game '${gameRoomId}' not found` })
-        .end();
     }
     if (shipPositions.length !== 2) {
       return res
         .status(400)
         .json({ error: "Must have exactly two players" })
-        .end();
     }
 
     const positions1 = shipPositions[0].shipPoints;
@@ -60,7 +58,6 @@ export class TestController {
       return res
         .status(404)
         .json({ error: "player 1 or player 2 not found" })
-        .end();
     }
 
     this.setPositions(positions1, p1.ownShips);
@@ -75,13 +72,13 @@ export class TestController {
       const { gameId, opponentId } = req.params;
       const game = await GameModel.findById(gameId);
       if (!game) {
-        return res.status(404).json({ error: "game not found" }).end();
+        return res.status(404).json({ error: "game not found" });
       }
       const opponent = game.players.find(
         (p) => p.playerId.toString() === opponentId
       );
       if (!opponent) {
-        return res.status(404).json({ error: "opponent not found" }).end();
+        return res.status(404).json({ error: "opponent not found" });
       }
       const ships = opponent.ownShips;
       return res.json(ships);

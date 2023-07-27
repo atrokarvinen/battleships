@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import jwt from "jsonwebtoken";
+import { JWT_COOKIE_NAME } from "../core/constants";
 import { env } from "../core/env";
 import { User } from "../database/user";
 
@@ -9,7 +10,7 @@ export class AccountController {
       const userId = req.userId;
       const account = await User.findById(userId);
       if (!account) {
-        return res.status(404).json({ message: `User '${userId}' not found` });
+        return res.status(404).json({ error: `User '${userId}' not found` });
       }
       return res.json({ userId: account.id, username: account.username });
     } catch (error) {
@@ -18,7 +19,7 @@ export class AccountController {
   }
 
   async getGuestAccountInfo(req: Request, res: Response, next: NextFunction) {
-    const cookieName = env.JWT_COOKIE_NAME;
+    const cookieName = JWT_COOKIE_NAME;
     const cookie = req.cookies[cookieName];
     if (!cookie) {
       const error = `Expected to find an auth cookie '${cookieName}'`;

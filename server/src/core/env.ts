@@ -1,6 +1,6 @@
 import dotenv from "dotenv";
 
-const config = dotenv.config();
+dotenv.config();
 
 export interface EnvConfig {
   CLIENT_ADDRESS: string;
@@ -8,7 +8,6 @@ export interface EnvConfig {
   DB_CONNECTION_STRING_TESTS: string;
   HOST_ADDRESS: string;
   HTTP_PORT: number;
-  JWT_COOKIE_NAME: string;
   JWT_SECRET: string;
   NODE_ENV: string;
 }
@@ -22,7 +21,6 @@ const parseConfig = () => {
     DB_CONNECTION_STRING_TESTS,
     HOST_ADDRESS,
     HTTP_PORT,
-    JWT_COOKIE_NAME,
     JWT_SECRET,
     NODE_ENV,
   } = process.env;
@@ -39,7 +37,6 @@ const parseConfig = () => {
     ),
     HOST_ADDRESS: toString(HOST_ADDRESS, "HOST_ADDRESS"),
     HTTP_PORT: toNumber(HTTP_PORT, "HTTP_PORT"),
-    JWT_COOKIE_NAME: toString(JWT_COOKIE_NAME, "JWT_COOKIE_NAME"),
     JWT_SECRET: toString(JWT_SECRET, "JWT_SECRET"),
     NODE_ENV: toString(NODE_ENV, "NODE_ENV"),
   };
@@ -51,21 +48,21 @@ const parseConfig = () => {
 
 const toNumber = (value: string | undefined, name: string) => {
   if (!value) {
+    console.log(`Environment variable '${name}' is missing`);
     return 0;
-    throw new Error(`Environment variable '${name}' is missing`);
   }
   if (isNaN(+value)) {
-    return -1;
     const msg = `Failed to convert environment variable '${name}': '${value}' to number`;
-    throw new Error(msg);
+    console.log(msg);
+    return -1;
   }
   return +value;
 };
 
 const toString = (value: string | undefined, name: string) => {
   if (!value) {
+    console.log(`Environment variable '${name}' is missing`);
     return "N/A";
-    throw new Error(`Environment variable '${name}' is missing`);
   }
   return value;
 };

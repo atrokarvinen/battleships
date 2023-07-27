@@ -13,7 +13,7 @@ export const testEnvMiddleware = (
     );
     return res
       .status(403)
-      .json({ message: "Route is only available in test environment" });
+      .json({ error: "Route is only available in test environment" });
   }
   return next();
 };
