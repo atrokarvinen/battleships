@@ -2,10 +2,10 @@ import { NextFunction, Request, Response } from "express";
 import { Server } from "socket.io";
 import { GameRoomService } from "../gameRoom/gameRoomService";
 import { StartGamePayload } from "./api/startGamePayload";
-import { GameDTO } from "./models";
 import { GameOptions } from "./models/gameOptions";
 import { AttackService } from "./services/attackService";
 import { GameService } from "./services/gameService";
+import { filterGameInfo } from "./services/info-filter";
 
 export class GameController {
   private gameDbService = new GameService();
@@ -51,8 +51,8 @@ export class GameController {
         (p) => p.playerId !== req.userId
       );
 
-      const selfInfo = this.filterGameInfo(requester!.playerId, startedGame);
-      const opponentInfo = this.filterGameInfo(opponent!.playerId, startedGame);
+      const selfInfo = filterGameInfo(requester!.playerId, startedGame);
+      const opponentInfo = filterGameInfo(opponent!.playerId, startedGame);
 
       console.log("Started game:", startedGame.id);
       this.io
@@ -64,21 +64,6 @@ export class GameController {
       next(error);
     }
   }
-
-  private filterGameInfo = (requesterId: string, gameDto: GameDTO) => {
-    const requester = gameDto.players.find((p) => p.playerId === requesterId);
-    const notPlayingInGame = !requester;
-    if (notPlayingInGame) {
-      return gameDto;
-    }
-    const filteredGameDto = {
-      ...gameDto,
-      players: [],
-      primaryBoard: requester.ownShips,
-      trackingBoard: requester.attacks,
-    };
-    return filteredGameDto;
-  };
 
   async attackSquare(req: Request, res: Response, next: NextFunction) {
     try {
@@ -98,9 +83,7 @@ export class GameController {
 
   private randomizeFirstPlayer(playerIds: string[]) {
     const playerCount = playerIds.length;
-    // Todo fix seeding for tests
-    // const startingIndex = Math.round((Math.random() - 0.5) * playerCount);
-    const startingIndex = 0;
+    const startingIndex = Math.round((Math.random() - 0.5) * playerCount);
     const firstPlayerId = playerIds[startingIndex];
     return firstPlayerId;
   }

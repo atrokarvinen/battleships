@@ -40,7 +40,7 @@ app.use("/account", authMiddleware, accountRouter);
 app.use("/game-room", authMiddleware, gameRoomRouter(io));
 app.use("/game", authMiddleware, gameRouter(io));
 app.use("/player", playerRouter());
-app.use("/test", testEnvMiddleware, testRouter());
+app.use("/test", testEnvMiddleware, testRouter(io));
 
 app.use(unknownRouteMiddleware);
 app.use(errorHandleMiddleware);

@@ -6,6 +6,7 @@ export type User = {
 };
 
 export type GameSeed = {
+  firstPlayerName: string;
   gameRoomId: string;
   shipPositions: ShipPlacement[];
 };

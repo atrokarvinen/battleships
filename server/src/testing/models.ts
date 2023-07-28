@@ -1,6 +1,7 @@
 import { Point } from "../game/models/point";
 
 export type GameSeed = {
+  firstPlayerName: string;
   gameRoomId: string;
   shipPositions: ShipPlacement[];
 };

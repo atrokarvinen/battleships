@@ -96,6 +96,7 @@ export class GamePlayPage {
   seedGameDummyShips = async () => {
     const { request } = this.page;
     const seed: GameSeed = {
+      firstPlayerName: this.player1,
       gameRoomId: this.gameRoomId,
       shipPositions: [
         {
