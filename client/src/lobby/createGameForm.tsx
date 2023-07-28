@@ -1,10 +1,9 @@
-import { useForm } from "react-hook-form";
-import styles from "./styles.module.scss";
-import { CreateGame } from "./createGame";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { schema } from "./createGameValidation";
-import { Box, Button, Grid, Stack, TextField } from "@mui/material";
+import { Button, Stack, TextField } from "@mui/material";
 import { FormEvent } from "react";
+import { useForm } from "react-hook-form";
+import { CreateGame } from "./createGame";
+import { schema } from "./createGameValidation";
 
 type CreateGameFormProps = {
   onCancel(): void;

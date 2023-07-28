@@ -1,4 +1,4 @@
-import { Avatar, Box } from "@mui/material";
+import { Avatar, Box, Typography } from "@mui/material";
 import { deepPurple } from "@mui/material/colors";
 import { useAppSelector } from "../redux/hooks";
 import { selectUsername } from "../redux/selectors";
@@ -19,8 +19,8 @@ const Profile = ({}: ProfileProps) => {
 
   return (
     <Box display={"flex"} flexDirection={"row"} alignItems={"center"}>
-      <h2 datatest-id="player-name">{`Player: ${username}`}</h2>
-      <Avatar sx={{ bgcolor: deepPurple[500] }}>
+      <Typography datatest-id="player-name" variant="h6">{username}</Typography>
+      <Avatar sx={{ bgcolor: deepPurple[500], ml: 1 }}>
         {getFirstLetter(username)}
       </Avatar>
     </Box>

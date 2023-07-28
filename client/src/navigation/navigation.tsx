@@ -1,7 +1,6 @@
 import Brightness4Icon from "@mui/icons-material/Brightness4";
 import Brightness7Icon from "@mui/icons-material/Brightness7";
 import FlagCircle from "@mui/icons-material/FlagCircle";
-import SettingsIcon from "@mui/icons-material/Settings";
 import {
   AppBar,
   Button,
@@ -85,7 +84,6 @@ const Navigation = ({}: NavigationProps) => {
                 <Brightness4Icon fontSize="large" />
               )}
             </IconButton>
-            <SettingsIcon fontSize="large" sx={{ mr: 2 }} />
             {isAuth && (
               <>
                 <Profile />

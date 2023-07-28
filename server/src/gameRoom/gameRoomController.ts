@@ -11,16 +11,16 @@ export class GameRoomController {
     this.io = io;
   }
 
-  async getGameRooms(req: Request, res: Response, next: NextFunction) {
+  getGameRooms = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const gameDtos = await this.gameRoomService.getGameRooms();
       return res.json(gameDtos);
     } catch (error) {
       return next(error);
     }
-  }
+  };
 
-  async getGameRoom(req: Request, res: Response, next: NextFunction) {
+  getGameRoom = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const gameRoomId = req.params.id;
       const gameRoomDto = await this.gameRoomService.getGameRoom(gameRoomId);
@@ -33,9 +33,9 @@ export class GameRoomController {
     } catch (error) {
       next(error);
     }
-  }
+  };
 
-  async getGameInRoom(req: Request, res: Response, next: NextFunction) {
+  getGameInRoom = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { id: gameRoomId } = req.params;
       const gameDto = await this.gameRoomService.getGameInRoom(gameRoomId);
@@ -63,31 +63,43 @@ export class GameRoomController {
     } catch (error) {
       next(error);
     }
-  }
+  };
 
-  async createGameRoom(req: Request, res: Response, next: NextFunction) {
+  createGameRoom = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const payload: IGameRoom = req.body;
-      const gameDto = await this.gameRoomService.createGameRoom(payload);
+      const gameRoomToCreate = { ...payload, createdBy: req.userId };
+      const gameDto = await this.gameRoomService.createGameRoom(
+        gameRoomToCreate
+      );
       this.io.except(req.socketId).emit("gameCreated", gameDto);
       return res.json(gameDto);
     } catch (error) {
       next(error);
     }
-  }
+  };
 
-  async deleteGameRoom(req: Request, res: Response, next: NextFunction) {
+  deleteGameRoom = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const gameRoomId = req.params.id;
+      const gameRoom = await this.gameRoomService.getGameRoom(gameRoomId);
+      if (!gameRoom) {
+        return res.end();
+      }
+      if (gameRoom.createdBy !== req.userId) {
+        return res.status(403).json({
+          error: "Only the creator of the game room can delete it",
+        });
+      }
       await this.gameRoomService.deleteGameRoom(gameRoomId);
       this.io.except(req.socketId).emit("gameDeleted", gameRoomId);
       res.end();
     } catch (error) {
       next(error);
     }
-  }
+  };
 
-  async joinGame(req: Request, res: Response, next: NextFunction) {
+  joinGame = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const gameRoomId = req.body.gameId;
       const userId = req.userId;
@@ -100,9 +112,9 @@ export class GameRoomController {
     } catch (error) {
       next(error);
     }
-  }
+  };
 
-  async leaveGame(req: Request, res: Response, next: NextFunction) {
+  leaveGame = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const gameRoomId = req.body.gameId;
       const userId = req.userId;
@@ -117,5 +129,5 @@ export class GameRoomController {
     } catch (error) {
       next(error);
     }
-  }
+  };
 }

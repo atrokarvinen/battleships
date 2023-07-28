@@ -1,26 +1,29 @@
 import { Router } from "express";
 import { Server } from "socket.io";
+import { validationMiddleware } from "../middleware/validationMiddleware";
 import { GameRoomController } from "./gameRoomController";
+import { createGameValidation } from "./validation";
 
 export const gameRoomRouter = (io: Server) => {
   const router = Router();
 
   const ctr = new GameRoomController(io);
 
-  router.get("/", (req, res, next) => ctr.getGameRooms(req, res, next));
-  router.get("/:id", (req, res, next) => ctr.getGameRoom(req, res, next));
-  router.get("/:id/game", (req, res, next) =>
-    ctr.getGameInRoom(req, res, next)
+  router.get("/", ctr.getGameRooms);
+  router.get("/:id", ctr.getGameRoom);
+  router.get("/:id/game", ctr.getGameInRoom);
+
+  router.post(
+    "/",
+    createGameValidation,
+    validationMiddleware,
+    ctr.createGameRoom
   );
 
-  router.post("/", (req, res, next) => ctr.createGameRoom(req, res, next));
+  router.delete("/:id", ctr.deleteGameRoom);
 
-  router.delete("/:id", (req, res, next) => ctr.deleteGameRoom(req, res, next));
-
-  router.post("/player/join", (req, res, next) => ctr.joinGame(req, res, next));
-  router.post("/player/leave", (req, res, next) =>
-    ctr.leaveGame(req, res, next)
-  );
+  router.post("/player/join", ctr.joinGame);
+  router.post("/player/leave", ctr.leaveGame);
 
   return router;
 };

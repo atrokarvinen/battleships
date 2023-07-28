@@ -1,4 +1,7 @@
 import { CustomValidator, check } from "express-validator";
+import { env } from "../core/env";
+
+const nameMaxLength = env.NODE_ENV === "development" ? 75 : 20;
 
 const passwordsMatch: CustomValidator = (confirmPassword, meta) => {
   const body = meta.req.body;
@@ -14,7 +17,7 @@ export const signUpValidation = [
   check("username")
     .notEmpty().withMessage("Cannot be empty")
     .isLength({ min: 3 }).withMessage("Too short. Min 3 characters")
-    .isLength({ max: 50 }).withMessage("Too long. Max 50 characters"),
+    .isLength({ max: nameMaxLength }).withMessage(`Too long. Max ${nameMaxLength} characters`),
   check("password")
     .notEmpty().withMessage("Cannot be empty")
     .isLength({ min: 8 }).withMessage("Too short. Min 8 characters")

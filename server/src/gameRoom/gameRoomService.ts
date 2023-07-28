@@ -1,6 +1,7 @@
 import { Types } from "mongoose";
 import { GameRoom, GameRoomDTO, IGameRoom } from "../database/gameRoom";
 import { User, UserDTO } from "../database/user";
+import { GameModel } from "../game/database/dbSchema";
 import { GameOptions } from "../game/models";
 import { GameDTO } from "../game/models/game";
 import { GameCreationService } from "../game/services/gameCreationService";
@@ -60,6 +61,7 @@ export class GameRoomService {
   async deleteGameRoom(gameRoomId: string) {
     console.log(`Deleting game room '${gameRoomId}'...`);
     const gameRoom = await GameRoom.findByIdAndDelete(gameRoomId);
+    await GameModel.findByIdAndDelete(gameRoom?.game);
     console.log(`Deleted game room '${gameRoom?.title}'`);
   }
 

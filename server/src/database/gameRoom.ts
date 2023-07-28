@@ -8,20 +8,26 @@ export interface IGameRoom {
   title: string;
   players: Types.ObjectId[];
   game?: Types.ObjectId;
+  createdBy: string;
+  createdAt: Date;
 }
 
 export type GameRoomDTO = {
   id: string;
   title: string;
-  players: UserDTO[]; 
+  players: UserDTO[];
   game?: GameDTO;
-}
+  createdBy: string;
+  createdAt: Date;
+};
 
 export const gameRoomSchema = new Schema<IGameRoom>(
   {
     title: { type: String, required: true },
     players: [{ ref: "user", type: Schema.Types.ObjectId }],
     game: { ref: "game", type: Schema.Types.ObjectId },
+    createdBy: String,
+    createdAt: { type: Date, default: Date.now },
   },
   { toObject: toObjectOptions }
 );
