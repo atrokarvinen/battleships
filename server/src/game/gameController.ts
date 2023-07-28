@@ -2,13 +2,15 @@ import { NextFunction, Request, Response } from "express";
 import { Server } from "socket.io";
 import { GameRoomService } from "../gameRoom/gameRoomService";
 import { StartGamePayload } from "./api/startGamePayload";
-import { AttackSquare, GameDTO } from "./models";
+import { GameDTO } from "./models";
 import { GameOptions } from "./models/gameOptions";
+import { AttackService } from "./services/attackService";
 import { GameService } from "./services/gameService";
 
 export class GameController {
   private gameDbService = new GameService();
   private gameRoomService = new GameRoomService();
+  private attackService = new AttackService();
   private io: Server;
 
   constructor(io: Server) {
@@ -81,10 +83,9 @@ export class GameController {
   async attackSquare(req: Request, res: Response, next: NextFunction) {
     try {
       const { point, attackerPlayerId, gameId } = req.body;
+      const params = { point, attackerPlayerId, gameId };
+      const attackResultDto = await this.attackService.attack(params);
       const game = await this.gameDbService.getGame(gameId);
-      const attack = { point, attackerPlayerId, gameId };
-      const result = await this.gameDbService.attackSquare(attack);
-      const attackResultDto = this.mapAttackResultToDto(result, attack);
       this.io
         .to(game.gameRoom.id)
         .except(req.socketId)
@@ -94,19 +95,6 @@ export class GameController {
       next(error);
     }
   }
-
-  private mapAttackResultToDto = (result: any, attack: AttackSquare) => {
-    const { point, attackerPlayerId } = attack;
-    const attackResultDto = {
-      hasShip: result.shipHit,
-      nextPlayerId: result.nextPlayerId,
-      isGameOver: result.isGameOver,
-      point,
-      attackerPlayerId,
-      winnerPlayerId: result.isGameOver ? attackerPlayerId : undefined,
-    };
-    return attackResultDto;
-  };
 
   private randomizeFirstPlayer(playerIds: string[]) {
     const playerCount = playerIds.length;

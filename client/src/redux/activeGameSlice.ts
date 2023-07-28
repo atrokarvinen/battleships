@@ -12,6 +12,7 @@ export type Attack = {
 
 export type ActiveGameState = {
   id: string;
+  gameRoomId: string;
 
   activePlayerId?: string;
   winnerPlayerId?: string;
@@ -20,8 +21,6 @@ export type ActiveGameState = {
   isGameOver: boolean;
   showGameOverDialog: boolean;
 
-  // boards: Board[];
-  // attacks: Attack[];
   primaryBoard: Board;
   trackingBoard: Board;
 
@@ -30,11 +29,11 @@ export type ActiveGameState = {
 
 export const initialState: ActiveGameState = {
   id: "1",
+  gameRoomId: "1",
+
   isGameStarted: false,
   isGameOver: false,
   showGameOverDialog: false,
-  // boards: [],
-  // attacks: [],
 
   primaryBoard: undefined as any,
   trackingBoard: undefined as any,
@@ -47,8 +46,9 @@ const activeGameSlice = createSlice({
   name: "activeGame",
   reducers: {
     setActiveGame(state, action: PayloadAction<ActiveGameState>) {
-      state.activePlayerId = action.payload.activePlayerId;
       state.id = action.payload.id;
+      state.gameRoomId = action.payload.gameRoomId;
+      state.activePlayerId = action.payload.activePlayerId;
       state.isGameStarted = action.payload.isGameStarted;
       state.isGameOver = action.payload.isGameOver;
       state.primaryBoard = action.payload.primaryBoard;

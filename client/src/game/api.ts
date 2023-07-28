@@ -42,6 +42,8 @@ export const getOpponentShipLocationsRequest = (
 
 export const mapGameDtoToActiveGame = (game: GameDTO) => {
   const activeGame: ActiveGameState = {
+    id: game.id,
+    gameRoomId: game.gameRoom,
     showOpponentBoard: false,
     primaryBoard: {
       playerId: "not needed",
@@ -51,7 +53,6 @@ export const mapGameDtoToActiveGame = (game: GameDTO) => {
       playerId: "not needed",
       points: mapSquaresToBoardPoint(game.trackingBoard),
     },
-    id: game.id,
     isGameStarted: game.state === GameState.STARTED,
     isGameOver: game.players
       .map((p) => p.playerId)

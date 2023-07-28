@@ -37,13 +37,8 @@ test("changes player order when fails to attack", async ({
   await page.reload();
   await gamePlayPage.verifyPlayerTurnActive(gamePlayPage.player1);
 
-  const trackingBoard = page.getByTestId("tracking-board");
-  const attackedSquare = trackingBoard.getByTestId("square-5-5");
-  await attackedSquare.click();
-
-  await expect(attackedSquare.getByTestId("water-square")).toHaveClass(
-    /missed/
-  );
+  await gamePlayPage.attackSquare(5, 5, false);
+  
   await gamePlayPage.verifyPlayerTurnInactive(gamePlayPage.player1);
 });
 
@@ -59,9 +54,8 @@ test("ends game when all ships are destroyed", async ({
   const gameOverDialog = page.getByTestId("game-over-dialog");
   await expect(gameOverDialog).toBeHidden();
 
-  const trackingBoard = page.getByTestId("tracking-board");
-  await trackingBoard.getByTestId("square-0-0").click();
-  await trackingBoard.getByTestId("square-0-1").click();
+  await gamePlayPage.attackSquare(0, 0, true);
+  await gamePlayPage.attackSquare(0, 1, true);
 
   await expect(gameOverDialog).toBeVisible();
   await expect(gameOverDialog).toContainText(gamePlayPage.player1);
@@ -86,15 +80,11 @@ test("cannot attack when not own turn", async ({ page, gamePlayPage }) => {
   await gamePlayPage.seedGameDummyShips();
   await page.reload();
 
-  const trackingBoard = page.getByTestId("tracking-board");
-  const square1 = trackingBoard.getByTestId("square-5-5");
-  await expect(square1).toBeVisible();
-  await square1.click();
-
-  await expect(square1.getByTestId("water-square")).toHaveClass(/missed/);
+  await gamePlayPage.attackSquare(5, 5, false);
   await gamePlayPage.verifyPlayerTurnInactive(gamePlayPage.player1);
 
-  const square2 = trackingBoard.getByTestId("square-0-0");
+  const trackingBoard = page.getByTestId("tracking-board");
+  const square2 = trackingBoard.getByTestId("square-5-6");
   await square2.click();
   await page.waitForTimeout(1000);
   await expect(square2.getByTestId("water-square")).not.toHaveClass(/missed/);

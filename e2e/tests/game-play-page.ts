@@ -54,6 +54,19 @@ export class GamePlayPage {
     );
   };
 
+  async attackSquare(x: number, y: number, expectShip: boolean) {
+    const trackingBoard = this.page.getByTestId("tracking-board");
+    const attackedSquare = trackingBoard.getByTestId(`square-${x}-${y}`);
+    await attackedSquare.click();
+    if (expectShip) {
+      await expect(attackedSquare.getByTestId("ship-square")).toBeVisible();
+    } else {
+      await expect(attackedSquare.getByTestId("water-square")).toHaveClass(
+        /missed/
+      );
+    }
+  }
+
   addPlayerToGame = async (username: string, gameRoomId: string) => {
     const pageP2 = await this.context.newPage();
     await signUpAndSignIn({
