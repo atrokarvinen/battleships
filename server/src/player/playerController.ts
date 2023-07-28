@@ -15,7 +15,7 @@ export class PlayerController {
         .map((g) => g.players as any)
         .flat();
 
-      return res.json(playerDtos);
+      res.json(playerDtos);
     } catch (error) {
       next(error);
     }

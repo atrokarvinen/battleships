@@ -12,7 +12,7 @@ export class AccountController {
       if (!account) {
         return res.status(404).json({ error: `User '${userId}' not found` });
       }
-      return res.json({ userId: account.id, username: account.username });
+      res.json({ userId: account.id, username: account.username });
     } catch (error) {
       next(error);
     }
