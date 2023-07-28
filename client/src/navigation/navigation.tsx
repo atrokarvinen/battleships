@@ -1,5 +1,3 @@
-import Brightness4Icon from "@mui/icons-material/Brightness4";
-import Brightness7Icon from "@mui/icons-material/Brightness7";
 import FlagCircle from "@mui/icons-material/FlagCircle";
 import {
   AppBar,
@@ -9,15 +7,14 @@ import {
   Link as MuiLink,
   Toolbar,
 } from "@mui/material";
-import { useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { handleError } from "../api/errorHandling";
 import { signOutRequest } from "../auth/api";
-import { ColorModeContext } from "../dark-mode-wrapper";
 import Profile from "../lobby/profile";
 import { logout as logoutUser } from "../redux/authSlice";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import { selectIsLoggedIn } from "../redux/selectors";
+import DarkModeButton from "../theme/dark-mode-button";
 import NavigationMobile from "./navigationMobile";
 import { useBreakpoint } from "./useBreakpoint";
 
@@ -27,7 +24,6 @@ const Navigation = ({}: NavigationProps) => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const breakpoints = useBreakpoint();
-  const colorMode = useContext(ColorModeContext);
 
   const isAuth = useAppSelector(selectIsLoggedIn);
 
@@ -73,17 +69,7 @@ const Navigation = ({}: NavigationProps) => {
             alignItems="center"
             xs={10}
           >
-            <IconButton
-              sx={{ ml: 1 }}
-              onClick={colorMode.toggleColorMode}
-              color="inherit"
-            >
-              {colorMode.mode === "dark" ? (
-                <Brightness7Icon fontSize="large" />
-              ) : (
-                <Brightness4Icon fontSize="large" />
-              )}
-            </IconButton>
+            <DarkModeButton />
             {isAuth && (
               <>
                 <Profile />

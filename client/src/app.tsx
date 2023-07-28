@@ -1,8 +1,8 @@
 import { Provider } from "react-redux";
-import { DarkModeWrapper } from "./dark-mode-wrapper";
 import SocketProvider from "./io/socketProvider";
 import { store } from "./redux/store";
 import Routing from "./routing";
+import { DarkModeWrapper } from "./theme/dark-mode-wrapper";
 
 function App() {
   return (
