@@ -1,4 +1,5 @@
 import { Types } from "mongoose";
+import { GameRoomDTO } from "../../database/gameRoom";
 import { GameState } from "./gameState";
 import { IPlayer, PlayerDTO } from "./player";
 
@@ -14,7 +15,7 @@ export type IGame = {
 
 export type GameDTO = {
   id: string;
-  gameRoomId: string;
+  gameRoom: GameRoomDTO;
   activePlayerId?: string;
   winnerPlayerId?: string;
   players: PlayerDTO[];

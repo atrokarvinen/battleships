@@ -6,6 +6,7 @@ import { selectActiveGame, selectGame, selectUserId } from "../redux/selectors";
 import GameControls from "./gameControls";
 import GameMobile from "./gameMobile";
 import GameOverDialog from "./gameOverDialog";
+import { useRoomSocket } from "./hooks/useRoomSocket";
 import InfoBoard from "./infoBoard";
 import PlayerArea from "./playerArea";
 import { useGetInitialData } from "./useGetInitialData";
@@ -26,6 +27,7 @@ const Game = ({}: GameProps) => {
   const { sm } = useBreakpoint();
 
   useGetInitialData();
+  useRoomSocket(gameRoomId);
 
   if (!game || !gameRoom) {
     return <div>{`Unknown game id: '${gameRoomId}'`}</div>;

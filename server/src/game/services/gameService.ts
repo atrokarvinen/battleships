@@ -1,4 +1,5 @@
 import { Types } from "mongoose";
+import { ApiError } from "../../middleware/errorHandleMiddleware";
 import { GameModel } from "../database/dbSchema";
 import {
   AttackSquare,
@@ -56,7 +57,7 @@ export class GameService {
     if (isGameOver) {
       game.winnerPlayerId = attackerPlayerId;
     }
-    
+
     const updatedGame = await game.save();
 
     return { shipHit, nextPlayerId, isGameOver };
@@ -83,13 +84,22 @@ export class GameService {
     game.activePlayerId = undefined;
     await game.save();
 
-    const gameDto = await this.getGame(game.id);
+    const gameDto = await this.findGame(game.id);
     return gameDto!;
   }
 
-  async getGame(gameId: string) {
+  async findGame(gameId: string) {
     const game = await GameModel.findById(gameId);
     const gameDto: GameDTO | undefined = game?.toObject();
+    return gameDto;
+  }
+
+  async getGame(gameId: string) {
+    const game = await GameModel.findById(gameId).populate("gameRoom");
+    if (!game) {
+      throw new ApiError(`Game '${gameId}' was not found`, 404);
+    }
+    const gameDto: GameDTO = game.toObject();
     return gameDto;
   }
 

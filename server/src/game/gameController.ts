@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import { Server } from "socket.io";
 import { GameRoomService } from "../gameRoom/gameRoomService";
 import { StartGamePayload } from "./api/startGamePayload";
-import { GameDTO } from "./models";
+import { AttackSquare, GameDTO } from "./models";
 import { GameOptions } from "./models/gameOptions";
 import { GameService } from "./services/gameService";
 
@@ -53,14 +53,17 @@ export class GameController {
       const opponentInfo = this.filterGameInfo(opponent!.playerId, startedGame);
 
       console.log("Started game:", startedGame.id);
-      this.io.except(req.socketId).emit("gameStarted", opponentInfo);
+      this.io
+        .to(gameRoomId)
+        .except(req.socketId)
+        .emit("gameStarted", opponentInfo);
       return res.json(selfInfo);
     } catch (error) {
       next(error);
     }
   }
 
-  filterGameInfo = (requesterId: string, gameDto: GameDTO) => {
+  private filterGameInfo = (requesterId: string, gameDto: GameDTO) => {
     const requester = gameDto.players.find((p) => p.playerId === requesterId);
     const notPlayingInGame = !requester;
     if (notPlayingInGame) {
@@ -75,39 +78,35 @@ export class GameController {
     return filteredGameDto;
   };
 
-  async confirmPlacements(req: Request, res: Response, next: NextFunction) {
-    try {
-      const gameRoomId = req.params.gameRoomId;
-      const userId = req.userId;
-
-      res.end();
-    } catch (error) {
-      next(error);
-    }
-  }
-
   async attackSquare(req: Request, res: Response, next: NextFunction) {
     try {
       const { point, attackerPlayerId, gameId } = req.body;
-      const result = await this.gameDbService.attackSquare({
-        point,
-        attackerPlayerId,
-        gameId,
-      });
-      const attackResult = {
-        hasShip: result.shipHit,
-        nextPlayerId: result.nextPlayerId,
-        isGameOver: result.isGameOver,
-        point,
-        attackerPlayerId,
-        winnerPlayerId: result.isGameOver ? attackerPlayerId : undefined,
-      };
-      this.io.except(req.socketId).emit("squareAttacked", attackResult);
-      return res.json(attackResult);
+      const game = await this.gameDbService.getGame(gameId);
+      const attack = { point, attackerPlayerId, gameId };
+      const result = await this.gameDbService.attackSquare(attack);
+      const attackResultDto = this.mapAttackResultToDto(result, attack);
+      this.io
+        .to(game.gameRoom.id)
+        .except(req.socketId)
+        .emit("squareAttacked", attackResultDto);
+      return res.json(attackResultDto);
     } catch (error) {
       next(error);
     }
   }
+
+  private mapAttackResultToDto = (result: any, attack: AttackSquare) => {
+    const { point, attackerPlayerId } = attack;
+    const attackResultDto = {
+      hasShip: result.shipHit,
+      nextPlayerId: result.nextPlayerId,
+      isGameOver: result.isGameOver,
+      point,
+      attackerPlayerId,
+      winnerPlayerId: result.isGameOver ? attackerPlayerId : undefined,
+    };
+    return attackResultDto;
+  };
 
   private randomizeFirstPlayer(playerIds: string[]) {
     const playerCount = playerIds.length;
@@ -128,17 +127,8 @@ export class GameController {
       });
       const otherPlayer = game.players.find((p) => p.playerId !== req.userId);
       game.winnerPlayerId = otherPlayer?.playerId;
-      this.io.except(req.socketId).emit("gameEnded", game);
+      this.io.to(gameRoomId).except(req.socketId).emit("gameEnded", game);
       res.json(game);
-    } catch (error) {
-      next(error);
-    }
-  }
-
-  async resetGame(req: Request, res: Response, next: NextFunction) {
-    try {
-      console.log("Not implemented");
-      res.end();
     } catch (error) {
       next(error);
     }
