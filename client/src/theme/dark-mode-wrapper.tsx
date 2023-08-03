@@ -1,6 +1,6 @@
-import { ThemeProvider } from "@emotion/react";
-import { CssBaseline, createTheme, useMediaQuery } from "@mui/material";
-import { useState, useMemo, createContext, ReactElement } from "react";
+import { CssBaseline } from "@mui/material";
+import { useColorScheme } from "@mui/material/styles";
+import { ReactElement, createContext, useMemo } from "react";
 
 export const ColorModeContext = createContext({
   toggleColorMode: () => {},
@@ -12,35 +12,21 @@ type DarkModeProps = {
 };
 
 export function DarkModeWrapper({ children }: DarkModeProps) {
-  const prefersDarkMode = useMediaQuery("(prefers-color-scheme: dark)");
-  const [mode, setMode] = useState<"light" | "dark">("light");
+  const { mode, setMode } = useColorScheme();
   const colorMode = useMemo(
     () => ({
       toggleColorMode: () => {
-        setMode((prevMode) => (prevMode === "light" ? "dark" : "light"));
+        setMode(mode === "light" ? "dark" : "light");
       },
-      mode: mode,
+      mode: mode === "light" ? "light" : "dark",
     }),
     [mode]
   );
 
-  const theme = useMemo(() => {
-    // console.log("mode changed, changing theme...");
-    return createTheme({
-      palette: {
-        mode,
-      },
-    });
-  }, [mode]);
-
-  // console.log("prefers dark mode:", prefersDarkMode);
-
   return (
     <ColorModeContext.Provider value={colorMode}>
-      <ThemeProvider theme={theme}>
-        <CssBaseline />
-        {children}
-      </ThemeProvider>
+      <CssBaseline />
+      {children}
     </ColorModeContext.Provider>
   );
 }

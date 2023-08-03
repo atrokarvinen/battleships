@@ -17,8 +17,8 @@ type GamesTableProps = {
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
-    backgroundColor: theme.palette.common.black,
-    color: theme.palette.common.white,
+    backgroundColor: theme.palette.primary.dark,
+    color: theme.palette.primary.contrastText,
   },
   [`&.${tableCellClasses.body}`]: {
     fontSize: 14,

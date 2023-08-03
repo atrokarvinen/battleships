@@ -1,4 +1,4 @@
-import { Point } from "../board/point";
+import { Point } from "../board/models/point";
 
 export type AttackShipPayload = {
   point: Point;

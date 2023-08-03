@@ -7,10 +7,10 @@ import {
   selectIsGameOver,
 } from "../redux/selectors";
 import { attackSquareRequest } from "./api";
-import { Point } from "./point";
-import { AttackResult } from "./square/attack-result";
+import { AttackResult } from "./models/attack-result";
+import { Point } from "./models/point";
 import PrimarySquare from "./square/primarySquare";
-import { StaticSquares } from "./staticSquares";
+import { StaticSquares } from "./square/staticSquares";
 import styles from "./styles.module.scss";
 
 type TrackingBoardProps = {

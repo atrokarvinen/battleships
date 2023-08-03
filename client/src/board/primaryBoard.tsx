@@ -1,7 +1,7 @@
 import { useAppSelector } from "../redux/hooks";
 import { selectOwnPoints } from "../redux/selectors";
 import PrimarySquare from "./square/primarySquare";
-import { StaticSquares } from "./staticSquares";
+import { StaticSquares } from "./square/staticSquares";
 import styles from "./styles.module.scss";
 
 type PrimaryBoardProps = {

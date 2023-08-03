@@ -1,5 +1,5 @@
 import _ from "lodash";
-import { BoardPoint } from "../board/point";
+import { BoardPoint } from "../board/models";
 import { RootState } from "./store";
 
 // Players

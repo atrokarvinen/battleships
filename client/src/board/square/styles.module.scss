@@ -1,6 +1,4 @@
 .square {
-  border: 1px solid black;
-
   $squareSize: 30px;
   height: $squareSize;
   width: $squareSize;
@@ -10,65 +8,59 @@
   justify-content: center;
 }
 
-.square:hover {
-  background-color: lightblue;
+.empty {
+  width: 100%;
+  height: 100%;
 }
 
 .ship {
   height: 100%;
   width: 100%;
-  background-color: black;
 }
 
 $shipMargin: 10%;
 $shipSize: 80%;
 
 .shipStartVertical {
+  margin: 0 $shipMargin;
   margin-top: 2 * $shipMargin;
   width: $shipSize;
 }
 .shipMiddleVertical {
+  margin: 0 $shipMargin;
   width: $shipSize;
 }
 .shipEndVertical {
+  margin: 0 $shipMargin;
   width: $shipSize;
   border-radius: 0 0 50% 50%;
 }
 
 .shipStartHorizontal {
+  margin: $shipMargin 0;
   margin-left: $shipMargin;
   height: $shipSize;
 }
 .shipMiddleHorizontal {
+  margin: $shipMargin 0;
   height: $shipSize;
 }
 .shipEndHorizontal {
+  margin: $shipMargin 0px;
   height: $shipSize;
   border-radius: 0 50% 50% 0;
 }
 
-.enemyExplosion {
-  height: 100%;
-  width: 100%;
-  background-color: red;
-}
-
-.attacked {
-  background-color: red;
+.sunk {
+  background-color: var(--mui-palette-error-main)
 }
 
 .missed {
-  background-color: gray;
+  background-color: var(--mui-palette-grey-600);
   height: 100%;
   width: 100%;
 }
 
-.sunk {
-  background-color: orange;
-}
-
-.defendMiss {
-  height: 100%;
-  width: 100%;
-  background-color: gray;
+.shipColor {
+  background-color: var(--mui-palette-primary-main);
 }

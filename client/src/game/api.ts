@@ -1,14 +1,7 @@
 import { axios } from "../api/axios";
-import { BoardPoint } from "../board/point";
-import { ShipPart } from "../board/square-ship-part";
-import { AttackResult } from "../board/square/attack-result";
+import { AttackResult, BoardPoint, Ship } from "../board/models";
 import { ActiveGameState } from "../redux/activeGameSlice";
-import {
-  ShipPart as ApiShipPart,
-  GameDTO,
-  GameState,
-  Square,
-} from "./apiModel";
+import { GameDTO, GameState, Square } from "./apiModel";
 
 export type StartGamePayload = { gameRoomId: string };
 export type EndGamePayload = { gameRoomId: string };
@@ -71,7 +64,7 @@ export const mapSquaresToBoardPoint = (squares: Square[]) => {
     const boardPoint: BoardPoint = {
       point: square.point,
       attackResult: determineAttackResult(square),
-      shipPart: determineShipPart(square),
+      shipPart: mapShip(square),
     };
     return boardPoint;
   });
@@ -88,26 +81,9 @@ const determineAttackResult = (square: Square) => {
   return AttackResult.None;
 };
 
-const determineShipPart = (square: Square): ShipPart => {
-  if (square.isVertical) {
-    if (square.ship === ApiShipPart.START) {
-      return ShipPart.StartVertical;
-    } else if (square.ship === ApiShipPart.MIDDLE) {
-      return ShipPart.MiddleVertical;
-    } else if (square.ship === ApiShipPart.END) {
-      return ShipPart.EndVertical;
-    }
-  } else {
-    if (square.ship === ApiShipPart.START) {
-      return ShipPart.StartHorizontal;
-    } else if (square.ship === ApiShipPart.MIDDLE) {
-      return ShipPart.MiddleHorizontal;
-    } else if (square.ship === ApiShipPart.END) {
-      return ShipPart.EndHorizontal;
-    }
+const mapShip = (square: Square): Ship | undefined => {
+  if (square.hasShip) {
+    return { isVertical: square.isVertical, part: square.ship };
   }
-  if (square.hasShip && square.hasBeenAttacked) {
-    return ShipPart.EnemyExplosion;
-  }
-  return ShipPart.None;
+  return undefined;
 };

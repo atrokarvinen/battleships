@@ -1,12 +1,12 @@
+import { Box, useTheme } from "@mui/material";
 import cn from "classnames";
-import { Point } from "../point";
-import { ShipPart } from "../square-ship-part";
-import { AttackResult } from "./attack-result";
+import { AttackResult, Point, Ship, ShipPart } from "../models";
 import styles from "./styles.module.scss";
+import { useSquareStyle } from "./useSquareStyle";
 
 type PrimarySquareProps = {
   point: Point;
-  shipPart: ShipPart;
+  shipPart?: Ship;
 
   attackResult: AttackResult;
 
@@ -19,44 +19,71 @@ const PrimarySquare = ({
   squareClicked,
   attackResult,
 }: PrimarySquareProps) => {
-  const hasShip = shipPart !== ShipPart.Unknown && shipPart !== ShipPart.None;
+  const theme = useTheme();
+  const { border } = useSquareStyle();
+  const hasShip = !!shipPart || attackResult === AttackResult.Hit;
 
-  const getShipPartClassName = (shipPart: ShipPart) => {
-    switch (shipPart) {
-      case ShipPart.StartHorizontal:
-        return styles.shipStartHorizontal;
-      case ShipPart.MiddleHorizontal:
-        return styles.shipMiddleHorizontal;
-      case ShipPart.EndHorizontal:
-        return styles.shipEndHorizontal;
-      case ShipPart.StartVertical:
-        return styles.shipStartVertical;
-      case ShipPart.MiddleVertical:
-        return styles.shipMiddleVertical;
-      case ShipPart.EndVertical:
-        return styles.shipEndVertical;
-      case ShipPart.EnemyExplosion:
-        return styles.enemyExplosion;
-      default:
-        return "";
+  const getShipPartClassName = () => {
+    if (!shipPart) {
+      return styles.empty;
     }
+    if (shipPart.isVertical) {
+      if (shipPart.part === ShipPart.START) {
+        return styles.shipStartVertical;
+      }
+      if (shipPart.part === ShipPart.MIDDLE) {
+        return styles.shipMiddleVertical;
+      }
+      if (shipPart.part === ShipPart.END) {
+        return styles.shipEndVertical;
+      }
+    } else {
+      if (shipPart.part === ShipPart.START) {
+        return styles.shipStartHorizontal;
+      }
+      if (shipPart.part === ShipPart.MIDDLE) {
+        return styles.shipMiddleHorizontal;
+      }
+      if (shipPart.part === ShipPart.END) {
+        return styles.shipEndHorizontal;
+      }
+    }
+    return styles.empty;
+  };
+
+  const getBackgroundClass = () => {
+    if (attackResult === AttackResult.Hit) {
+      return styles.sunk;
+    }
+    if (attackResult === AttackResult.Miss) {
+      return styles.missed;
+    }
+    if (hasShip) {
+      return styles.shipColor;
+    }
+    return undefined;
   };
 
   return (
-    <div
+    <Box
       data-testid={`square-${x}-${y}`}
       className={styles.square}
+      sx={{
+        ...border,
+        ":hover": {
+          borderColor: theme.palette.secondary.light,
+          borderWidth: 3,
+        },
+      }}
       onClick={() => squareClicked({ x, y })}
     >
-      <div
+      <Box
         data-testid={hasShip ? "ship-square" : "water-square"}
-        className={cn(getShipPartClassName(shipPart), {
+        className={cn(getShipPartClassName(), getBackgroundClass(), {
           [styles.ship]: hasShip,
-          [styles.attacked]: attackResult === AttackResult.Hit,
-          [styles.missed]: attackResult === AttackResult.Miss,
         })}
       />
-    </div>
+    </Box>
   );
 };
 

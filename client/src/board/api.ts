@@ -1,5 +1,5 @@
 import { axios } from "../api/axios";
-import { Point } from "./point";
+import { Point } from "./models/point";
 
 export type AttackSquarePayload = {
   point: Point;

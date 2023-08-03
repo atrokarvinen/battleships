@@ -1,9 +1,7 @@
 import type { PayloadAction } from "@reduxjs/toolkit";
 import { createSlice } from "@reduxjs/toolkit";
-import { BoardPoint } from "../board/point";
+import { AttackResult, BoardPoint } from "../board/models";
 import { generateEmptyBoardPoints } from "../board/redux/board-utils";
-import { ShipPart } from "../board/square-ship-part";
-import { AttackResult } from "../board/square/attack-result";
 import { AddShipPayload, AttackShipPayload } from "./models";
 
 export interface Board {
@@ -48,7 +46,7 @@ export const boardSlice = createSlice({
       state.boards.forEach((board) => {
         board.points.forEach((p) => {
           p.attackResult = AttackResult.None;
-          p.shipPart = ShipPart.None;
+          p.shipPart = undefined;
         });
       });
     },

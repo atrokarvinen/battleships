@@ -39,6 +39,7 @@ export const handlers = [
       winnerPlayerId: "",
       primaryBoard: {},
       trackingBoard: {},
+      gameRoom: "123",
     };
     return res(ctx.json(response));
   }),

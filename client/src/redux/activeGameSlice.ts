@@ -1,7 +1,5 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
-import { BoardPoint, Point } from "../board/point";
-import { ShipPart } from "../board/square-ship-part";
-import { AttackResult } from "../board/square/attack-result";
+import { AttackResult, BoardPoint, Point } from "../board/models";
 import { Board } from "./boardSlice";
 import { AttackResultPayload } from "./models";
 
@@ -80,12 +78,7 @@ const activeGameSlice = createSlice({
         const foundPoint = points.find(
           (p) => p.point.x === point.point.x && p.point.y === point.point.y
         );
-        if (
-          !foundPoint ||
-          foundPoint.shipPart === ShipPart.None ||
-          foundPoint.shipPart === ShipPart.Unknown
-        )
-          return;
+        if (!foundPoint || !foundPoint.shipPart) return;
         point.shipPart = foundPoint.shipPart;
       });
     },
@@ -94,7 +87,7 @@ const activeGameSlice = createSlice({
       opponent.points
         .filter((p) => p.attackResult === AttackResult.None)
         .forEach((point) => {
-          point.shipPart = ShipPart.None;
+          point.shipPart = undefined;
         });
     },
     attackSquare: (state, action: PayloadAction<AttackResultPayload>) => {
@@ -112,13 +105,6 @@ const activeGameSlice = createSlice({
       const attackedSquare = board.points.find(pointMatches(point));
       if (!attackedSquare) return;
 
-      let shipPart = ShipPart.None;
-      if (hasShip && isOwnGuess) {
-        shipPart = ShipPart.EnemyExplosion;
-      } else if (hasShip && !isOwnGuess) {
-        shipPart = attackedSquare.shipPart;
-      }
-      attackedSquare.shipPart = shipPart;
       attackedSquare.attackResult = hasShip
         ? AttackResult.Hit
         : AttackResult.Miss;
@@ -131,7 +117,7 @@ const activeGameSlice = createSlice({
       }
     },
     gameOver: (state, action: PayloadAction<string>) => {
-      state.winnerPlayerId = action.payload
+      state.winnerPlayerId = action.payload;
       state.isGameOver = true;
       state.showGameOverDialog = true;
     },
@@ -150,7 +136,7 @@ export const {
   setOpponentShipLocations,
   resetOpponentShipLocations,
   attackSquare,
-  gameOver
+  gameOver,
 } = activeGameSlice.actions;
 
 export const activeGameReducer = activeGameSlice.reducer;
