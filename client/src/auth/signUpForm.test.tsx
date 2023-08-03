@@ -5,7 +5,6 @@ import SignUp, { SignUpProps } from "./signUp";
 import { SignUpForm } from "./singUpForm";
 
 const defaultProps: SignUpProps = {
-  errors: {},
   onCancel: vi.fn(),
   onSubmit: vi.fn(),
 };
