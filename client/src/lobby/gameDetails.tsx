@@ -8,7 +8,7 @@ import {
   IconButton,
   Stack,
 } from "@mui/material";
-import { handleError } from "../api/errorHandling";
+import { useApiRequest } from "../api/useApiRequest";
 import { deleteGameRoom } from "../redux/gameRoomSlice";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import { selectGame, selectUserId } from "../redux/selectors";
@@ -30,6 +30,7 @@ const GameDetails = ({
   onLeave,
 }: GameDetailsProps) => {
   const dispatch = useAppDispatch();
+  const { request } = useApiRequest();
   const game = useAppSelector((state) => selectGame(state, gameId));
   const userId = useAppSelector(selectUserId);
 
@@ -44,14 +45,11 @@ const GameDetails = ({
   }
 
   const onDelete = async (gameId: string) => {
-    try {
-      await deleteGameRequest(gameId);
-      console.log("successfully deleted game " + gameId);
-      dispatch(deleteGameRoom(gameId));
-      onClose();
-    } catch (error) {
-      handleError(error);
-    }
+    const response = await deleteGameRequest(gameId);
+    if (!response) return;
+    console.log("successfully deleted game " + gameId);
+    dispatch(deleteGameRoom(gameId));
+    onClose();
   };
 
   const isGameCreator = userId === userId;

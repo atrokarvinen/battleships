@@ -1,5 +1,15 @@
 import { PreloadedState, configureStore } from "@reduxjs/toolkit";
+import {
+  initialState as initialNotificationState,
+  notificationReducer,
+} from "../notification/notificationSlice";
+import {
+  activeGameReducer,
+  initialState as initialActiveGameState,
+} from "./activeGameSlice";
+import { authReducer, initialState as initialAuthState } from "./authSlice";
 import boardReducer, { initialState as initialBoardState } from "./boardSlice";
+import { chatReducer, initialState as initialChatState } from "./chatSlice";
 import {
   gameRoomReducer,
   initialState as initialGameState,
@@ -8,20 +18,15 @@ import {
   initialState as initialPlayerState,
   playerReducer,
 } from "./playerSlice";
-import { authReducer, initialState as initialAuthState } from "./authSlice";
-import { chatReducer, initialState as initialChatState } from "./chatSlice";
-import {
-  activeGameReducer,
-  initialState as initialActiveGameState,
-} from "./activeGameSlice";
 
 export const rootReducer = {
-  board: boardReducer,
-  gameRoom: gameRoomReducer,
   activeGame: activeGameReducer,
-  players: playerReducer,
   auth: authReducer,
+  board: boardReducer,
   chat: chatReducer,
+  gameRoom: gameRoomReducer,
+  notification: notificationReducer,
+  players: playerReducer,
 };
 
 export const store = configureStore({
@@ -29,12 +34,13 @@ export const store = configureStore({
 });
 
 export const preloadedState: PreloadedState<RootState> = {
+  activeGame: initialActiveGameState,
   auth: initialAuthState,
   board: initialBoardState,
-  gameRoom: initialGameState,
-  activeGame: initialActiveGameState,
-  players: initialPlayerState,
   chat: initialChatState,
+  gameRoom: initialGameState,
+  notification: initialNotificationState,
+  players: initialPlayerState,
 };
 
 // Infer the `RootState` and `AppDispatch` types from the store itself

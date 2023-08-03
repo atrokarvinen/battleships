@@ -1,5 +1,6 @@
 import { Button, Stack } from "@mui/material";
 import { handleError } from "../api/errorHandling";
+import { useApiRequest } from "../api/useApiRequest";
 import { useBreakpoint } from "../navigation/useBreakpoint";
 import { gameOver, setActiveGame } from "../redux/activeGameSlice";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
@@ -15,13 +16,14 @@ import { GameDTO } from "./apiModel";
 type GameControlsProps = { gameRoomId: string };
 
 const GameControls = ({ gameRoomId }: GameControlsProps) => {
+  const { request } = useApiRequest();
   const dispatch = useAppDispatch();
   const isGameStarted = useAppSelector(selectIsGameStarted);
   const { sm } = useBreakpoint();
 
   async function startGame() {
-    const response = await startGameRequest({ gameRoomId });
-
+    const response = await request(startGameRequest({ gameRoomId }), true);
+    if (!response) return;
     const startedGame: GameDTO = response.data;
     const activeGame = mapGameDtoToActiveGame(startedGame);
     console.log("started game:", activeGame);
@@ -29,7 +31,8 @@ const GameControls = ({ gameRoomId }: GameControlsProps) => {
   }
 
   async function endGame() {
-    const response = await endGameRequest({ gameRoomId });
+    const response = await request(endGameRequest({ gameRoomId }), true);
+    if (!response) return;
     const activeGame = mapGameDtoToActiveGame(response.data);
     const { winnerPlayerId } = activeGame;
     dispatch(setActiveGame(activeGame));

@@ -2,18 +2,16 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { Box, Button, Stack, TextField } from "@mui/material";
 import { FormEvent, useEffect, useRef } from "react";
 import { useForm } from "react-hook-form";
-import { FormErrorMap } from "../api/models";
 import { schema } from "./signUpValidation";
 import { SignUpForm } from "./singUpForm";
 
 export type SignUpProps = {
   onCancel(): void;
   onSubmit(data: SignUpForm): void;
-  errors: FormErrorMap;
 };
 
 const SignUp = (props: SignUpProps) => {
-  const { onCancel, errors } = props;
+  const { onCancel } = props;
   const usernameRef = useRef<HTMLInputElement>();
   const { register, handleSubmit, formState, setValue } = useForm<SignUpForm>({
     resolver: yupResolver(schema),
@@ -25,23 +23,9 @@ const SignUp = (props: SignUpProps) => {
 
   function onSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    const handler = handleSubmit((data) => 
-      props.onSubmit(data)
-    );
+    const handler = handleSubmit((data) => props.onSubmit(data));
     handler();
   }
-
-  const getError = (path: "username" | "password" | "confirmPassword") => {
-    const fieldError = formState.errors[path];
-    const hasFieldError = fieldError !== undefined;
-    if (hasFieldError) {
-      const helperText = fieldError.message;
-      return { error: true, helperText };
-    }
-    const error = errors[path] !== undefined;
-    const helperText = errors[path];
-    return { error, helperText };
-  };
 
   function onAutoFill() {
     setValue("username", `testi ${new Date().toLocaleTimeString("fi-Fi")}`);
@@ -55,7 +39,6 @@ const SignUp = (props: SignUpProps) => {
         <TextField
           id="sign-up-username"
           label="Username"
-          {...getError("username")}
           {...register("username")}
           inputRef={usernameRef}
         />

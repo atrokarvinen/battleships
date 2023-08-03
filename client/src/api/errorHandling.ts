@@ -1,6 +1,4 @@
 import axios, { AxiosError } from "axios";
-import { FormError } from "./formError";
-import { ValidationError } from "./models";
 
 export const handleError = (error: any) => {
   if (axios.isAxiosError(error)) {
@@ -27,12 +25,6 @@ const handleAxiosError = (axiosError: AxiosError) => {
   if (errorMessage) {
     console.log("[axios.message] rejection message:", errorMessage);
     return errorMessage;
-  }
-
-  const formErrors: ValidationError[] | undefined = message.errors;
-  if (formErrors) {
-    console.log("[axios.validation] validationErrors:", formErrors);
-    return new FormError(formErrors);
   }
 
   console.log("No axios error parsed. Rejection reason:", axiosError);

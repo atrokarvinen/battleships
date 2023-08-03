@@ -1,4 +1,4 @@
-import { handleError } from "../api/errorHandling";
+import { useApiRequest } from "../api/useApiRequest";
 import { attackSquare } from "../redux/activeGameSlice";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import {
@@ -21,6 +21,7 @@ type TrackingBoardProps = {
 
 const TrackingBoard = ({ gameId, playerId }: TrackingBoardProps) => {
   const dispatch = useAppDispatch();
+  const { request } = useApiRequest();
   const points = useAppSelector((state) => selectEnemyPoints(state, playerId));
   const playerIdToPlay = useAppSelector(selectActivePlayerId);
   const isGameOver = useAppSelector(selectIsGameOver);
@@ -36,18 +37,18 @@ const TrackingBoard = ({ gameId, playerId }: TrackingBoardProps) => {
       console.log(error.message);
       return;
     }
-    try {
-      console.log("attacking point:", point);
-      const response = await attackSquareRequest({
+    console.log("attacking point:", point);
+    const response = await request(
+      attackSquareRequest({
         point,
         attackerPlayerId: playerId,
         gameId,
-      });
-      const payload = { ...response.data, isOwnGuess: true };
-      dispatch(attackSquare(payload));
-    } catch (error) {
-      handleError(error);
-    }
+      }),
+      true
+    );
+    if (!response) return;
+    const payload = { ...response.data, isOwnGuess: true };
+    dispatch(attackSquare(payload));
   };
 
   const validateAttack = (targetPoint: BoardPoint | undefined) => {

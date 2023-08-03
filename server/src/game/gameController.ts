@@ -29,6 +29,9 @@ export class GameController {
       }
       let game = await this.gameRoomService.getGameInRoom(gameRoomId);
       const playerIds = gameRoom.players.map((p) => p.id);
+      if (playerIds.length !== 2) {
+        return res.status(400).json({ error: `Game requires 2 players` });
+      }
       const firstPlayerId = this.randomizeFirstPlayer(playerIds);
       const options: GameOptions = { gameRoomId, playerIds, firstPlayerId };
       if (!game) {

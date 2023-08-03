@@ -8,7 +8,7 @@ import {
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router";
-import { handleError } from "../api/errorHandling";
+import { useApiRequest } from "../api/useApiRequest";
 import {
   addNewGameRoom,
   joinGame,
@@ -32,12 +32,11 @@ import GamesTable from "./gamesTable";
 type LobbyProps = {};
 
 const Lobby = ({}: LobbyProps) => {
+  const { request } = useApiRequest();
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const [isCreateGameOpen, setIsCreateGameOpen] = useState(false);
-  const [selectedGameRoomId, setSelectedGameRoomId] = useState<
-    string | undefined
-  >();
+  const [selectedGameRoomId, setSelectedGameRoomId] = useState<string>();
 
   const gameRooms = useSelector(selectGames);
 
@@ -50,50 +49,38 @@ const Lobby = ({}: LobbyProps) => {
   }
 
   async function onCreateGameSubmitted(data: CreateGame) {
-    console.log("creating game with data: " + JSON.stringify(data));
+    console.log("creating game with data: ", data);
 
-    try {
-      const response = await createGameRequest(data);
-      console.log("Game %s created", response.data);
-      dispatch(addNewGameRoom(response.data));
-      setIsCreateGameOpen(false);
-    } catch (error) {
-      handleError(error);
-    }
+    const response = await request(createGameRequest(data), true);
+    if (!response) return;
+    console.log("Game %s created", response.data);
+    dispatch(addNewGameRoom(response.data));
+    setIsCreateGameOpen(false);
   }
 
   async function getGameRooms() {
-    try {
-      const response = await getGamesRequest();
-      const games = response.data;
-      console.log("fetched games count: " + games.length);
-      dispatch(setGameRooms(games));
-    } catch (error) {
-      handleError(error);
-    }
+    const response = await request(getGamesRequest());
+    if (!response) return;
+    const games = response.data;
+    console.log("fetched games count: " + games.length);
+    dispatch(setGameRooms(games));
   }
 
   async function onJoinGame(gameId: string) {
-    try {
-      const response = await joinGameRequest(gameId);
-      navigate(`/game/${gameId}`);
-      onGameDetailsClosed();
-      dispatch(joinGame(response.data));
-      dispatch(addPlayerToGame(response.data));
-    } catch (error) {
-      handleError(error);
-    }
+    const response = await request(joinGameRequest(gameId), true);
+    if (!response) return;
+    navigate(`/game/${gameId}`);
+    onGameDetailsClosed();
+    dispatch(joinGame(response.data));
+    dispatch(addPlayerToGame(response.data));
   }
 
   async function onLeaveGame(gameId: string) {
-    try {
-      const response = await leaveGameRequest(gameId);
-      onGameDetailsClosed();
-      dispatch(leaveGame(response.data));
-      dispatch(removePlayerFromGame(response.data));
-    } catch (error) {
-      handleError(error);
-    }
+    const response = await request(leaveGameRequest(gameId), true);
+    if (!response) return;
+    onGameDetailsClosed();
+    dispatch(leaveGame(response.data));
+    dispatch(removePlayerFromGame(response.data));
   }
 
   const onGameDetailsClosed = () => {
@@ -109,13 +96,12 @@ const Lobby = ({}: LobbyProps) => {
         />
       </Grid>
 
-      <Grid
-        item
-        display="flex"
-        justifyContent="center"
-        xs={12}
-      >
-        <Button onClick={() => setIsCreateGameOpen(true)} variant="contained" sx={{maxWidth: 250}}>
+      <Grid item display="flex" justifyContent="center" xs={12}>
+        <Button
+          onClick={() => setIsCreateGameOpen(true)}
+          variant="contained"
+          sx={{ maxWidth: 250 }}
+        >
           Create new game
         </Button>
       </Grid>

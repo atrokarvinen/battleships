@@ -28,6 +28,8 @@ const cleanup = async () => {
 
 it("creates game", async () => {
   const createdGame = await service.createGameRoom({
+    createdAt: new Date(),
+    createdBy: "test user",
     title: "test game",
     players: [],
   });

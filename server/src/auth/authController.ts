@@ -3,7 +3,6 @@ import { NextFunction, Request, Response } from "express";
 import jwt from "jsonwebtoken";
 import { JWT_COOKIE_NAME } from "../core/constants";
 import { env } from "../core/env";
-import { ValidationFailure } from "../core/validationFailure";
 import { User } from "../database/user";
 import { generateGuid, getRandomGuestName } from "./guestNames";
 import { SignInPayload } from "./models/signInPayload";
@@ -19,11 +18,8 @@ export class AuthController {
 
       const isUnique = await this.isUsernameUnique(username);
       if (!isUnique) {
-        const msg = `Username '${username}' already exists`;
-        const error: ValidationFailure = {
-          errors: [{ path: "username", msg: msg }],
-        };
-        return res.status(400).json(error);
+        const error = `Username '${username}' already exists`;
+        return res.status(400).json({ error });
       }
 
       const hashedPassword = await bcrypt.hash(password, 10);

@@ -1,9 +1,7 @@
 import { Box, Button, Dialog, DialogContent, DialogTitle } from "@mui/material";
 import { useState } from "react";
 import { useLocation, useNavigate } from "react-router";
-import { handleError } from "../api/errorHandling";
-import { FormError } from "../api/formError";
-import { FormErrorMap } from "../api/models";
+import { useApiRequest } from "../api/useApiRequest";
 import { login } from "../redux/authSlice";
 import { useAppDispatch } from "../redux/hooks";
 import { addPlayer } from "../redux/playerSlice";
@@ -17,96 +15,60 @@ import styles from "./styles.module.scss";
 type LoginProps = {};
 
 const Login = ({}: LoginProps) => {
-  const [isSignUpOpen, setIsSignUpOpen] = useState(false);
-  const [testCreatedUser, setTestCreatedUser] = useState<LoginForm>();
-  const [signUpErrors, setSignUpErrors] = useState<FormErrorMap>({});
-  const [signInError, setSignInError] = useState("");
-
   const location = useLocation();
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
+  const { request } = useApiRequest();
+
+  const [isSignUpOpen, setIsSignUpOpen] = useState(false);
+  const [createdUser, setCreatedUser] = useState<LoginForm>();
 
   function openSignUpForm() {
-    resetSignUpErrors();
     setIsSignUpOpen(true);
   }
 
   function closeSignUpForm() {
     setIsSignUpOpen(false);
-    resetSignUpErrors();
-  }
-
-  function resetSignUpErrors() {
-    setSignUpErrors({});
   }
 
   async function handleSignInSubmit(data: LoginForm) {
-    try {
-      const response = await signInRequest(data);
+    const response = await request(signInRequest(data), true);
+    if (!response) return;
+    const { userId, username, gamesJoined } = response.data;
+    dispatch(addPlayer({ id: userId, username, gamesJoined }));
+    dispatch(login({ userId, username, isGuest: false }));
 
-      const { userId, username, gamesJoined } = response.data;
-      dispatch(addPlayer({ id: userId, username, gamesJoined }));
-      dispatch(login({ userId, username, isGuest: false }));
-
-      const redirectUrl = location.state?.deniedRoute ?? "/lobby";
-      navigate(redirectUrl);
-    } catch (error) {
-      handleSignInError(error);
-    }
+    const redirectUrl = location.state?.deniedRoute ?? "/lobby";
+    navigate(redirectUrl);
   }
-
-  const handleSignInError = (error: any) => {
-    const message = handleError(error);
-    if (typeof message === "string") {
-      setSignInError(message);
-    }
-  };
 
   async function handleSignUpSubmit(data: SignUpForm) {
-    console.log(`sign up data: ${JSON.stringify(data)}`);
-    try {
-      const response = await signUpRequest(data);
-      console.log(`sign up response: ${response.status}`);
-      setTestCreatedUser({ ...data });
-      setIsSignUpOpen(false);
-      resetSignUpErrors();
-    } catch (error) {
-      handleSignUpError(error);
-    }
+    const response = await request(signUpRequest(data), true);
+    if (!response) return;
+    setCreatedUser({ username: data.username, password: data.password });
+    closeSignUpForm();
   }
 
-  const handleSignUpError = (error: any) => {
-    const message = handleError(error);
-    if (message instanceof FormError) {
-      setSignUpErrors(message.errors);
-    }
-  };
-
   const handleGuestLogin = async () => {
-    try {
-      const response = await signInAsGuestRequest();
-      const { userId, username } = response.data;
-      dispatch(login({ userId, username, isGuest: true }));
-      navigate("/lobby");
-    } catch (error) {
-      handleError(error);
-    }
+    const response = await request(signInAsGuestRequest(), true);
+    if (!response) return;
+    const { userId, username } = response.data;
+    dispatch(login({ userId, username, isGuest: true }));
+    navigate("/lobby");
   };
 
   return (
     <Box className={styles.login}>
-      <SignIn
-        defaultValues={testCreatedUser}
-        onSubmit={handleSignInSubmit}
-        error={signInError}
-      />
-      <Button
-        onClick={handleGuestLogin}
-        variant="outlined"
-        sx={{ width: "150px", mt: 1 }}
-      >
-        Guest login
-      </Button>
+      <SignIn defaultValues={createdUser} onSubmit={handleSignInSubmit} />
+      {process.env.NODE_ENV === "development" && (
+        <Button
+          onClick={handleGuestLogin}
+          variant="outlined"
+          sx={{ width: "150px", mt: 1 }}
+        >
+          Guest login
+        </Button>
+      )}
       <Button
         onClick={openSignUpForm}
         variant="outlined"
@@ -122,11 +84,7 @@ const Login = ({}: LoginProps) => {
         <DialogTitle>Sign up</DialogTitle>
         <DialogContent>
           <Box pt={1} pb={1}>
-            <SignUp
-              onCancel={closeSignUpForm}
-              onSubmit={handleSignUpSubmit}
-              errors={signUpErrors}
-            />
+            <SignUp onCancel={closeSignUpForm} onSubmit={handleSignUpSubmit} />
           </Box>
         </DialogContent>
       </Dialog>

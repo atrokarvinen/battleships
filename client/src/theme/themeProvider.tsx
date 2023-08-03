@@ -3,7 +3,7 @@ import { ReactElement } from "react";
 import { DarkModeWrapper } from "./dark-mode-wrapper";
 
 type ThemeProviderProps = {
-  children: ReactElement;
+  children: ReactElement | ReactElement[];
 };
 
 const ThemeProvider = ({ children }: ThemeProviderProps) => {

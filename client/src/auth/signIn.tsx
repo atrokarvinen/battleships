@@ -1,5 +1,5 @@
 import { yupResolver } from "@hookform/resolvers/yup";
-import { TextField, Button, Alert, Grid } from "@mui/material";
+import { Button, TextField } from "@mui/material";
 import { FormEvent, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { LoginForm } from "./loginForm";
@@ -9,11 +9,10 @@ import styles from "./styles.module.scss";
 type SignInProps = {
   defaultValues?: LoginForm;
   onSubmit(data: LoginForm): void;
-  error?: string;
 };
 
 const SignIn = (props: SignInProps) => {
-  const { defaultValues, error } = props;
+  const { defaultValues } = props;
   const { register, handleSubmit, formState, setValue } = useForm<LoginForm>({
     resolver: yupResolver(schema),
     defaultValues,
@@ -39,7 +38,6 @@ const SignIn = (props: SignInProps) => {
       onSubmit={(e) => onSubmit(e)}
       autoComplete="on"
     >
-      {error && <Alert severity="error">{error}</Alert>}
       <TextField
         id="username"
         label="Username"
