@@ -45,7 +45,7 @@ const GameDetails = ({
   }
 
   const onDelete = async (gameId: string) => {
-    const response = await deleteGameRequest(gameId);
+    const response = await request(deleteGameRequest(gameId), true);
     if (!response) return;
     console.log("successfully deleted game " + gameId);
     dispatch(deleteGameRoom(gameId));
