@@ -7,7 +7,7 @@ type StaticColumnProps = {
   direction: "row" | "column";
 };
 
-const StaticStack = ({ items, direction }: StaticColumnProps) => {
+const StaticSquareStack = ({ items, direction }: StaticColumnProps) => {
   const { border } = useSquareStyle();
   return (
     <Stack direction={direction}>
@@ -20,4 +20,4 @@ const StaticStack = ({ items, direction }: StaticColumnProps) => {
   );
 };
 
-export default StaticStack;
+export default StaticSquareStack;

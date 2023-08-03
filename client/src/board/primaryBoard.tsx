@@ -1,6 +1,6 @@
 import { useAppSelector } from "../redux/hooks";
 import { selectOwnPoints } from "../redux/selectors";
-import PrimarySquare from "./square/primarySquare";
+import { PlaySquare } from "./square/playSquare";
 import { StaticSquares } from "./square/staticSquares";
 import styles from "./styles.module.scss";
 
@@ -20,7 +20,7 @@ const PrimaryBoard = ({ playerId }: PrimaryBoardProps) => {
       <StaticSquares />
       <div className={styles.playArea}>
         {points.map((point, index) => (
-          <PrimarySquare key={index} squareClicked={squareClicked} {...point} />
+          <PlaySquare key={index} squareClicked={squareClicked} {...point} />
         ))}
       </div>
     </div>

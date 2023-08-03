@@ -1,5 +1,5 @@
 import { Box } from "@mui/material";
-import StaticStack from "./staticStack";
+import StaticSquareStack from "./staticSquareStack";
 import styles from "./styles.module.scss";
 import { useSquareStyle } from "./useSquareStyle";
 
@@ -15,10 +15,10 @@ export const StaticSquares = () => {
         <Box className={styles.square} sx={{ ...border }} />
       </div>
       <div className={styles.staticRow}>
-        <StaticStack items={arr} direction="row" />
+        <StaticSquareStack items={arr} direction="row" />
       </div>
       <div className={styles.staticColumn}>
-        <StaticStack items={ranks} direction="column" />
+        <StaticSquareStack items={ranks} direction="column" />
       </div>
     </>
   );

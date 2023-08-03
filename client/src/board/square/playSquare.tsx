@@ -13,7 +13,7 @@ type PrimarySquareProps = {
   squareClicked(p: Point): void;
 };
 
-const PrimarySquare = ({
+const PlaySquare = ({
   point: { x, y },
   shipPart,
   squareClicked,
@@ -87,4 +87,4 @@ const PrimarySquare = ({
   );
 };
 
-export default PrimarySquare;
+export { PlaySquare };

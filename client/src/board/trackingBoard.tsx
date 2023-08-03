@@ -7,9 +7,10 @@ import {
   selectIsGameOver,
 } from "../redux/selectors";
 import { attackSquareRequest } from "./api";
+import { BoardPoint } from "./models";
 import { AttackResult } from "./models/attack-result";
 import { Point } from "./models/point";
-import PrimarySquare from "./square/primarySquare";
+import { PlaySquare } from "./square/playSquare";
 import { StaticSquares } from "./square/staticSquares";
 import styles from "./styles.module.scss";
 
@@ -24,45 +25,19 @@ const TrackingBoard = ({ gameId, playerId }: TrackingBoardProps) => {
   const playerIdToPlay = useAppSelector(selectActivePlayerId);
   const isGameOver = useAppSelector(selectIsGameOver);
 
-  // console.log("enemy points:", points);
-
   const squareClicked = async (point: Point) => {
-    console.log("square clicked @" + JSON.stringify(point));
-    console.log(
-      `playerIdToPlay === playerId: ${playerIdToPlay} === ${playerId}`
-    );
+    console.log("square clicked:", point);
     const targetPoint = points.find(
       (p) => p.point.x === point.x && p.point.y === point.y
     );
-    if (!targetPoint) {
-      console.log("failed to find point");
-      return;
-    }
-    const isPlayersTurn = playerIdToPlay === playerId;
-    const isAlreadyAttacked =
-      targetPoint.attackResult !== undefined &&
-      targetPoint.attackResult !== AttackResult.None;
-    const isOpponentBoard = true;
-    if (!isOpponentBoard) {
-      console.log("attack should click tracking board");
-      return;
-    }
-    if (!isPlayersTurn) {
-      console.log("incorrect player turn");
-      return;
-    }
-    if (isAlreadyAttacked) {
-      console.log(
-        "square already attacked: " + AttackResult[targetPoint.attackResult]
-      );
-      return;
-    }
-    if (isGameOver) {
-      console.log("game already over, cannot attack");
-      return;
-    }
-    console.log("attacking point:", point);
     try {
+      validateAttack(targetPoint);
+    } catch (error: any) {
+      console.log(error.message);
+      return;
+    }
+    try {
+      console.log("attacking point:", point);
       const response = await attackSquareRequest({
         point,
         attackerPlayerId: playerId,
@@ -75,12 +50,31 @@ const TrackingBoard = ({ gameId, playerId }: TrackingBoardProps) => {
     }
   };
 
+  const validateAttack = (targetPoint: BoardPoint | undefined) => {
+    if (!targetPoint) {
+      throw new Error("failed to find point");
+    }
+    const isPlayersTurn = playerIdToPlay === playerId;
+    const isAlreadyAttacked =
+      targetPoint.attackResult !== undefined &&
+      targetPoint.attackResult !== AttackResult.None;
+    if (!isPlayersTurn) {
+      throw new Error("incorrect player turn");
+    }
+    if (isAlreadyAttacked) {
+      throw new Error("square already attacked");
+    }
+    if (isGameOver) {
+      throw new Error("game already over, cannot attack");
+    }
+  };
+
   return (
     <div className={styles.board} data-testid="tracking-board">
       <StaticSquares />
       <div className={styles.playArea}>
         {points.map((point, index) => (
-          <PrimarySquare key={index} squareClicked={squareClicked} {...point} />
+          <PlaySquare key={index} squareClicked={squareClicked} {...point} />
         ))}
       </div>
     </div>
