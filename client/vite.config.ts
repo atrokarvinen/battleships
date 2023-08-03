@@ -12,6 +12,9 @@ export default defineConfig({
     host: "localhost",
     open: true,
   },
+  build: {
+    sourcemap: true,
+  },
   plugins: [react()],
   test: {
     globals: true,
