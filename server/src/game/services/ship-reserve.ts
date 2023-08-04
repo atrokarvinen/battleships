@@ -9,7 +9,6 @@ export const standardCarrierQuantity = 1;
 export const standardBattleshipQuantity = 2;
 export const standardCruiserQuantity = 2;
 export const standardSubmarineQuantity = 3;
-// export const standardSubmarineQuantity = 1;
 
 export const standardReserve: FleetReserve = {
   fleets: [

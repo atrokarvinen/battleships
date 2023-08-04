@@ -66,6 +66,9 @@ export const createRandomFleetLocations = () => {
       iter++;
     }
 
+    if (iter === maxIter) {
+      throw new Error("Could not place all ships");
+    }
     // console.log("available points: " + availablePoints.length);
 
     // console.log(
@@ -75,12 +78,22 @@ export const createRandomFleetLocations = () => {
     // );
 
     takenPoints.forEach((tp) => {
-      availablePoints = availablePoints.filter((ap) => !pointsEqual(ap, tp));
+      const neighborPoints = [
+        { x: tp.x - 1, y: tp.y },
+        { x: tp.x + 1, y: tp.y },
+        { x: tp.x, y: tp.y - 1 },
+        { x: tp.x, y: tp.y + 1 },
+      ];
+      availablePoints = availablePoints.filter((ap) => {
+        const isNeighbor = neighborPoints.some((np) => pointsEqual(ap, np));
+        const isSame = pointsEqual(ap, tp);
+        return !(isNeighbor || isSame);
+      });
     });
 
     const placement: ShipPlacement = {
       takenPoints,
-      ship: ship,
+      ship,
       start,
       end,
       isVertical,
