@@ -27,17 +27,17 @@ const PlayerArea = ({
   return (
     <Box>
       <Stack direction={sm ? "column" : "row"} spacing={2}>
-        <Box>
+        <Stack direction="column" spacing={1}>
           <PlayerName name={player1Name} id={player1Id} />
           <PrimaryBoard playerId={player1Id} />
-        </Box>
-        <Box>
+        </Stack>
+        <Stack direction="column" spacing={1}>
           <PlayerName name={player2Name} id={player2Id} />
           <TrackingBoard gameId={gameId} playerId={player1Id} />
           {process.env.NODE_ENV === "development" && (
             <RevealOpponentBoard opponentId={player2Id} gameId={gameId} />
           )}
-        </Box>
+        </Stack>
       </Stack>
     </Box>
   );

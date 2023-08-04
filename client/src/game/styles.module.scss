@@ -4,9 +4,9 @@
 }
 
 .playerName {
-  border: 1px solid transparent;
+  border: 3px solid transparent;
 }
 
 .active {
-  border: 1px solid green;
+  border: 3px solid var(--mui-palette-success-main);
 }
