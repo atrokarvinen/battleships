@@ -20,6 +20,7 @@ type TrackingBoardProps = {
 };
 
 const TrackingBoard = ({ gameId, playerId }: TrackingBoardProps) => {
+  const lastAttack = useAppSelector((state) => state.activeGame.lastAttack);
   const dispatch = useAppDispatch();
   const { request } = useApiRequest();
   const points = useAppSelector((state) => selectEnemyPoints(state, playerId));
@@ -74,9 +75,21 @@ const TrackingBoard = ({ gameId, playerId }: TrackingBoardProps) => {
     <div className={styles.board} data-testid="tracking-board">
       <StaticSquares />
       <div className={styles.playArea}>
-        {points.map((point, index) => (
-          <PlaySquare key={index} squareClicked={squareClicked} {...point} />
-        ))}
+        {points.map((point, index) => {
+          const lastAttacked =
+            !!lastAttack &&
+            lastAttack.playerId === playerId &&
+            lastAttack.point.x === point.point.x &&
+            lastAttack.point.y === point.point.y;
+          return (
+            <PlaySquare
+              key={index}
+              lastAttacked={lastAttacked}
+              squareClicked={squareClicked}
+              {...point}
+            />
+          );
+        })}
       </div>
     </div>
   );

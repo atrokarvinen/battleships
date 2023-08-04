@@ -7,7 +7,7 @@ import { useSquareStyle } from "./useSquareStyle";
 type PrimarySquareProps = {
   point: Point;
   shipPart?: Ship;
-
+  lastAttacked: boolean;
   attackResult: AttackResult;
 
   squareClicked(p: Point): void;
@@ -17,6 +17,7 @@ const PlaySquare = ({
   point: { x, y },
   shipPart,
   squareClicked,
+  lastAttacked,
   attackResult,
 }: PrimarySquareProps) => {
   const theme = useTheme();
@@ -69,7 +70,10 @@ const PlaySquare = ({
       data-testid={`square-${x}-${y}`}
       className={styles.square}
       sx={{
-        ...border,
+        border: lastAttacked ? 3 : border.border,
+        borderColor: lastAttacked
+          ? theme.palette.warning.light
+          : border.borderColor,
         ":hover": {
           borderColor: theme.palette.secondary.light,
           borderWidth: 3,

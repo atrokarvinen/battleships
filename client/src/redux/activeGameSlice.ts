@@ -8,6 +8,11 @@ export type Attack = {
   points: BoardPoint[];
 };
 
+export type LastAttack = {
+  playerId: string;
+  point: Point;
+};
+
 export type ActiveGameState = {
   id: string;
   gameRoomId: string;
@@ -22,6 +27,7 @@ export type ActiveGameState = {
   primaryBoard: Board;
   trackingBoard: Board;
 
+  lastAttack?: LastAttack;
   showOpponentBoard: boolean;
 };
 
@@ -98,6 +104,7 @@ const activeGameSlice = createSlice({
         point,
         winnerPlayerId,
         isOwnGuess,
+        attackerPlayerId,
       } = action.payload;
 
       console.log("Sinking ship at ", point);
@@ -115,6 +122,10 @@ const activeGameSlice = createSlice({
       if (isGameOver) {
         state.showGameOverDialog = true;
       }
+      state.lastAttack = {
+        playerId: attackerPlayerId,
+        point,
+      };
     },
     gameOver: (state, action: PayloadAction<string>) => {
       state.winnerPlayerId = action.payload;

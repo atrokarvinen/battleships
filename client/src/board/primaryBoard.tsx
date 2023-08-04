@@ -9,6 +9,7 @@ type PrimaryBoardProps = {
 };
 
 const PrimaryBoard = ({ playerId }: PrimaryBoardProps) => {
+  const lastAttack = useAppSelector((state) => state.activeGame.lastAttack);
   const points = useAppSelector((state) => selectOwnPoints(state, playerId));
 
   const squareClicked = () => {
@@ -19,9 +20,21 @@ const PrimaryBoard = ({ playerId }: PrimaryBoardProps) => {
     <div data-testid="primary-board" className={styles.board}>
       <StaticSquares />
       <div className={styles.playArea}>
-        {points.map((point, index) => (
-          <PlaySquare key={index} squareClicked={squareClicked} {...point} />
-        ))}
+        {points.map((point, index) => {
+          const lastAttacked =
+            !!lastAttack &&
+            lastAttack.playerId !== playerId &&
+            lastAttack.point.x === point.point.x &&
+            lastAttack.point.y === point.point.y;
+          return (
+            <PlaySquare
+              key={index}
+              lastAttacked={lastAttacked}
+              squareClicked={squareClicked}
+              {...point}
+            />
+          );
+        })}
       </div>
     </div>
   );
