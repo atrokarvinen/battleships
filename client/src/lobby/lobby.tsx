@@ -6,85 +6,63 @@ import {
   Grid,
 } from "@mui/material";
 import { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
 import { useNavigate } from "react-router";
-import { useApiRequest } from "../api/useApiRequest";
-import {
-  addNewGameRoom,
-  joinGame,
-  leaveGame,
-  setGameRooms,
-} from "../redux/gameRoomSlice";
-import { useAppDispatch } from "../redux/hooks";
-import { addPlayerToGame, removePlayerFromGame } from "../redux/playerSlice";
+import { useAppSelector } from "../redux/hooks";
 import { selectGames } from "../redux/selectors";
-import {
-  createGameRequest,
-  getGamesRequest,
-  joinGameRequest,
-  leaveGameRequest,
-} from "./api";
-import { CreateGame } from "./createGame";
-import CreateGameForm from "./createGameForm";
-import GameDetails from "./gameDetails";
+import { useLobbyApi } from "./api/useLobbyApi";
+import { CreateGame } from "./createGameRoom/createGame";
+import CreateGameForm from "./createGameRoom/createGameForm";
+import GameDetails from "./gameDetails/gameDetails";
 import GamesTable from "./gamesTable";
 
 type LobbyProps = {};
 
 const Lobby = ({}: LobbyProps) => {
-  const { request } = useApiRequest();
-  const dispatch = useAppDispatch();
+  const { getGames, createGame, joinGame, leaveGame } = useLobbyApi();
   const navigate = useNavigate();
   const [isCreateGameOpen, setIsCreateGameOpen] = useState(false);
   const [selectedGameRoomId, setSelectedGameRoomId] = useState<string>();
 
-  const gameRooms = useSelector(selectGames);
+  const gameRooms = useAppSelector(selectGames);
 
   useEffect(() => {
-    getGameRooms();
+    getGames();
   }, []);
 
-  function onCreateGameCancel() {
+  const onCreateGameCancel = () => {
     setIsCreateGameOpen(false);
-  }
-
-  async function onCreateGameSubmitted(data: CreateGame) {
-    console.log("creating game with data: ", data);
-
-    const response = await request(createGameRequest(data), true);
-    if (!response) return;
-    console.log("Game %s created", response.data);
-    dispatch(addNewGameRoom(response.data));
-    setIsCreateGameOpen(false);
-  }
-
-  async function getGameRooms() {
-    const response = await request(getGamesRequest());
-    if (!response) return;
-    const games = response.data;
-    console.log("fetched games count: " + games.length);
-    dispatch(setGameRooms(games));
-  }
-
-  async function onJoinGame(gameId: string) {
-    const response = await request(joinGameRequest(gameId), true);
-    if (!response) return;
-    navigate(`/game/${gameId}`);
-    onGameDetailsClosed();
-    dispatch(joinGame(response.data));
-    dispatch(addPlayerToGame(response.data));
-  }
-
-  async function onLeaveGame(gameId: string) {
-    const response = await request(leaveGameRequest(gameId), true);
-    if (!response) return;
-    onGameDetailsClosed();
-    dispatch(leaveGame(response.data));
-    dispatch(removePlayerFromGame(response.data));
-  }
+  };
 
   const onGameDetailsClosed = () => {
     setSelectedGameRoomId(undefined);
+  };
+
+  const onJoinGame = (gameId: string) => {
+    try {
+      joinGame(gameId);
+      navigate(`/game/${gameId}`);
+      onGameDetailsClosed();
+    } catch (error: any) {
+      console.log(error.message);
+    }
+  };
+
+  const onLeaveGame = (gameId: string) => {
+    try {
+      leaveGame(gameId);
+      onGameDetailsClosed();
+    } catch (error: any) {
+      console.log(error.message);
+    }
+  };
+
+  const onCreateGameSubmitted = (data: CreateGame) => {
+    try {
+      createGame(data);
+      setIsCreateGameOpen(false);
+    } catch (error: any) {
+      console.log(error.message);
+    }
   };
 
   return (
@@ -115,9 +93,9 @@ const Lobby = ({}: LobbyProps) => {
       />
 
       <Dialog
+        data-testid="create-game-dialog"
         open={isCreateGameOpen}
         onClose={onCreateGameCancel}
-        data-testid="create-game-dialog"
       >
         <DialogTitle>Create game</DialogTitle>
         <DialogContent>

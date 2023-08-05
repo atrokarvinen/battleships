@@ -8,11 +8,11 @@ import {
   IconButton,
   Stack,
 } from "@mui/material";
-import { useApiRequest } from "../api/useApiRequest";
-import { deleteGameRoom } from "../redux/gameRoomSlice";
-import { useAppDispatch, useAppSelector } from "../redux/hooks";
-import { selectGame, selectUserId } from "../redux/selectors";
-import { deleteGameRequest } from "./api";
+import { useApiRequest } from "../../api/useApiRequest";
+import { deleteGameRoom } from "../../redux/gameRoomSlice";
+import { useAppDispatch, useAppSelector } from "../../redux/hooks";
+import { selectGame, selectUserId } from "../../redux/selectors";
+import { deleteGameRequest } from "../api/api";
 
 type GameDetailsProps = {
   gameId: string | undefined;

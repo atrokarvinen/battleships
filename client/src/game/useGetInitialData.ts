@@ -4,7 +4,7 @@ import { handleError } from "../api/errorHandling";
 import { getGameByRoomIdRequest, mapGameDtoToActiveGame } from "../game/api";
 import { GameDTO } from "../game/apiModel";
 import { SocketContext } from "../io/socketProvider";
-import { getGameRequest } from "../lobby/api";
+import { getGameRequest } from "../lobby/api/api";
 import { GameRoom } from "../lobby/gameRoom";
 import { setActiveGame } from "../redux/activeGameSlice";
 import { addNewGameRoom } from "../redux/gameRoomSlice";

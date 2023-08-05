@@ -10,12 +10,12 @@ import {
 import { Link, useNavigate } from "react-router-dom";
 import { handleError } from "../api/errorHandling";
 import { signOutRequest } from "../auth/api";
-import Profile from "../lobby/profile";
 import { logout as logoutUser } from "../redux/authSlice";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import { selectIsLoggedIn } from "../redux/selectors";
 import DarkModeButton from "../theme/dark-mode-button";
 import NavigationMobile from "./navigationMobile";
+import Profile from "./profile";
 import { useBreakpoint } from "./useBreakpoint";
 
 type NavigationProps = {};

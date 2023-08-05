@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { getAllPlayersRequest } from "../lobby/api";
+import { getAllPlayersRequest } from "../lobby/api/api";
 import { useAppDispatch } from "../redux/hooks";
 import { addPlayers } from "../redux/playerSlice";
 import { handleError } from "./errorHandling";

@@ -1,5 +1,5 @@
-import { axios } from "../api/axios";
-import { CreateGame } from "./createGame";
+import { axios } from "../../api/axios";
+import { CreateGame } from "../createGameRoom/createGame";
 
 export const getGamesRequest = () => {
   return axios.get("/game-room");
