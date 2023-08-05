@@ -56,6 +56,7 @@ export class GameService {
 
     if (isGameOver) {
       game.winnerPlayerId = attackerPlayerId;
+      game.state = GameState.ENDED;
     }
 
     const updatedGame = await game.save();

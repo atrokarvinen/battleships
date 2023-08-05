@@ -47,9 +47,7 @@ export const mapGameDtoToActiveGame = (game: GameDTO) => {
       points: mapSquaresToBoardPoint(game.trackingBoard),
     },
     isGameStarted: game.state === GameState.STARTED,
-    isGameOver: game.players
-      .map((p) => p.playerId)
-      .includes(game.winnerPlayerId),
+    isGameOver: game.state === GameState.ENDED,
     activePlayerId: game.activePlayerId,
     winnerPlayerId: game.winnerPlayerId,
     showGameOverDialog: false,

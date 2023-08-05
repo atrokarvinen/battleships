@@ -60,7 +60,7 @@ export enum GameState {
 export type GameDTO = {
   id: string;
   gameRoom: string;
-  
+
   activePlayerId: string;
   winnerPlayerId: string;
 

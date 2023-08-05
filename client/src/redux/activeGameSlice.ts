@@ -58,6 +58,7 @@ const activeGameSlice = createSlice({
       state.primaryBoard = action.payload.primaryBoard;
       state.trackingBoard = action.payload.trackingBoard;
       state.winnerPlayerId = action.payload.winnerPlayerId;
+      state.lastAttack = undefined;
     },
     setIsGameOver(state, action: PayloadAction<boolean>) {
       const isOver = action.payload;
