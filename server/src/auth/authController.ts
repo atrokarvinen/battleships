@@ -77,7 +77,7 @@ export class AuthController {
     }
   };
 
-  async signInAsGuest(req: Request, res: Response, next: NextFunction) {
+  signInAsGuest = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const username = getRandomGuestName();
       const userId = generateGuid();
@@ -96,9 +96,9 @@ export class AuthController {
     } catch (error) {
       next(error);
     }
-  }
+  };
 
-  async signOut(req: Request, res: Response, next: NextFunction) {
+  signOut = async (req: Request, res: Response, next: NextFunction) => {
     try {
       console.log(`Logging out user '${req.userId}'...`);
       const cookieName = JWT_COOKIE_NAME;
@@ -106,7 +106,7 @@ export class AuthController {
     } catch (error) {
       next(error);
     }
-  }
+  };
 
   private async isUsernameUnique(username: string) {
     const foundUser = await User.findOne({ username });

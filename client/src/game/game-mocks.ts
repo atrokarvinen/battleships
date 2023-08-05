@@ -24,6 +24,8 @@ export const handlers = [
         { id: "2", username: "Player 2" },
       ],
       title: "Test Game Room",
+      createdAt: "2021-05-01T00:00:00.000Z",
+      createdBy: "1",
     };
     return res(ctx.json(response));
   }),
