@@ -121,6 +121,7 @@ const activeGameSlice = createSlice({
       state.isGameOver = isGameOver;
       if (isGameOver) {
         state.showGameOverDialog = true;
+        state.isGameStarted = false;
       }
       state.lastAttack = {
         playerId: attackerPlayerId,
