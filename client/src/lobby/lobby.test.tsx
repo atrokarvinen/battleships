@@ -1,8 +1,7 @@
-import userEvent from "@testing-library/user-event";
-import Lobby from "./lobby";
-import { RootState, preloadedState, store } from "../redux/store";
-import { render, screen } from "../test-utils/test-utils";
 import { PreloadedState } from "@reduxjs/toolkit";
+import { RootState, preloadedState } from "../redux/store";
+import { render, screen } from "../test-utils/test-utils";
+import Lobby from "./lobby";
 
 it("renders", () => {
   render(<Lobby />);
@@ -15,7 +14,15 @@ it("renders game", () => {
   const state: PreloadedState<RootState> = {
     ...preloadedState,
     gameRoom: {
-      byId: { ["1"]: { id: "1", players: [], title: gameTitle } },
+      byId: {
+        ["1"]: {
+          id: "1",
+          players: [],
+          title: gameTitle,
+          createdAt: "",
+          createdBy: "test user",
+        },
+      },
       allIds: ["id"],
     },
   };

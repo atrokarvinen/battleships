@@ -9,6 +9,7 @@ import {
   tableCellClasses,
 } from "@mui/material";
 import { GameRoom } from "./gameRoom";
+import { getPlayerNames } from "./lobbyUtils";
 
 type GamesTableProps = {
   games: GameRoom[];
@@ -38,6 +39,7 @@ const GamesTable = ({ games, onGameClicked }: GamesTableProps) => {
         </TableHead>
         <TableBody>
           {games.map((game) => {
+            const { player1, player2 } = getPlayerNames(game);
             return (
               <TableRow
                 key={game.id}
@@ -47,12 +49,8 @@ const GamesTable = ({ games, onGameClicked }: GamesTableProps) => {
                 sx={{ ":hover": { cursor: "pointer" } }}
               >
                 <TableCell>{game.title}</TableCell>
-                <TableCell>
-                  {game.players.length > 0 ? game.players[0].username : ""}
-                </TableCell>
-                <TableCell>
-                  {game.players.length > 1 ? game.players[1].username : ""}
-                </TableCell>
+                <TableCell>{player1}</TableCell>
+                <TableCell>{player2}</TableCell>
               </TableRow>
             );
           })}

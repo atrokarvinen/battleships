@@ -33,7 +33,7 @@ export class GameJoinPage {
 
   async expectUserAlreadyInGameRoom() {
     const dialog = this.getGameDetailsDialog();
-    await expect(dialog.getByRole("button", { name: /join/i })).toBeDisabled();
+    await expect(dialog.getByRole("button", { name: /join/i })).toBeHidden();
     await expect(dialog.getByRole("button", { name: /go/i })).toBeEnabled();
   }
 
