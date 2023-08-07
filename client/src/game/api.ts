@@ -26,6 +26,10 @@ export const confirmPlacementsRequest = ({
   return axios.post(`/game/${gameRoomId}/confirm-placements`);
 };
 
+export const getAiAttack = ({ gameRoomId }: { gameRoomId: string }) => {
+  return axios.get(`/game/${gameRoomId}/attack/ai`);
+};
+
 export const getOpponentShipLocationsRequest = (
   gameId: string,
   opponentId: string

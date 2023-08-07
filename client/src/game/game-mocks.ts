@@ -2,6 +2,7 @@ import { rest } from "msw";
 import { setupServer } from "msw/node";
 import { config } from "../config/config";
 import { GameRoom } from "../lobby/gameRoom";
+import { defaultGameRoom } from "../test-utils/defaults/defaultGameRoom";
 import { GameDTO, GameState } from "./apiModel";
 import { defaultSquare } from "./defaults";
 
@@ -18,14 +19,13 @@ export const handlers = [
   ),
   rest.get(`${baseURL}/game-room/${123}`, (req, res, ctx) => {
     const response: GameRoom = {
+      ...defaultGameRoom,
       id: "123",
       players: [
         { id: "1", username: "Player 1" },
         { id: "2", username: "Player 2" },
       ],
       title: "Test Game Room",
-      createdAt: "2021-05-01T00:00:00.000Z",
-      createdBy: "1",
     };
     return res(ctx.json(response));
   }),

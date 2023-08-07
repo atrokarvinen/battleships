@@ -1,5 +1,6 @@
 import { PreloadedState } from "@reduxjs/toolkit";
 import { RootState, preloadedState } from "../redux/store";
+import { defaultGameRoom } from "../test-utils/defaults/defaultGameRoom";
 import { render, screen } from "../test-utils/test-utils";
 import Lobby from "./lobby";
 
@@ -16,11 +17,9 @@ it("renders game", () => {
     gameRoom: {
       byId: {
         ["1"]: {
+          ...defaultGameRoom,
           id: "1",
-          players: [],
           title: gameTitle,
-          createdAt: "",
-          createdBy: "test user",
         },
       },
       allIds: ["id"],

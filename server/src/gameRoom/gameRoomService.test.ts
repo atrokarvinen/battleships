@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 import { env } from "../core/env";
-import { GameRoom } from "../database/gameRoom";
+import { GameRoom, OpponentType } from "../database/gameRoom";
 import { User } from "../database/user";
 import { GameModel } from "../game/database/dbSchema";
 import { GameRoomService } from "./gameRoomService";
@@ -32,6 +32,7 @@ it("creates game", async () => {
     createdBy: "test user",
     title: "test game",
     players: [],
+    opponentType: OpponentType.HUMAN,
   });
 
   const expectedGame = await service.getGameRoom(createdGame.id!);

@@ -6,20 +6,19 @@ let ongoingAttacks: string[] = [];
 
 export class AttackService {
   private gameDbService: GameService = new GameService();
-   
+
   attack = async (attackParams: AttackSquare) => {
     const attackerId = attackParams.attackerPlayerId;
     if (ongoingAttacks.includes(attackerId)) {
-      throw new ApiError(`Player '${attackerId}' is already attacking`);
+      throw new ApiError(`Player '${attackerId}' is already attacking`, 400);
     }
     try {
       ongoingAttacks.push(attackerId);
       const result = await this.gameDbService.attackSquare(attackParams);
       const attackResultDto = this.mapAttackResultToDto(result, attackParams);
       return attackResultDto;
-    }
-    finally{
-      ongoingAttacks = ongoingAttacks.filter(x => x !== attackerId);
+    } finally {
+      ongoingAttacks = ongoingAttacks.filter((x) => x !== attackerId);
     }
   };
 

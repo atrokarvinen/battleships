@@ -1,15 +1,9 @@
-import _ from "lodash";
 import { BoardPoint } from "../board/models";
 import { RootState } from "./store";
 
 // Players
 export const selectPlayers = (state: RootState) =>
   Object.values(state.players.byId);
-export const selectPlayersInGame = (state: RootState, gameId: string) => {
-  console.log("Selecting players in game...");
-  const players = Object.values(state.players.byId);
-  return players.filter((p) => p.gamesJoined.some((id) => id === gameId));
-};
 export const selectPlayerIds = (state: RootState) => state.players.allIds;
 
 // Chat
@@ -26,7 +20,9 @@ export const selectGamesById = (state: RootState) => state.gameRoom.byId;
 export const selectGames = (state: RootState) =>
   Object.values(state.gameRoom.byId);
 export const selectGame = (state: RootState, id: string | undefined) =>
-  _.find(state.gameRoom.byId, (x) => x.id === id);
+  id ? state.gameRoom.byId[id] : undefined;
+export const selectGameRoom = (state: RootState, id: string) =>
+  state.gameRoom.byId[id];
 
 // Active Game
 export const selectActiveGame = (state: RootState) => state.activeGame;
@@ -41,6 +37,11 @@ export const selectShowGameOverDialog = (state: RootState) =>
   state.activeGame.showGameOverDialog;
 export const selectShowOpponentShips = (state: RootState) =>
   state.activeGame.showOpponentBoard;
+export const selectPlayersInGameRoom = (state: RootState, id: string) => {
+  const gameRoom = state.gameRoom.byId[id];
+  if (!gameRoom) return [];
+  return gameRoom.players;
+};
 
 // Players
 export const selectPlayerById = (state: RootState, id: string) => {

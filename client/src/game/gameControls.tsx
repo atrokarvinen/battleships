@@ -2,12 +2,17 @@ import { Button, Stack } from "@mui/material";
 import { handleError } from "../api/errorHandling";
 import { useApiRequest } from "../api/useApiRequest";
 import { useBreakpoint } from "../navigation/useBreakpoint";
-import { gameOver, setActiveGame } from "../redux/activeGameSlice";
+import {
+  attackSquare,
+  gameOver,
+  setActiveGame,
+} from "../redux/activeGameSlice";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import { selectIsGameStarted } from "../redux/selectors";
 import {
   confirmPlacementsRequest,
   endGameRequest,
+  getAiAttack,
   mapGameDtoToActiveGame,
   startGameRequest,
 } from "./api";
@@ -47,6 +52,13 @@ const GameControls = ({ gameRoomId }: GameControlsProps) => {
     }
   };
 
+  const requestAiAttack = async () => {
+    const response = await request(getAiAttack({ gameRoomId }), true);
+    if (!response) return;
+    const attack = response.data;
+    dispatch(attackSquare(attack));
+  };
+
   return (
     <Stack spacing={1} direction={sm ? "row" : "row"} alignItems="center">
       <Button
@@ -75,6 +87,9 @@ const GameControls = ({ gameRoomId }: GameControlsProps) => {
           Confirm
         </Button>
       )}
+      <Button variant="contained" onClick={requestAiAttack}>
+        Request AI Move
+      </Button>
     </Stack>
   );
 };

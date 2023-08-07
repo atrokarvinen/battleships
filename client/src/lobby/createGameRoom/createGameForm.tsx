@@ -1,8 +1,18 @@
 import { yupResolver } from "@hookform/resolvers/yup";
-import { Button, Stack, TextField } from "@mui/material";
+import {
+  Button,
+  FormControl,
+  FormControlLabel,
+  FormHelperText,
+  FormLabel,
+  Radio,
+  RadioGroup,
+  Stack,
+  TextField,
+} from "@mui/material";
 import { FormEvent } from "react";
-import { useForm } from "react-hook-form";
-import { CreateGame } from "./createGame";
+import { Controller, useForm } from "react-hook-form";
+import { CreateGame, OpponentType } from "./createGame";
 import { schema } from "./createGameValidation";
 
 type CreateGameFormProps = {
@@ -16,17 +26,19 @@ const CreateGameForm = (props: CreateGameFormProps) => {
     formState: { errors },
     register,
     handleSubmit,
+    control,
   } = useForm<CreateGame>({
     resolver: yupResolver(schema),
+    defaultValues: { title: "test", opponentType: OpponentType.COMPUTER },
   });
 
-  function onSubmit(e: FormEvent) {
+  const onSubmit = (e: FormEvent) => {
     e.preventDefault();
     const handler = handleSubmit((data) => {
       props.onSubmit(data);
     });
     handler();
-  }
+  };
 
   return (
     <Stack
@@ -34,16 +46,44 @@ const CreateGameForm = (props: CreateGameFormProps) => {
       onSubmit={onSubmit}
       direction={"column"}
       spacing={2}
+      mt={1}
     >
       <TextField
         id="title"
         label="Title"
         error={errors.title ? true : false}
         helperText={errors.title?.message}
-        margin="normal"
         {...register("title")}
       />
-      <Stack direction="row" justifyContent={"flex-end"} spacing={2}>
+      <Controller
+        name="opponentType"
+        control={control}
+        render={({ field, fieldState }) => {
+          return (
+            <FormControl>
+              <FormLabel>Opponent</FormLabel>
+              <RadioGroup value={field.value} onChange={field.onChange}>
+                <FormControlLabel
+                  label="Human"
+                  value={OpponentType.HUMAN}
+                  control={<Radio />}
+                />
+                <FormControlLabel
+                  label="Computer"
+                  value={OpponentType.COMPUTER}
+                  control={<Radio />}
+                />
+              </RadioGroup>
+              {fieldState.error && (
+                <FormHelperText error>
+                  {fieldState.error.message}
+                </FormHelperText>
+              )}
+            </FormControl>
+          );
+        }}
+      />
+      <Stack direction="row" justifyContent="flex-end" spacing={2}>
         <Button onClick={onCancel} variant="outlined">
           Cancel
         </Button>

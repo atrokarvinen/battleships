@@ -135,5 +135,5 @@ test("logs out when page is closed", async ({ page, browser }) => {
   const context = await browser.newContext();
   const newPage = await context.newPage();
   await newPage.goto(`${frontendUrl}/lobby`);
-  await expect(newPage.getByText(/not authorized/i)).toBeVisible();
+  await expect(newPage.getByText(/unauthorized/i)).toBeVisible();
 });

@@ -2,10 +2,15 @@ import { Stack } from "@mui/material";
 import { useParams } from "react-router";
 import { useBreakpoint } from "../navigation/useBreakpoint";
 import { useAppSelector } from "../redux/hooks";
-import { selectActiveGame, selectGame, selectUserId } from "../redux/selectors";
+import {
+  selectActiveGameId,
+  selectGame,
+  selectUserId,
+} from "../redux/selectors";
 import GameControls from "./gameControls";
 import GameMobile from "./gameMobile";
 import GameOverDialog from "./gameOverDialog";
+import { useAiPlayer } from "./hooks/useAiPlayer";
 import { useRoomSocket } from "./hooks/useRoomSocket";
 import InfoBoard from "./infoBoard";
 import PlayerArea from "./playerArea";
@@ -22,14 +27,15 @@ const Game = ({}: GameProps) => {
   const playerId = useAppSelector(selectUserId);
   const gameRoomId = params.id!;
 
-  const game = useAppSelector(selectActiveGame);
+  const gameId = useAppSelector(selectActiveGameId);
   const gameRoom = useAppSelector((state) => selectGame(state, gameRoomId));
   const { sm } = useBreakpoint();
 
   useGetInitialData();
   useRoomSocket(gameRoomId);
+  useAiPlayer(gameRoomId);
 
-  if (!game || !gameRoom) {
+  if (!gameId || !gameRoom) {
     return <div>{`Unknown game id: '${gameRoomId}'`}</div>;
   }
 
@@ -44,15 +50,13 @@ const Game = ({}: GameProps) => {
       <GameOverDialog />
       <InfoBoard gameRoomId={gameRoomId} />
       <PlayerArea
-        gameId={game.id}
+        gameId={gameId}
         player1Name={self?.username ?? ""}
         player1Id={self?.id ?? ""}
         player2Name={opponent?.username ?? "-"}
         player2Id={opponent?.id ?? ""}
       />
-      <GameControls
-        gameRoomId={gameRoomId}
-      />
+      <GameControls gameRoomId={gameRoomId} />
     </Stack>
   );
 };

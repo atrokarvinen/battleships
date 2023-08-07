@@ -7,14 +7,16 @@ import {
   GameOptions,
   GameState,
   IGame,
+  IPlayer,
 } from "../models";
-import { pointEqualsToSquare } from "./board-utils";
+import { pointEqualsToSquare, pointsEqual } from "./board-utils";
 import { GameCreationService } from "./gameCreationService";
 
 export class GameService {
   private gameCreationService: GameCreationService = new GameCreationService();
 
-  async attackSquare({ point, gameId, attackerPlayerId }: AttackSquare) {
+  async attackSquare(params: AttackSquare) {
+    const { point, gameId, attackerPlayerId } = params;
     const { x, y } = point;
     console.log(`Attacking point (${x}, ${y})...`);
 
@@ -24,33 +26,38 @@ export class GameService {
     }
 
     const players = game.players;
-    const own = players.find((p) => p.playerId.toString() === attackerPlayerId);
-    const enemy = players.find(
+    const attacker = players.find(
+      (p) => p.playerId.toString() === attackerPlayerId
+    );
+    const defender = players.find(
       (p) => p.playerId.toString() !== attackerPlayerId
     );
-    if (!own) {
-      throw new Error(`Failed to find player '${attackerPlayerId}'`);
+    if (!attacker) {
+      throw new Error(`Failed to find attacker '${attackerPlayerId}'`);
     }
-    if (!enemy) {
-      throw new Error(`Failed to find enemy of player '${attackerPlayerId}'`);
+    if (!defender) {
+      throw new Error(`Failed to find defender '${attackerPlayerId}'`);
     }
-    const attackedSquareOwnSide = own.attacks.find(pointEqualsToSquare(point));
-    const attackedSquareEnemySide = enemy.ownShips.find(
-      pointEqualsToSquare(point)
-    );
-    if (!attackedSquareOwnSide || !attackedSquareEnemySide) {
+    const attackerSquare = attacker.attacks.find(pointEqualsToSquare(point));
+    const defenderSquare = defender.ownShips.find(pointEqualsToSquare(point));
+    if (!attackerSquare || !defenderSquare) {
       throw new Error(`Failed to find square at point '${point}'`);
     }
-    attackedSquareOwnSide.hasShip = attackedSquareEnemySide.hasShip;
-    attackedSquareOwnSide.hasBeenAttacked = true;
-    attackedSquareEnemySide.hasBeenAttacked = true;
 
-    const shipHit = attackedSquareEnemySide.hasShip;
-    const nextPlayerId = shipHit ? attackerPlayerId : enemy.playerId.toString();
+    this.validateAttack(params, game, attacker);
+
+    attackerSquare.hasShip = defenderSquare.hasShip;
+    attackerSquare.hasBeenAttacked = true;
+    defenderSquare.hasBeenAttacked = true;
+
+    const shipHit = defenderSquare.hasShip;
+    const nextPlayerId = shipHit
+      ? attackerPlayerId
+      : defender.playerId.toString();
 
     game.activePlayerId = nextPlayerId;
 
-    const isGameOver = enemy.ownShips
+    const isGameOver = defender.ownShips
       .filter((x) => x.hasShip)
       .every((x) => x.hasBeenAttacked);
 
@@ -62,6 +69,26 @@ export class GameService {
     const updatedGame = await game.save();
 
     return { shipHit, nextPlayerId, isGameOver };
+  }
+
+  private validateAttack(params: AttackSquare, game: IGame, attacker: IPlayer) {
+    const { attackerPlayerId, point } = params;
+    const isPlayerTurn = game.activePlayerId === attackerPlayerId;
+    const squareAlreadyAttacked = attacker.attacks
+      .filter((a) => a.hasBeenAttacked)
+      .some((a) => pointsEqual(a.point, point));
+    const isGameStateCorrect = game.state === GameState.STARTED;
+
+    if (!isPlayerTurn) {
+      throw new ApiError("Can only attack on own turn", 400);
+    }
+    if (squareAlreadyAttacked) {
+      throw new ApiError("Square has been attacked already", 400);
+    }
+    if (!isGameStateCorrect) {
+      const stateStr = GameState[game.state];
+      throw new ApiError(`Cannot attack in game state '${stateStr}'`, 400);
+    }
   }
 
   createGame(game: IGame) {

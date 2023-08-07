@@ -2,6 +2,7 @@ import { PreloadedState } from "@reduxjs/toolkit";
 import { Route, Routes } from "react-router-dom";
 import { initialState as initialGameRoomState } from "../redux/gameRoomSlice";
 import { RootState, preloadedState } from "../redux/store";
+import { defaultGameRoom } from "../test-utils/defaults/defaultGameRoom";
 import { render, screen, userEvent, within } from "../test-utils/test-utils";
 import Game from "./game";
 import { server } from "./game-mocks";
@@ -25,8 +26,8 @@ it("has start button", () => {
       allIds: ["123"],
       byId: {
         "123": {
+          ...defaultGameRoom,
           id: "123",
-          players: [],
           title: "test",
         },
       },
@@ -54,8 +55,8 @@ it("clicks square", async () => {
       allIds: ["123"],
       byId: {
         "123": {
+          ...defaultGameRoom,
           id: "123",
-          players: [],
           title: "test",
         },
       },

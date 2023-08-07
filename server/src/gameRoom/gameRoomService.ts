@@ -1,6 +1,11 @@
 import { Types } from "mongoose";
-import { GameRoom, GameRoomDTO, IGameRoom } from "../database/gameRoom";
-import { User, UserDTO } from "../database/user";
+import {
+  GameRoom,
+  GameRoomDTO,
+  IGameRoom,
+  OpponentType,
+} from "../database/gameRoom";
+import { IUser, User, UserDTO } from "../database/user";
 import { GameModel } from "../game/database/dbSchema";
 import { GameOptions } from "../game/models";
 import { GameDTO } from "../game/models/game";
@@ -52,10 +57,32 @@ export class GameRoomService {
     };
     const newGame = await this.gameCreationService.createEmptyGame(options);
     createdGameRoom.game = new Types.ObjectId(newGame.id);
-    const initializedGameRoom = await createdGameRoom.save();
+    let initializedGameRoom = await createdGameRoom.save();
+
+    const isAgainstBot = payload.opponentType === OpponentType.COMPUTER;
+    if (isAgainstBot) {
+      initializedGameRoom = await this.addBotToGame(initializedGameRoom.id);
+    }
 
     const gameDto: IGameRoom = initializedGameRoom.toObject();
     return gameDto;
+  }
+
+  private async addBotToGame(gameRoomId: string) {
+    const gameRoom = await GameRoom.findById(gameRoomId);
+    if (!gameRoom) throw new Error("Failed to add bot to game, game not found");
+
+    const botPlayer: IUser = {
+      username: "AI",
+      password: "ai",
+      gamesJoined: [new Types.ObjectId(gameRoomId)],
+    };
+    const createdBot = await User.create(botPlayer);
+
+    gameRoom.players.push(createdBot._id);
+    const updatedGameRoom = await gameRoom.save();
+
+    return updatedGameRoom;
   }
 
   async deleteGameRoom(gameRoomId: string) {

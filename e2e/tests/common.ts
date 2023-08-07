@@ -52,8 +52,9 @@ export const deleteUserByName = (request: APIRequestContext, name: string) => {
 
 export const createGameRoom = (
   request: APIRequestContext,
-  data: { title: string }
+  data: { title: string; opponentType?: number }
 ) => {
+  data.opponentType ??= 1;
   return post({ request, url: "/game-room", data });
 };
 
