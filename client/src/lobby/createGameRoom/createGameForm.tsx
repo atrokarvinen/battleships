@@ -29,7 +29,7 @@ const CreateGameForm = (props: CreateGameFormProps) => {
     control,
   } = useForm<CreateGame>({
     resolver: yupResolver(schema),
-    defaultValues: { title: "test", opponentType: OpponentType.COMPUTER },
+    defaultValues: { opponentType: OpponentType.HUMAN },
   });
 
   const onSubmit = (e: FormEvent) => {
