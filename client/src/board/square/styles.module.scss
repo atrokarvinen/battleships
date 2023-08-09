@@ -1,5 +1,8 @@
+$squareSize: 30px;
+$shipMargin: 10%;
+$shipSize: 80%;
+
 .square {
-  $squareSize: 30px;
   height: $squareSize;
   width: $squareSize;
 
@@ -17,9 +20,6 @@
   height: 100%;
   width: 100%;
 }
-
-$shipMargin: 10%;
-$shipSize: 80%;
 
 .shipStartVertical {
   margin: 0 $shipMargin;

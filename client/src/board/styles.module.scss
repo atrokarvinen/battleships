@@ -1,4 +1,8 @@
+@import "./square/styles.module.scss";
+
 .board {
+  width: calc(11 * $squareSize);
+  height: calc(11 * $squareSize);
   display: grid;
   grid-template-areas:
     "empty static-row"

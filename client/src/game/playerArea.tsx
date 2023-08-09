@@ -26,7 +26,12 @@ const PlayerArea = ({
 
   return (
     <Box>
-      <Stack direction={sm ? "column" : "row"} spacing={2}>
+      <Stack
+        spacing={2}
+        direction={sm ? "column" : "row"}
+        alignItems={sm ? "center" : undefined}
+        justifyContent={sm ? undefined : "center"}
+      >
         <Stack direction="column" spacing={1}>
           <PlayerName name={player1Name} id={player1Id} />
           <PrimaryBoard playerId={player1Id} />
