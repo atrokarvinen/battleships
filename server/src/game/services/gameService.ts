@@ -2,22 +2,24 @@ import { Types } from "mongoose";
 import { ApiError } from "../../middleware/errorHandleMiddleware";
 import { GameModel } from "../database/dbSchema";
 import {
-  AttackSquare,
-  GameDTO,
-  GameOptions,
-  GameState,
-  IGame,
-  IPlayer,
+    AttackSquare,
+    GameDTO,
+    GameOptions,
+    GameState,
+    IGame,
+    IPlayer,
+    Point,
 } from "../models";
-import { pointEqualsToSquare, pointsEqual } from "./board-utils";
+import { pointEquals } from "./board-utils";
 import { GameCreationService } from "./gameCreationService";
+import { shipsToPoints } from "./shipToSquareMapper";
 
 export class GameService {
   private gameCreationService: GameCreationService = new GameCreationService();
 
   async attackSquare(params: AttackSquare) {
-    const { point, gameId, attackerPlayerId } = params;
-    const { x, y } = point;
+    const { point: attackedPoint, gameId, attackerPlayerId } = params;
+    const { x, y } = attackedPoint;
     console.log(`Attacking point (${x}, ${y})...`);
 
     const game = await GameModel.findById(gameId);
@@ -38,28 +40,20 @@ export class GameService {
     if (!defender) {
       throw new Error(`Failed to find defender '${attackerPlayerId}'`);
     }
-    const attackerSquare = attacker.attacks.find(pointEqualsToSquare(point));
-    const defenderSquare = defender.ownShips.find(pointEqualsToSquare(point));
-    if (!attackerSquare || !defenderSquare) {
-      throw new Error(`Failed to find square at point '${point}'`);
-    }
-
     this.validateAttack(params, game, attacker);
 
-    attackerSquare.hasShip = defenderSquare.hasShip;
-    attackerSquare.hasBeenAttacked = true;
-    defenderSquare.hasBeenAttacked = true;
+    const { attacks } = attacker;
+    attacks.push(attackedPoint);
 
-    const shipHit = defenderSquare.hasShip;
+    const defenderShipPoints = shipsToPoints(defender.ownShips);
+    const shipHit = defenderShipPoints.some(pointEquals(attackedPoint));
     const nextPlayerId = shipHit
       ? attackerPlayerId
       : defender.playerId.toString();
 
     game.activePlayerId = nextPlayerId;
 
-    const isGameOver = defender.ownShips
-      .filter((x) => x.hasShip)
-      .every((x) => x.hasBeenAttacked);
+    const isGameOver = this.checkContainsAllPoints(attacks, defenderShipPoints);
 
     if (isGameOver) {
       game.winnerPlayerId = attackerPlayerId;
@@ -71,12 +65,14 @@ export class GameService {
     return { shipHit, nextPlayerId, isGameOver };
   }
 
+  private checkContainsAllPoints(superset: Point[], subset: Point[]) {
+    return subset.every((dp) => superset.find(pointEquals(dp)));
+  }
+
   private validateAttack(params: AttackSquare, game: IGame, attacker: IPlayer) {
     const { attackerPlayerId, point } = params;
     const isPlayerTurn = game.activePlayerId === attackerPlayerId;
-    const squareAlreadyAttacked = attacker.attacks
-      .filter((a) => a.hasBeenAttacked)
-      .some((a) => pointsEqual(a.point, point));
+    const squareAlreadyAttacked = attacker.attacks.some(pointEquals(point));
     const isGameStateCorrect = game.state === GameState.STARTED;
 
     if (!isPlayerTurn) {

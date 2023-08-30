@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import { Server } from "socket.io";
 import { IGameRoom } from "../database/gameRoom";
+import { filterGameInfo } from "../game/services/info-filter";
 import { GameRoomService } from "./gameRoomService";
 
 export class GameRoomController {
@@ -47,17 +48,7 @@ export class GameRoomController {
       console.log(`Found game in game room '${gameRoomId}'`);
 
       // Return only information that is visible to the player
-      const requester = gameDto.players.find((p) => p.playerId === req.userId);
-      const notPlayingInGame = !requester;
-      if (notPlayingInGame) {
-        return res.json(gameDto);
-      }
-      const filteredGameDto = {
-        ...gameDto,
-        players: [],
-        primaryBoard: requester.ownShips,
-        trackingBoard: requester.attacks,
-      };
+      const filteredGameDto = filterGameInfo(req.userId, gameDto);
 
       return res.json(filteredGameDto);
     } catch (error) {

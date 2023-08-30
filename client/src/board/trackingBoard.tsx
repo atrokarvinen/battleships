@@ -1,39 +1,35 @@
 import { useApiRequest } from "../api/useApiRequest";
-import { attackSquare } from "../redux/activeGameSlice";
+import { attackSquare, pointMatchesToPoint } from "../redux/activeGameSlice";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import {
   selectActivePlayerId,
-  selectEnemyPoints,
   selectIsGameOver,
+  selectPlayerAttacks,
+  selectPlayerShips,
 } from "../redux/selectors";
 import { attackSquareRequest } from "./api";
-import { BoardPoint } from "./models";
-import { AttackResult } from "./models/attack-result";
 import { Point } from "./models/point";
-import { PlaySquare } from "./square/playSquare";
-import { StaticSquares } from "./square/staticSquares";
-import styles from "./styles.module.scss";
+import PlayBoard from "./playBoard";
 
 type TrackingBoardProps = {
   gameId: string;
-  playerId: string;
+  ownId: string;
+  enemyId: string;
 };
 
-const TrackingBoard = ({ gameId, playerId }: TrackingBoardProps) => {
-  const lastAttack = useAppSelector((state) => state.activeGame.lastAttack);
+const TrackingBoard = ({ gameId, ownId, enemyId }: TrackingBoardProps) => {
   const dispatch = useAppDispatch();
   const { request } = useApiRequest();
-  const points = useAppSelector((state) => selectEnemyPoints(state, playerId));
   const playerIdToPlay = useAppSelector(selectActivePlayerId);
   const isGameOver = useAppSelector(selectIsGameOver);
 
+  const enemyShips = useAppSelector(selectPlayerShips(enemyId));
+  const ownAttacks = useAppSelector(selectPlayerAttacks(ownId));
+
   const squareClicked = async (point: Point) => {
     console.log("square clicked:", point);
-    const targetPoint = points.find(
-      (p) => p.point.x === point.x && p.point.y === point.y
-    );
     try {
-      validateAttack(targetPoint);
+      validateAttack(point);
     } catch (error: any) {
       console.log(error.message);
       return;
@@ -42,7 +38,7 @@ const TrackingBoard = ({ gameId, playerId }: TrackingBoardProps) => {
     const response = await request(
       attackSquareRequest({
         point,
-        attackerPlayerId: playerId,
+        attackerPlayerId: ownId,
         gameId,
       }),
       true
@@ -52,14 +48,9 @@ const TrackingBoard = ({ gameId, playerId }: TrackingBoardProps) => {
     dispatch(attackSquare(payload));
   };
 
-  const validateAttack = (targetPoint: BoardPoint | undefined) => {
-    if (!targetPoint) {
-      throw new Error("failed to find point");
-    }
-    const isPlayersTurn = playerIdToPlay === playerId;
-    const isAlreadyAttacked =
-      targetPoint.attackResult !== undefined &&
-      targetPoint.attackResult !== AttackResult.None;
+  const validateAttack = (targetPoint: Point) => {
+    const isPlayersTurn = playerIdToPlay === ownId;
+    const isAlreadyAttacked = ownAttacks.some(pointMatchesToPoint(targetPoint));
     if (!isPlayersTurn) {
       throw new Error("incorrect player turn");
     }
@@ -72,26 +63,13 @@ const TrackingBoard = ({ gameId, playerId }: TrackingBoardProps) => {
   };
 
   return (
-    <div className={styles.board} data-testid="tracking-board">
-      <StaticSquares />
-      <div className={styles.playArea}>
-        {points.map((point, index) => {
-          const lastAttacked =
-            !!lastAttack &&
-            lastAttack.playerId === playerId &&
-            lastAttack.point.x === point.point.x &&
-            lastAttack.point.y === point.point.y;
-          return (
-            <PlaySquare
-              key={index}
-              lastAttacked={lastAttacked}
-              squareClicked={squareClicked}
-              {...point}
-            />
-          );
-        })}
-      </div>
-    </div>
+    <PlayBoard
+      datatestId="tracking-board"
+      playerId={enemyId}
+      ships={enemyShips}
+      attacks={ownAttacks}
+      squareClicked={squareClicked}
+    />
   );
 };
 

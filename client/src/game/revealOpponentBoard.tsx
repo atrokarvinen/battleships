@@ -7,7 +7,7 @@ import {
 } from "../redux/activeGameSlice";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import { selectShowOpponentShips } from "../redux/selectors";
-import { getOpponentShipLocationsRequest, mapSquaresToBoardPoint } from "./api";
+import { getOpponentShipLocationsRequest, mapShipsToBoardPoint } from "./api";
 
 type RevealOpponentBoardProps = { opponentId: string; gameId: string };
 
@@ -34,7 +34,7 @@ const RevealOpponentBoard = ({
         opponentId
       );
       const opponentShipLocations = response.data;
-      const mappedLocations = mapSquaresToBoardPoint(opponentShipLocations);
+      const mappedLocations = mapShipsToBoardPoint(opponentShipLocations);
       console.log("mappedLocations:", mappedLocations);
       dispatch(
         setOpponentShipLocations({

@@ -1,4 +1,3 @@
-import { BoardPoint } from "../board/models";
 import { RootState } from "./store";
 
 // Players
@@ -42,6 +41,16 @@ export const selectPlayersInGameRoom = (state: RootState, id: string) => {
   if (!gameRoom) return [];
   return gameRoom.players;
 };
+export const selectGamePlayerById = (state: RootState, playerId: string) =>
+  state.activeGame.players.find((p) => p.playerId === playerId);
+export const selectPlayerShips = (playerId: string) => (state: RootState) => {
+  const player = selectGamePlayerById(state, playerId);
+  return player ? player.ownShips : [];
+};
+export const selectPlayerAttacks = (playerId: string) => (state: RootState) => {
+  const player = selectGamePlayerById(state, playerId);
+  return player ? player.attacks : [];
+};
 
 // Players
 export const selectPlayerById = (state: RootState, id: string) => {
@@ -56,17 +65,12 @@ export const selectWinnerPlayer = (state: RootState) => {
 
 // Board
 export const selectOwnPoints = (state: RootState, playerId: string) => {
-  const board = state.activeGame.primaryBoard;
-  if (!board) return [];
-  return board.points;
+  const player = state.activeGame.players.find((p) => p.playerId === playerId);
+  if (!player) return [];
+  return player.ownShips;
 };
 export const selectEnemyPoints = (state: RootState, playerId: string) => {
-  const board = state.activeGame.trackingBoard;
-  if (!board) return [];
-  return board.points;
-};
-export const selectBoardState = (state: RootState) => state.board.boards;
-
-export const boardPointsMatch = (pointA: BoardPoint, pointB: BoardPoint) => {
-  return pointA.point.x === pointB.point.x && pointA.point.y === pointB.point.y;
+  const player = state.activeGame.players.find((p) => p.playerId !== playerId);
+  if (!player) return [];
+  return player.ownShips;
 };

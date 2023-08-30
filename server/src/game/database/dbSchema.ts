@@ -38,10 +38,10 @@ const boardSchema = new Schema<Board>(
 const playerSchema = new Schema<IPlayer>(
   {
     playerId: String,
-    attacks: [squareSchema],
-    ownShips: [squareSchema],
+    attacks: [pointSchema],
+    ownShips: [shipSchema],
   },
-  { toObject: toObjectOptions}
+  { toObject: toObjectOptions }
 );
 
 const gameSchema = new Schema<IGame>(

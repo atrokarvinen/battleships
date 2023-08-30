@@ -34,11 +34,15 @@ const PlayerArea = ({
       >
         <Stack direction="column" spacing={1}>
           <PlayerName name={player1Name} id={player1Id} />
-          <PrimaryBoard playerId={player1Id} />
+          <PrimaryBoard ownId={player1Id} enemyId={player2Id} />
         </Stack>
         <Stack direction="column" spacing={1}>
           <PlayerName name={player2Name} id={player2Id} />
-          <TrackingBoard gameId={gameId} playerId={player1Id} />
+          <TrackingBoard
+            gameId={gameId}
+            ownId={player1Id}
+            enemyId={player2Id}
+          />
           {process.env.NODE_ENV === "development" && (
             <RevealOpponentBoard opponentId={player2Id} gameId={gameId} />
           )}

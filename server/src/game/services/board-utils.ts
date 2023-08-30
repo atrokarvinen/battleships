@@ -40,6 +40,10 @@ export const pointsEqual = (pointA: Point, pointB: Point) => {
   return pointA.x === pointB.x && pointA.y === pointB.y;
 };
 
+export const pointEquals = (pointA: Point) => (pointB: Point) => {
+  return pointA.x === pointB.x && pointA.y === pointB.y;
+};
+
 export const pointEqualsToSquare = (pointA: Point) => (square: Square) => {
   const pointB = square.point;
   return pointsEqual(pointA, pointB);

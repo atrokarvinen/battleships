@@ -1,9 +1,9 @@
 import { Types } from "mongoose";
 import {
-  GameRoom,
-  GameRoomDTO,
-  IGameRoom,
-  OpponentType,
+    GameRoom,
+    GameRoomDTO,
+    IGameRoom,
+    OpponentType,
 } from "../database/gameRoom";
 import { IUser, User, UserDTO } from "../database/user";
 import { GameModel } from "../game/database/dbSchema";
@@ -43,7 +43,7 @@ export class GameRoomService {
     console.log(`Getting game in game room '${gameRoomId}'...`);
     const gameRoom = await GameRoom.findById(gameRoomId).populate("game");
     const gameRoomDto = gameRoom?.toObject();
-    const gameDto: GameDTO | undefined = gameRoomDto?.game as any;
+    const gameDto = gameRoomDto?.game as GameDTO | undefined;
     return gameDto;
   }
 

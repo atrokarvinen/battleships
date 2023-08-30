@@ -5,10 +5,6 @@ import { GameRoom } from "../database/gameRoom";
 import { User } from "../database/user";
 import { GameModel } from "../game/database/dbSchema";
 import { GameDTO } from "../game/models";
-import { Point } from "../game/models/point";
-import { ShipPart } from "../game/models/shipPart";
-import { Square } from "../game/models/square";
-import { pointsEqual } from "../game/services/board-utils";
 import { GameSeed } from "./models";
 
 export class TestController {
@@ -53,8 +49,8 @@ export class TestController {
       return res.status(400).json({ error: "Must have exactly two players" });
     }
 
-    const positions1 = shipPositions[0].shipPoints;
-    const positions2 = shipPositions[1].shipPoints;
+    const ships1 = shipPositions[0].ships;
+    const ships2 = shipPositions[1].ships;
     const playerName1 = shipPositions[0].playerId;
     const playerName2 = shipPositions[1].playerId;
     const player1 = await User.findOne({ username: playerName1 });
@@ -66,8 +62,8 @@ export class TestController {
       return res.status(404).json({ error: "player 1 or player 2 not found" });
     }
 
-    this.setPositions(positions1, p1.ownShips);
-    this.setPositions(positions2, p2.ownShips);
+    p1.ownShips = ships1;
+    p2.ownShips = ships2;
     game.activePlayerId = firstPlayer.id.toString();
 
     const updatedGame = await game.save();
@@ -94,20 +90,5 @@ export class TestController {
     } catch (error) {
       next(error);
     }
-  }
-
-  setPositions(positions: Point[], ships: Square[]) {
-    ships.forEach((s) => {
-      s.hasShip = false;
-      s.ship = ShipPart.UNKNOWN;
-    });
-    positions.forEach((pos) => {
-      const square = ships.find((s) => pointsEqual(s.point, pos));
-      if (!square) {
-        throw new Error(`square not found at ${pos.x}, ${pos.y}`);
-      }
-      square.hasShip = true;
-      square.ship = ShipPart.MIDDLE;
-    });
   }
 }

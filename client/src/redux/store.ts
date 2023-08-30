@@ -8,7 +8,6 @@ import {
   initialState as initialActiveGameState,
 } from "./activeGameSlice";
 import { authReducer, initialState as initialAuthState } from "./authSlice";
-import boardReducer, { initialState as initialBoardState } from "./boardSlice";
 import { chatReducer, initialState as initialChatState } from "./chatSlice";
 import {
   gameRoomReducer,
@@ -22,7 +21,6 @@ import {
 export const rootReducer = {
   activeGame: activeGameReducer,
   auth: authReducer,
-  board: boardReducer,
   chat: chatReducer,
   gameRoom: gameRoomReducer,
   notification: notificationReducer,
@@ -36,7 +34,6 @@ export const store = configureStore({
 export const preloadedState: PreloadedState<RootState> = {
   activeGame: initialActiveGameState,
   auth: initialAuthState,
-  board: initialBoardState,
   chat: initialChatState,
   gameRoom: initialGameState,
   notification: initialNotificationState,

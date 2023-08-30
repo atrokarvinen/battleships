@@ -1,7 +1,8 @@
 import { axios } from "../api/axios";
-import { AttackResult, BoardPoint, Ship } from "../board/models";
-import { ActiveGameState } from "../redux/activeGameSlice";
-import { GameDTO, GameState, Square } from "./apiModel";
+import { BoardPoint, ShipPart } from "../board/models";
+import { generateEmptyBoardPoints } from "../board/redux/board-utils";
+import { ActiveGameState, pointMatches } from "../redux/activeGameSlice";
+import { GameDTO, GameState, ShipDTO } from "./apiModel";
 
 export type StartGamePayload = { gameRoomId: string };
 export type EndGamePayload = { gameRoomId: string };
@@ -42,14 +43,7 @@ export const mapGameDtoToActiveGame = (game: GameDTO) => {
     id: game.id,
     gameRoomId: game.gameRoom,
     showOpponentBoard: false,
-    primaryBoard: {
-      playerId: "not needed",
-      points: mapSquaresToBoardPoint(game.primaryBoard),
-    },
-    trackingBoard: {
-      playerId: "not needed",
-      points: mapSquaresToBoardPoint(game.trackingBoard),
-    },
+    players: game.players,
     isGameStarted: game.state === GameState.STARTED,
     isGameOver: game.state === GameState.ENDED,
     activePlayerId: game.activePlayerId,
@@ -60,32 +54,49 @@ export const mapGameDtoToActiveGame = (game: GameDTO) => {
   return activeGame;
 };
 
-export const mapSquaresToBoardPoint = (squares: Square[]) => {
-  if (!squares) return [];
-  const boardPoints: BoardPoint[] = squares.map((square) => {
+export const mapShipsToBoardPoint = (ships: ShipDTO[]) => {
+  const shipPoints: BoardPoint[] = ships.map(shipToBoardPoint).flat();
+  return shipPoints;
+};
+
+export const mergePoints = (shipPoints: BoardPoint[]) => {
+  // Generate an empty canvas of points. Overwrite points
+  // where there is a ship with ship information.
+  const emptyPoints = generateEmptyBoardPoints();
+  const mergedPoints = emptyPoints.map((defaultPoint) => {
+    const shipPoint = shipPoints.find(pointMatches(defaultPoint.point));
+    if (!shipPoint) return defaultPoint;
+    return shipPoint;
+  });
+  return mergedPoints;
+};
+
+export const shipToBoardPoint = (ship: ShipDTO) => {
+  const { start, isVertical, length } = ship;
+  const boardPoints = Array.from(Array(length).keys()).map((n) => {
+    const shipPart = lengthIndexToShipPart(n, length);
     const boardPoint: BoardPoint = {
-      point: square.point,
-      attackResult: determineAttackResult(square),
-      shipPart: mapShip(square),
+      point: {
+        x: isVertical ? start.x : start.x + n,
+        y: !isVertical ? start.y : start.y + n,
+      },
+      shipPart: { isVertical, part: shipPart },
     };
     return boardPoint;
   });
   return boardPoints;
 };
 
-const determineAttackResult = (square: Square) => {
-  if (square.hasBeenAttacked) {
-    if (square.hasShip) {
-      return AttackResult.Hit;
-    }
-    return AttackResult.Miss;
+const lengthIndexToShipPart = (index: number, length: number) => {
+  // Ships with length of 1 are sunk enemy ships for which it is
+  // still unknown what shape the ship will have.
+  if (length === 1) {
+    return ShipPart.UNKNOWN;
   }
-  return AttackResult.None;
-};
 
-const mapShip = (square: Square): Ship | undefined => {
-  if (square.hasShip) {
-    return { isVertical: square.isVertical, part: square.ship };
-  }
-  return undefined;
+  return index === 0
+    ? ShipPart.START
+    : index === length - 1
+    ? ShipPart.END
+    : ShipPart.MIDDLE;
 };

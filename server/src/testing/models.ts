@@ -1,4 +1,4 @@
-import { Point } from "../game/models/point";
+import { Ship } from "../game/models";
 
 export type GameSeed = {
   firstPlayerName: string;
@@ -8,5 +8,5 @@ export type GameSeed = {
 
 export type ShipPlacement = {
   playerId: string;
-  shipPoints: Point[];
+  ships: Ship[];
 };

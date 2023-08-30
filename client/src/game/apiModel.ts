@@ -35,8 +35,8 @@ export type Square = {
 
 export type PlayerDTO = {
   playerId: string;
-  ownShips: Square[];
-  attacks: Square[];
+  ownShips: ShipDTO[];
+  attacks: Point[];
 };
 
 export type Board = {
@@ -56,6 +56,12 @@ export enum GameState {
   STARTED,
   ENDED,
 }
+
+export type ShipDTO = {
+  length: number;
+  start: Point;
+  isVertical: boolean;
+};
 
 export type GameDTO = {
   id: string;

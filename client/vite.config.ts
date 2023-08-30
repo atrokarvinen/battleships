@@ -9,7 +9,7 @@ export default defineConfig({
   base: "/battleships",
   server: {
     port: 5173,
-    host: "localhost",
+    host: "127.0.0.1",
     open: true,
   },
   build: {

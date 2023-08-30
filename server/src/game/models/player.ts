@@ -1,14 +1,15 @@
 import { Types } from "mongoose";
-import { Square } from "./square";
+import { Point } from "./point";
+import { Ship } from "./ship";
 
 export type IPlayer = {
   playerId: Types.ObjectId;
-  ownShips: Square[];
-  attacks: Square[];
+  ownShips: Ship[];
+  attacks: Point[];
 };
 
-export type PlayerDTO = {
+export type Player = {
   playerId: string;
-  ownShips: Square[];
-  attacks: Square[];
+  ownShips: Ship[];
+  attacks: Point[];
 };

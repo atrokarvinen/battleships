@@ -1,4 +1,4 @@
-import { FleetShip, Point } from "../models";
+import { FleetShip, Point, Ship } from "../models";
 import { generateEmptyBoardPoints, pointsEqual } from "./board-utils";
 import { standardReserve } from "./ship-reserve";
 
@@ -29,6 +29,7 @@ export const createRandomFleetLocations = () => {
     })
     .flat();
 
+  const ships: Ship[] = [];
   const placements: ShipPlacement[] = allShips.map((ship, index) => {
     const shipSize = ship.size;
 
@@ -98,10 +99,17 @@ export const createRandomFleetLocations = () => {
       end,
       isVertical,
     };
+    const createdShip: Ship = {
+      start,
+      isVertical,
+      length: shipSize,
+    };
+    ships.push(createdShip);
     return placement;
   });
 
-  return placements;
+  // return placements;
+  return ships;
 };
 
 export const getPointRange = (p0: Point, p1: Point) => {

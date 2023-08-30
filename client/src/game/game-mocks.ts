@@ -4,7 +4,6 @@ import { config } from "../config/config";
 import { GameRoom } from "../lobby/gameRoom";
 import { defaultGameRoom } from "../test-utils/defaults/defaultGameRoom";
 import { GameDTO, GameState } from "./apiModel";
-import { defaultSquare } from "./defaults";
 
 const baseURL = config.backendBaseUrl;
 
@@ -34,8 +33,8 @@ export const handlers = [
       id: "55",
       activePlayerId: "1",
       players: [
-        { playerId: "1", ownShips: [defaultSquare], attacks: [defaultSquare] },
-        { playerId: "2", ownShips: [defaultSquare], attacks: [defaultSquare] },
+        { playerId: "1", ownShips: [], attacks: [] },
+        { playerId: "2", ownShips: [], attacks: [] },
       ],
       state: GameState.UNKNOWN,
       winnerPlayerId: "",

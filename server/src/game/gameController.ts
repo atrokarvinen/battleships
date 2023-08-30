@@ -101,9 +101,7 @@ export class GameController {
       if (!attacker) return res.status(404).json({ error: "Bot not found" });
 
       const attackerPlayerId = attacker.playerId;
-      const attackedPoints = attacker.attacks
-        .filter((a) => a.hasBeenAttacked)
-        .map((a) => a.point);
+      const attackedPoints = attacker.attacks;
       const point = this.generateRandomAttackPoint(attackedPoints);
       const params = { point, attackerPlayerId, gameId };
       const attackResultDto = await this.attackService.attack(params);

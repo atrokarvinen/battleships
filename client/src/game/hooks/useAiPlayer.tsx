@@ -26,7 +26,8 @@ export const useAiPlayer = (gameRoomId: string) => {
   const gameRoom = useAppSelector((state) => selectGameRoom(state, gameRoomId));
 
   const isAgainstComputer = gameRoom?.opponentType === OpponentType.COMPUTER;
-  const isComputerTurn = computerPlayer?.id === activePlayerId;
+  const isComputerTurn =
+    !!computerPlayer && computerPlayer.id === activePlayerId;
 
   useEffect(() => {
     if (isAgainstComputer && isComputerTurn) {

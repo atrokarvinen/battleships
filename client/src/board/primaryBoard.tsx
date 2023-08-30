@@ -1,42 +1,37 @@
+import { shipToBoardPoint } from "../game/api";
+import { pointMatches } from "../redux/activeGameSlice";
 import { useAppSelector } from "../redux/hooks";
-import { selectOwnPoints } from "../redux/selectors";
-import { PlaySquare } from "./square/playSquare";
-import { StaticSquares } from "./square/staticSquares";
-import styles from "./styles.module.scss";
+import { selectPlayerAttacks, selectPlayerShips } from "../redux/selectors";
+import { Point } from "./models";
+import PlayBoard from "./playBoard";
 
 type PrimaryBoardProps = {
-  playerId: string;
+  ownId: string;
+  enemyId: string;
 };
 
-const PrimaryBoard = ({ playerId }: PrimaryBoardProps) => {
-  const lastAttack = useAppSelector((state) => state.activeGame.lastAttack);
-  const points = useAppSelector((state) => selectOwnPoints(state, playerId));
+const PrimaryBoard = ({ ownId, enemyId }: PrimaryBoardProps) => {
+  const enemyAttacks = useAppSelector(selectPlayerAttacks(enemyId));
+  const ownShips = useAppSelector(selectPlayerShips(ownId));
 
-  const squareClicked = () => {
+  const squareClicked = (point: Point) => {
     console.log("clicked primary board. nothing happens");
+    const relativeShip = ownShips.find((s) => {
+      const bps = shipToBoardPoint(s);
+      const shipPointsContain = bps.some(pointMatches(point));
+      return shipPointsContain;
+    });
+    console.log("relative ship:", relativeShip);
   };
 
   return (
-    <div data-testid="primary-board" className={styles.board}>
-      <StaticSquares />
-      <div className={styles.playArea}>
-        {points.map((point, index) => {
-          const lastAttacked =
-            !!lastAttack &&
-            lastAttack.playerId !== playerId &&
-            lastAttack.point.x === point.point.x &&
-            lastAttack.point.y === point.point.y;
-          return (
-            <PlaySquare
-              key={index}
-              lastAttacked={lastAttacked}
-              squareClicked={squareClicked}
-              {...point}
-            />
-          );
-        })}
-      </div>
-    </div>
+    <PlayBoard
+      datatestId="primary-board"
+      playerId={ownId}
+      ships={ownShips}
+      attacks={enemyAttacks}
+      squareClicked={squareClicked}
+    />
   );
 };
 

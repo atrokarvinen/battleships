@@ -38,7 +38,7 @@ test("changes player order when fails to attack", async ({
   await gamePlayPage.verifyPlayerTurnActive(gamePlayPage.player1);
 
   await gamePlayPage.attackSquare(5, 5, false);
-  
+
   await gamePlayPage.verifyPlayerTurnInactive(gamePlayPage.player1);
 });
 
@@ -104,19 +104,21 @@ test("attacks are broadcasted", async ({ page, gamePlayPage, browser }) => {
   await gamePlayPage.verifyGameHasStarted();
   await gamePlayPage.seedGameDummyShips();
   await page.reload();
+  await pageP2.reload();
 
   const trackingBoardP1 = page.getByTestId("tracking-board");
   const squareP1 = trackingBoardP1.getByTestId("square-5-5");
   await expect(squareP1).toBeVisible();
   await squareP1.click();
 
+  await pageP2.waitForTimeout(2000);
   const primaryBoardP2 = pageP2.getByTestId("primary-board");
   const squareP2 = primaryBoardP2.getByTestId("square-5-5");
   await expect(squareP2.getByTestId("water-square")).toHaveClass(/missed/);
   await expect(squareP1.getByTestId("water-square")).toHaveClass(/missed/);
 });
 
-test("game start is broadcasted", async ({ page, gamePlayPage, browser }) => {
+test.only("game start is broadcasted", async ({ page, gamePlayPage, browser }) => {
   const context = await browser.newContext();
   const pageP2 = await context.newPage();
   await signIn({

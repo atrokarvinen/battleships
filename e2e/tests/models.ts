@@ -13,7 +13,13 @@ export type GameSeed = {
 
 export type ShipPlacement = {
   playerId: string;
-  shipPoints: Point[];
+  ships: Ship[];
+};
+
+export type Ship = {
+  start: Point;
+  length: number;
+  isVertical: boolean;
 };
 
 export type Point = {
