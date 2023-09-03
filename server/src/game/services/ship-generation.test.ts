@@ -10,6 +10,6 @@ it("generates full game with players and ships", async () => {
   );
   expect(fleet).toHaveLength(shipCount);
 
-  const submarines = fleet.filter((x) => x.ship.name === submarine.name);
+  const submarines = fleet.filter((x) => x.length === submarine.size);
   expect(submarines).toHaveLength(3);
 });
