@@ -48,9 +48,9 @@ export class GameRoomController {
       console.log(`Found game in game room '${gameRoomId}'`);
 
       // Return only information that is visible to the player
-      const filteredGameDto = filterGameInfo(req.userId, gameDto);
+      const { selfInfo } = filterGameInfo(req.userId, gameDto);
 
-      return res.json(filteredGameDto);
+      return res.json(selfInfo);
     } catch (error) {
       next(error);
     }

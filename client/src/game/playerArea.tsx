@@ -2,6 +2,9 @@ import { Box, Stack } from "@mui/material";
 import PrimaryBoard from "../board/primaryBoard";
 import TrackingBoard from "../board/trackingBoard";
 import { useBreakpoint } from "../navigation/useBreakpoint";
+import { useAppSelector } from "../redux/hooks";
+import { selectShipBuilderActive } from "../redux/selectors";
+import ShipBuilder from "../ship-builder/shipBuilder";
 import { PlayerName } from "./playerName";
 import RevealOpponentBoard from "./revealOpponentBoard";
 
@@ -23,6 +26,18 @@ const PlayerArea = ({
   gameId,
 }: PlayerAreaProps) => {
   const { sm } = useBreakpoint();
+  const isShipBuilderActive = useAppSelector(selectShipBuilderActive);
+
+  const OpponenBoard = () => {
+    return (
+      <>
+        <TrackingBoard gameId={gameId} ownId={player1Id} enemyId={player2Id} />
+        {process.env.NODE_ENV === "development" && (
+          <RevealOpponentBoard opponentId={player2Id} gameId={gameId} />
+        )}
+      </>
+    );
+  };
 
   return (
     <Box>
@@ -36,16 +51,9 @@ const PlayerArea = ({
           <PlayerName name={player1Name} id={player1Id} />
           <PrimaryBoard ownId={player1Id} enemyId={player2Id} />
         </Stack>
-        <Stack direction="column" spacing={1}>
+        <Stack direction="column" spacing={1} justifyContent="space-between">
           <PlayerName name={player2Name} id={player2Id} />
-          <TrackingBoard
-            gameId={gameId}
-            ownId={player1Id}
-            enemyId={player2Id}
-          />
-          {process.env.NODE_ENV === "development" && (
-            <RevealOpponentBoard opponentId={player2Id} gameId={gameId} />
-          )}
+          {isShipBuilderActive ? <ShipBuilder /> : <OpponenBoard />}
         </Stack>
       </Stack>
     </Box>

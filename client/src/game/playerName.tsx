@@ -1,7 +1,11 @@
-import { Box, Typography, useTheme } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import cn from "classnames";
 import { useAppSelector } from "../redux/hooks";
-import { selectActivePlayerId } from "../redux/selectors";
+import {
+  selectActivePlayerId,
+  selectShipBuilderActive,
+} from "../redux/selectors";
+import PlayerNameStatus from "./playerNameStatus";
 import styles from "./styles.module.scss";
 
 type PlayerNameProps = {
@@ -10,12 +14,12 @@ type PlayerNameProps = {
 };
 
 const PlayerName = ({ id, name }: PlayerNameProps) => {
-  const theme = useTheme();
+  const isShipBuilderActive = useAppSelector(selectShipBuilderActive);
   const playerIdToPlay = useAppSelector(selectActivePlayerId);
   const isPlayersTurn = playerIdToPlay === id;
 
   return (
-    <Box display="flex" justifyContent="center">
+    <Box display="flex" justifyContent="center" alignItems="center">
       <Typography
         data-testid="player-name"
         variant="h6"
@@ -27,6 +31,7 @@ const PlayerName = ({ id, name }: PlayerNameProps) => {
       >
         {name ?? "N/A"}
       </Typography>
+      {isShipBuilderActive && <PlayerNameStatus id={id} />}
     </Box>
   );
 };

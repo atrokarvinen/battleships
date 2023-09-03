@@ -1,9 +1,9 @@
 import { Types } from "mongoose";
 import {
-    GameRoom,
-    GameRoomDTO,
-    IGameRoom,
-    OpponentType,
+  GameRoom,
+  GameRoomDTO,
+  IGameRoom,
+  OpponentType,
 } from "../database/gameRoom";
 import { IUser, User, UserDTO } from "../database/user";
 import { GameModel } from "../game/database/dbSchema";
@@ -21,13 +21,19 @@ export class GameRoomService {
     return gameDtos;
   }
 
-  async getGameRoom(gameId: string) {
+  async findGameRoom(gameId: string) {
     const game = await GameRoom.findById(gameId).populate(
       "players",
       "-password"
     );
     const gameDto: GameRoomDTO | undefined = game?.toObject();
     return gameDto;
+  }
+
+  async getGameRoom(gameId: string) {
+    const gameRoom = await this.findGameRoom(gameId);
+    if (!gameRoom) throw new ApiError("Gameroom not found", 404);
+    return gameRoom;
   }
 
   async setGameInRoom(gameRoomId: string, id: string) {
@@ -53,7 +59,7 @@ export class GameRoomService {
     // Initialize an empty game to the newly created room
     const options: GameOptions = {
       gameRoomId: createdGameRoom.id,
-      playerIds: [],
+      players: [],
     };
     const newGame = await this.gameCreationService.createEmptyGame(options);
     createdGameRoom.game = new Types.ObjectId(newGame.id);
@@ -61,6 +67,7 @@ export class GameRoomService {
 
     const isAgainstBot = payload.opponentType === OpponentType.COMPUTER;
     if (isAgainstBot) {
+      console.log("Adding bot to game");
       initializedGameRoom = await this.addBotToGame(initializedGameRoom.id);
     }
 

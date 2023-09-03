@@ -1,0 +1,6 @@
+ /* By default MUI has transparent background for disabled icon buttons. 
+ This overrides the setting so that the icon button behaves like regular button */
+#icon-button.disabled {
+  color: var(--mui-palette-action-disabled);
+  background-color: var(--mui-palette-action-disabledBackground);
+}

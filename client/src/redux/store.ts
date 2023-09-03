@@ -4,6 +4,10 @@ import {
   notificationReducer,
 } from "../notification/notificationSlice";
 import {
+  initialState as initialShipBuilderState,
+  shipBuilderReducer,
+} from "../ship-builder/redux/shipBuilderSlice";
+import {
   activeGameReducer,
   initialState as initialActiveGameState,
 } from "./activeGameSlice";
@@ -25,6 +29,7 @@ export const rootReducer = {
   gameRoom: gameRoomReducer,
   notification: notificationReducer,
   players: playerReducer,
+  shipBuilder: shipBuilderReducer,
 };
 
 export const store = configureStore({
@@ -38,6 +43,7 @@ export const preloadedState: PreloadedState<RootState> = {
   gameRoom: initialGameState,
   notification: initialNotificationState,
   players: initialPlayerState,
+  shipBuilder: initialShipBuilderState,
 };
 
 // Infer the `RootState` and `AppDispatch` types from the store itself

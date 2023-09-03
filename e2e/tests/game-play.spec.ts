@@ -2,7 +2,6 @@ import { expect } from "@playwright/test";
 import { signIn } from "./common";
 import { defaultPassword } from "./defaults";
 import { test } from "./game-play-fixture";
-import { STANDARD_SHIP_SQUARE_COUNT } from "./game-play-page";
 
 test("starts game", async ({ page, gamePlayPage }) => {
   await expect(page.getByRole("button", { name: /start/i })).toBeVisible();
@@ -20,6 +19,11 @@ test("cannot start game when game already started", async ({
   const startButton = page.getByRole("button", { name: /start/i });
   await expect(startButton).toBeEnabled();
   await gamePlayPage.startGame();
+
+  await gamePlayPage.verifyGameHasStarted();
+  await gamePlayPage.seedGameDummyShips();
+  await page.reload();
+
   await expect(startButton).toBeDisabled();
 });
 
@@ -118,7 +122,7 @@ test("attacks are broadcasted", async ({ page, gamePlayPage, browser }) => {
   await expect(squareP1.getByTestId("water-square")).toHaveClass(/missed/);
 });
 
-test.only("game start is broadcasted", async ({ page, gamePlayPage, browser }) => {
+test("game start is broadcasted", async ({ page, gamePlayPage, browser }) => {
   const context = await browser.newContext();
   const pageP2 = await context.newPage();
   await signIn({
@@ -129,9 +133,7 @@ test.only("game start is broadcasted", async ({ page, gamePlayPage, browser }) =
   await expect(pageP2.getByText("Battleships app")).toBeVisible();
 
   await gamePlayPage.startGame();
-  await expect(pageP2.getByTestId("ship-square")).toHaveCount(
-    STANDARD_SHIP_SQUARE_COUNT
-  );
+  await expect(pageP2.getByRole("button", { name: /confirm/i })).toBeVisible();
 });
 
 test("ends game", async ({ page }) => {

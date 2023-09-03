@@ -1,6 +1,7 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 import { BoardPoint, Point } from "../board/models";
-import { PlayerDTO } from "../game/apiModel";
+import { GameState, PlayerDTO } from "../game/apiModel";
+import { TransformShipPayload } from "../ship-builder/api/api";
 import { AttackResultPayload } from "./models";
 
 export type Attack = {
@@ -20,6 +21,7 @@ export type ActiveGameState = {
   activePlayerId?: string;
   winnerPlayerId?: string;
 
+  state: GameState;
   isGameStarted: boolean;
   isGameOver: boolean;
   showGameOverDialog: boolean;
@@ -34,6 +36,7 @@ export const initialState: ActiveGameState = {
   id: "1",
   gameRoomId: "1",
 
+  state: GameState.UNKNOWN,
   isGameStarted: false,
   isGameOver: false,
   showGameOverDialog: false,
@@ -51,11 +54,17 @@ const activeGameSlice = createSlice({
       state.id = action.payload.id;
       state.gameRoomId = action.payload.gameRoomId;
       state.activePlayerId = action.payload.activePlayerId;
+      state.state = action.payload.state;
       state.isGameStarted = action.payload.isGameStarted;
       state.isGameOver = action.payload.isGameOver;
       state.players = action.payload.players;
       state.winnerPlayerId = action.payload.winnerPlayerId;
       state.lastAttack = undefined;
+    },
+    setPlayerReady(state, action: PayloadAction<string>) {
+      const player = state.players.find((p) => p.playerId === action.payload);
+      if (!player) return state;
+      player.placementsReady = true;
     },
     setIsGameOver(state, action: PayloadAction<boolean>) {
       const isOver = action.payload;
@@ -103,7 +112,6 @@ const activeGameSlice = createSlice({
         nextPlayerId,
         point,
         winnerPlayerId,
-        isOwnGuess,
         attackerPlayerId: attackerId,
       } = action.payload;
 
@@ -114,7 +122,14 @@ const activeGameSlice = createSlice({
 
       attacker.attacks.push(point);
       if (hasShip) {
-        defender.ownShips.push({ start: point, length: 1, isVertical: false });
+        // Just use artificial id since full enemy ship information is unknown
+        const id = defender.ownShips.length + 1;
+        defender.ownShips.push({
+          id: id.toString(),
+          start: point,
+          length: 1,
+          isVertical: false,
+        });
       }
 
       state.activePlayerId = nextPlayerId;
@@ -131,18 +146,34 @@ const activeGameSlice = createSlice({
       state.isGameOver = true;
       state.showGameOverDialog = true;
     },
+    transformShip: (state, action: PayloadAction<TransformShipPayload>) => {
+      const { playerId, ship } = action.payload;
+      let shipToTransform = state.players
+        .find((p) => playerId === p.playerId)
+        ?.ownShips.find((s) => s.id === ship.id);
+
+      if (!shipToTransform) return;
+
+      shipToTransform.start = ship.start;
+      shipToTransform.isVertical = ship.isVertical;
+    },
   },
 });
 
 export const pointMatches = (point: Point) => (boardPoint: BoardPoint) => {
   return boardPoint.point.x === point.x && boardPoint.point.y === point.y;
 };
-export const pointMatchesToPoint = (pointA: Point) => (pointB: Point) => {
-  return pointB.x === pointA.x && pointB.y === pointA.y;
-};
+export const pointMatchesToPoint =
+  (pointA: Point | undefined) => (pointB: Point | undefined) => {
+    if (!!pointA && !!pointB) {
+      return pointB.x === pointA.x && pointB.y === pointA.y;
+    }
+    return pointA === pointB;
+  };
 
 export const {
   setActiveGame,
+  setPlayerReady,
   setIsGameOver,
   closeGameOverDialog,
   setShowOpponentBoard,
@@ -150,6 +181,7 @@ export const {
   resetOpponentShipLocations,
   attackSquare,
   gameOver,
+  transformShip,
 } = activeGameSlice.actions;
 
 export const activeGameReducer = activeGameSlice.reducer;

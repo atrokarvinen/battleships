@@ -1,4 +1,3 @@
-import { Stack } from "@mui/material";
 import { useParams } from "react-router";
 import { useBreakpoint } from "../navigation/useBreakpoint";
 import { useAppSelector } from "../redux/hooks";
@@ -8,11 +7,12 @@ import {
   selectUserId,
 } from "../redux/selectors";
 import GameControls from "./gameControls";
-import GameMobile from "./gameMobile";
-import GameOverDialog from "./gameOverDialog";
 import { useAiPlayer } from "./hooks/useAiPlayer";
 import { useRoomSocket } from "./hooks/useRoomSocket";
 import InfoBoard from "./infoBoard";
+import DesktopLayout from "./layout/desktopLayout";
+import { LayoutProps } from "./layout/layoutProps";
+import MobileLayout from "./layout/mobileLayout";
 import PlayerArea from "./playerArea";
 import { useGetInitialData } from "./useGetInitialData";
 
@@ -42,13 +42,10 @@ const Game = ({}: GameProps) => {
   const self = gameRoom.players.find((p) => p.id === playerId);
   const opponent = gameRoom.players.find((p) => p.id !== playerId);
 
-  if (sm) {
-    return <GameMobile />;
-  }
-  return (
-    <Stack direction="column" mt={2} data-testid="active-game" spacing={1}>
-      <GameOverDialog />
-      <InfoBoard gameRoomId={gameRoomId} />
+  const props: LayoutProps = {
+    GameControls: <GameControls gameRoomId={gameRoomId} />,
+    InfoBoard: <InfoBoard gameRoomId={gameRoomId} />,
+    PlayerArea: (
       <PlayerArea
         gameId={gameId}
         player1Name={self?.username ?? ""}
@@ -56,9 +53,12 @@ const Game = ({}: GameProps) => {
         player2Name={opponent?.username ?? "-"}
         player2Id={opponent?.id ?? ""}
       />
-      <GameControls gameRoomId={gameRoomId} />
-    </Stack>
-  );
+    ),
+  };
+  if (sm) {
+    return <MobileLayout {...props} />;
+  }
+  return <DesktopLayout {...props} />;
 };
 
 export default Game;

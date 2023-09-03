@@ -37,6 +37,8 @@ export type PlayerDTO = {
   playerId: string;
   ownShips: ShipDTO[];
   attacks: Point[];
+  placementsReady: boolean;
+  isAi: boolean;
 };
 
 export type Board = {
@@ -55,9 +57,11 @@ export enum GameState {
   UNKNOWN,
   STARTED,
   ENDED,
+  PLACEMENTS,
 }
 
 export type ShipDTO = {
+  id: string;
   length: number;
   start: Point;
   isVertical: boolean;

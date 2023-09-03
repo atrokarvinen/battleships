@@ -1,6 +1,6 @@
 import { Schema, model } from "mongoose";
 import { toObjectOptions } from "../../database/dbOptions";
-import { Board, IGame, IPlayer, Point, Ship, Square } from "../models";
+import { IGame, IPlayer, Point, Ship, Square } from "../models";
 
 const pointSchema = new Schema<Point>(
   {
@@ -23,15 +23,6 @@ const squareSchema = new Schema<Square>(
 
 const shipSchema = new Schema<Ship>(
   { length: Number, start: pointSchema, isVertical: Boolean },
-  { _id: false }
-);
-
-const boardSchema = new Schema<Board>(
-  {
-    playerId: String,
-    ships: [shipSchema],
-    squares: [squareSchema],
-  },
   { toObject: toObjectOptions }
 );
 
@@ -40,6 +31,8 @@ const playerSchema = new Schema<IPlayer>(
     playerId: String,
     attacks: [pointSchema],
     ownShips: [shipSchema],
+    placementsReady: Schema.Types.Boolean,
+    isAi: Schema.Types.Boolean,
   },
   { toObject: toObjectOptions }
 );

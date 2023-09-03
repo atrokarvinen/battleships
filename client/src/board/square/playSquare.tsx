@@ -5,20 +5,21 @@ import styles from "./styles.module.scss";
 import { useSquareStyle } from "./useSquareStyle";
 
 type PrimarySquareProps = {
+  attackResult: AttackResult;
+  isSelectedForBuilder: boolean;
+  lastAttacked: boolean;
   point: Point;
   shipPart?: Ship;
-  lastAttacked: boolean;
-  attackResult: AttackResult;
-
   squareClicked(p: Point): void;
 };
 
 const PlaySquare = ({
+  attackResult,
+  isSelectedForBuilder,
+  lastAttacked,
   point: { x, y },
   shipPart,
   squareClicked,
-  lastAttacked,
-  attackResult,
 }: PrimarySquareProps) => {
   const theme = useTheme();
   const { border } = useSquareStyle();
@@ -60,7 +61,7 @@ const PlaySquare = ({
       return styles.missed;
     }
     if (hasShip) {
-      return styles.shipColor;
+      return isSelectedForBuilder ? styles.sunk : styles.shipColor;
     }
     return undefined;
   };
@@ -69,6 +70,7 @@ const PlaySquare = ({
     <Box
       data-testid={`square-${x}-${y}`}
       className={styles.square}
+      onClick={() => squareClicked({ x, y })}
       sx={{
         border: lastAttacked ? 3 : border.border,
         borderColor: lastAttacked
@@ -79,7 +81,6 @@ const PlaySquare = ({
           borderWidth: 3,
         },
       }}
-      onClick={() => squareClicked({ x, y })}
     >
       <Box
         data-testid={hasShip ? "ship-square" : "water-square"}

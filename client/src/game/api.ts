@@ -19,14 +19,6 @@ export const getGameByRoomIdRequest = (gameRoomId: string) => {
   return axios.get(`/game-room/${gameRoomId}/game`);
 };
 
-export const confirmPlacementsRequest = ({
-  gameRoomId,
-}: {
-  gameRoomId: string;
-}) => {
-  return axios.post(`/game/${gameRoomId}/confirm-placements`);
-};
-
 export const getAiAttack = ({ gameRoomId }: { gameRoomId: string }) => {
   return axios.get(`/game/${gameRoomId}/attack/ai`);
 };
@@ -44,6 +36,7 @@ export const mapGameDtoToActiveGame = (game: GameDTO) => {
     gameRoomId: game.gameRoom,
     showOpponentBoard: false,
     players: game.players,
+    state: game.state,
     isGameStarted: game.state === GameState.STARTED,
     isGameOver: game.state === GameState.ENDED,
     activePlayerId: game.activePlayerId,

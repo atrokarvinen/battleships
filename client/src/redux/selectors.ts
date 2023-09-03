@@ -1,3 +1,4 @@
+import { GameState } from "../game/apiModel";
 import { RootState } from "./store";
 
 // Players
@@ -28,8 +29,11 @@ export const selectActiveGame = (state: RootState) => state.activeGame;
 export const selectActiveGameId = (state: RootState) => state.activeGame.id;
 export const selectActivePlayerId = (state: RootState) =>
   state.activeGame.activePlayerId;
+export const selectGameState = (state: RootState) => state.activeGame.state;
 export const selectIsGameStarted = (state: RootState) =>
-  state.activeGame.isGameStarted;
+  state.activeGame.state === GameState.STARTED;
+export const selectIsGameEnded = (state: RootState) =>
+  state.activeGame.state === GameState.ENDED;
 export const selectIsGameOver = (state: RootState) =>
   state.activeGame.isGameOver;
 export const selectShowGameOverDialog = (state: RootState) =>
@@ -51,6 +55,14 @@ export const selectPlayerAttacks = (playerId: string) => (state: RootState) => {
   const player = selectGamePlayerById(state, playerId);
   return player ? player.attacks : [];
 };
+
+// Ship builder
+export const selectIsPlayerReady = (playerId: string) => (state: RootState) =>
+  selectGamePlayerById(state, playerId)?.placementsReady === true;
+export const selectShipBuilderActive = (state: RootState) =>
+  state.activeGame.state === GameState.PLACEMENTS;
+export const selectSelectedShip = (state: RootState) =>
+  state.shipBuilder.selectedShip;
 
 // Players
 export const selectPlayerById = (state: RootState, id: string) => {

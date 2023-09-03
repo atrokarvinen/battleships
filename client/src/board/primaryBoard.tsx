@@ -1,7 +1,12 @@
 import { shipToBoardPoint } from "../game/api";
 import { pointMatches } from "../redux/activeGameSlice";
-import { useAppSelector } from "../redux/hooks";
-import { selectPlayerAttacks, selectPlayerShips } from "../redux/selectors";
+import { useAppDispatch, useAppSelector } from "../redux/hooks";
+import {
+  selectPlayerAttacks,
+  selectPlayerShips,
+  selectShipBuilderActive,
+} from "../redux/selectors";
+import { setSelectedShip } from "../ship-builder/redux/shipBuilderSlice";
 import { Point } from "./models";
 import PlayBoard from "./playBoard";
 
@@ -11,18 +16,26 @@ type PrimaryBoardProps = {
 };
 
 const PrimaryBoard = ({ ownId, enemyId }: PrimaryBoardProps) => {
+  const dispatch = useAppDispatch();
+
+  const isShipBuilderActive = useAppSelector(selectShipBuilderActive);
+
   const enemyAttacks = useAppSelector(selectPlayerAttacks(enemyId));
   const ownShips = useAppSelector(selectPlayerShips(ownId));
 
   const squareClicked = (point: Point) => {
-    console.log("clicked primary board. nothing happens");
     const relativeShip = ownShips.find((s) => {
       const bps = shipToBoardPoint(s);
       const shipPointsContain = bps.some(pointMatches(point));
       return shipPointsContain;
     });
-    console.log("relative ship:", relativeShip);
+
+    if (isShipBuilderActive) {
+      dispatch(setSelectedShip(relativeShip));
+    }
   };
+
+  console.log("ownships: ", ownShips);
 
   return (
     <PlayBoard

@@ -3,5 +3,4 @@ export enum GameState {
   STARTED,
   ENDED,
   PLACEMENTS,
-  PLAYING,
 }

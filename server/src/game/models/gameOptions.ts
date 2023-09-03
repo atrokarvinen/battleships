@@ -1,5 +1,10 @@
 export type GameOptions = {
   gameRoomId: string;
-  playerIds: string[];
+  players: PlayerOption[];
   firstPlayerId?: string;
+};
+
+export type PlayerOption = {
+  id: string;
+  isAi: boolean;
 };

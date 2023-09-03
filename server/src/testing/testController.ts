@@ -4,7 +4,7 @@ import { Server } from "socket.io";
 import { GameRoom } from "../database/gameRoom";
 import { User } from "../database/user";
 import { GameModel } from "../game/database/dbSchema";
-import { GameDTO } from "../game/models";
+import { GameDTO, GameState } from "../game/models";
 import { GameSeed } from "./models";
 
 export class TestController {
@@ -64,6 +64,7 @@ export class TestController {
 
     p1.ownShips = ships1;
     p2.ownShips = ships2;
+    game.state = GameState.STARTED;
     game.activePlayerId = firstPlayer.id.toString();
 
     const updatedGame = await game.save();

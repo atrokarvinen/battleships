@@ -7,10 +7,12 @@ import { AttackResultPayload } from "../../redux/models";
 import {
   selectActivePlayerId,
   selectGameRoom,
+  selectGameState,
   selectPlayersInGameRoom,
   selectUserId,
 } from "../../redux/selectors";
 import { getAiAttack } from "../api";
+import { GameState } from "../apiModel";
 
 export const useAiPlayer = (gameRoomId: string) => {
   const dispatch = useAppDispatch();
@@ -24,16 +26,18 @@ export const useAiPlayer = (gameRoomId: string) => {
   const computerPlayer = players.find((p) => p.id !== playerId);
   const activePlayerId = useAppSelector(selectActivePlayerId);
   const gameRoom = useAppSelector((state) => selectGameRoom(state, gameRoomId));
+  const gameState = useAppSelector(selectGameState);
 
+  const isCorrectStateToAttack = gameState === GameState.STARTED;
   const isAgainstComputer = gameRoom?.opponentType === OpponentType.COMPUTER;
   const isComputerTurn =
     !!computerPlayer && computerPlayer.id === activePlayerId;
 
   useEffect(() => {
-    if (isAgainstComputer && isComputerTurn) {
+    if (isAgainstComputer && isComputerTurn && isCorrectStateToAttack) {
       setTimeout(playAiTurn, 1000);
     }
-  }, [isComputerTurn, isAgainstComputer]);
+  }, [isComputerTurn, isAgainstComputer, isCorrectStateToAttack]);
 
   const playAiTurn = async () => {
     const response = await request(getAiAttack({ gameRoomId }), true);

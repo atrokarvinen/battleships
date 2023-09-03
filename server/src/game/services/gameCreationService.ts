@@ -15,15 +15,19 @@ export class GameCreationService {
     return await this.createGame(emptyGame);
   }
 
-  generateEmptyGame({ gameRoomId, playerIds, firstPlayerId }: GameOptions) {
+  generateEmptyGame({ gameRoomId, players, firstPlayerId }: GameOptions) {
     const game: IGame = {
       gameRoom: new Types.ObjectId(gameRoomId),
       activePlayerId: firstPlayerId,
-      players: playerIds.map<IPlayer>((pId) => ({
-        playerId: new Types.ObjectId(pId),
-        attacks: [],
-        ownShips: [],
-      })),
+      players: players.map<IPlayer>(({ id, isAi }) => {
+        return {
+          isAi,
+          placementsReady: false,
+          playerId: new Types.ObjectId(id),
+          attacks: [],
+          ownShips: [],
+        };
+      }),
       state: GameState.ENDED,
     };
 
@@ -34,6 +38,10 @@ export class GameCreationService {
     game.players.forEach((player) => {
       const placements = createRandomFleetLocations();
       player.ownShips = placements;
+
+      console.log("Player is ai:", player.isAi);
+
+      player.placementsReady = player.isAi;
     });
   }
 }

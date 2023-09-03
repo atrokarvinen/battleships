@@ -1,6 +1,6 @@
 $squareSize: 30px;
-$shipMargin: 10%;
-$shipSize: 80%;
+$shipMargin: 6px;
+$shipSize: 18px;
 
 .square {
   height: $squareSize;
@@ -22,31 +22,31 @@ $shipSize: 80%;
 }
 
 .shipStartVertical {
-  margin: 0 $shipMargin;
-  margin-top: 2 * $shipMargin;
+  padding: 0 $shipMargin;
+  padding-top: 2 * $shipMargin;
   width: $shipSize;
 }
 .shipMiddleVertical {
-  margin: 0 $shipMargin;
+  padding: 0 $shipMargin;
   width: $shipSize;
 }
 .shipEndVertical {
-  margin: 0 $shipMargin;
+  padding: 0 $shipMargin;
   width: $shipSize;
   border-radius: 0 0 50% 50%;
 }
 
 .shipStartHorizontal {
-  margin: $shipMargin 0;
-  margin-left: $shipMargin;
+  padding: $shipMargin 0;
+  padding-left: $shipMargin;
   height: $shipSize;
 }
 .shipMiddleHorizontal {
-  margin: $shipMargin 0;
+  padding: $shipMargin 0;
   height: $shipSize;
 }
 .shipEndHorizontal {
-  margin: $shipMargin 0px;
+  padding: $shipMargin 0px;
   height: $shipSize;
   border-radius: 0 50% 50% 0;
 }

@@ -1,7 +1,15 @@
-import { mapShipsToBoardPoint, mergePoints } from "../game/api";
+import {
+  mapShipsToBoardPoint,
+  mergePoints,
+  shipToBoardPoint,
+} from "../game/api";
 import { ShipDTO } from "../game/apiModel";
 import { pointMatches, pointMatchesToPoint } from "../redux/activeGameSlice";
 import { useAppSelector } from "../redux/hooks";
+import {
+  selectSelectedShip,
+  selectShipBuilderActive,
+} from "../redux/selectors";
 import { AttackResult, Point } from "./models";
 import { PlaySquare } from "./square/playSquare";
 import { StaticSquares } from "./square/staticSquares";
@@ -23,6 +31,8 @@ const PlayBoard = ({
   datatestId,
 }: PlayBoardProps) => {
   const lastAttack = useAppSelector((state) => state.activeGame.lastAttack);
+  const selectedShip = useAppSelector(selectSelectedShip);
+  const isShipBuilderActive = useAppSelector(selectShipBuilderActive);
 
   const shipPoints = mapShipsToBoardPoint(ships);
   const boardPoints = mergePoints(shipPoints);
@@ -51,21 +61,33 @@ const PlayBoard = ({
     return AttackResult.None;
   };
 
+  const isSquareSelectedForShipBuilder = (point: Point) => {
+    if (!selectedShip || !isShipBuilderActive) {
+      return false;
+    }
+
+    const selectedSquares = shipToBoardPoint(selectedShip);
+    return selectedSquares.some(pointMatches(point));
+  };
+
   return (
     <div data-testid={datatestId} className={styles.board}>
       <StaticSquares />
       <div className={styles.playArea}>
-        {boardPoints.map((point, index) => {
-          const lastAttacked = isSquareLastAttacked(point.point);
-          const attackResult = determineAttackResult(point.point);
+        {boardPoints.map((bp, index) => {
+          const point = bp.point;
+          const lastAttacked = isSquareLastAttacked(point);
+          const attackResult = determineAttackResult(point);
+          const isSelectedForBuilder = isSquareSelectedForShipBuilder(point);
           return (
             <PlaySquare
               key={index}
-              lastAttacked={lastAttacked}
-              squareClicked={squareClicked}
               attackResult={attackResult}
-              point={point.point}
-              shipPart={point.shipPart}
+              isSelectedForBuilder={isSelectedForBuilder}
+              lastAttacked={lastAttacked}
+              point={point}
+              squareClicked={squareClicked}
+              shipPart={bp.shipPart}
             />
           );
         })}

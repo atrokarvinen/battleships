@@ -17,6 +17,7 @@ import { logRequestMiddleware } from "./src/middleware/logRequestMiddleware";
 import { socketMiddleware } from "./src/middleware/socketMiddleware";
 import { unknownRouteMiddleware } from "./src/middleware/unknownRouteMiddleware";
 import { playerRouter } from "./src/player/playerRouter";
+import { shipBuilderRouter } from "./src/shipBuilder/shipBuilderRouter";
 import { addListeners } from "./src/socket/socket";
 import { testEnvMiddleware } from "./src/testing/testEnvMiddleware";
 import { testRouter } from "./src/testing/testRouter";
@@ -39,6 +40,7 @@ app.use("/auth", authRouter());
 app.use("/account", authMiddleware, accountRouter);
 app.use("/game-room", authMiddleware, gameRoomRouter(io));
 app.use("/game", authMiddleware, gameRouter(io));
+app.use("/ship-builder", authMiddleware, shipBuilderRouter(io));
 app.use("/player", playerRouter());
 app.use("/test", testEnvMiddleware, testRouter(io));
 

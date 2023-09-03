@@ -2,13 +2,13 @@ import { Types } from "mongoose";
 import { ApiError } from "../../middleware/errorHandleMiddleware";
 import { GameModel } from "../database/dbSchema";
 import {
-    AttackSquare,
-    GameDTO,
-    GameOptions,
-    GameState,
-    IGame,
-    IPlayer,
-    Point,
+  AttackSquare,
+  GameDTO,
+  GameOptions,
+  GameState,
+  IGame,
+  IPlayer,
+  Point,
 } from "../models";
 import { pointEquals } from "./board-utils";
 import { GameCreationService } from "./gameCreationService";
@@ -105,11 +105,8 @@ export class GameService {
     const emptyGame = this.gameCreationService.generateEmptyGame(options);
     await game.updateOne(emptyGame);
 
-    game.activePlayerId = undefined;
-    await game.save();
-
-    const gameDto = await this.findGame(game.id);
-    return gameDto!;
+    const gameDto = await this.getGame(game.id);
+    return gameDto;
   }
 
   async findGame(gameId: string) {
@@ -120,11 +117,15 @@ export class GameService {
 
   async getGame(gameId: string) {
     const game = await GameModel.findById(gameId).populate("gameRoom");
-    if (!game) {
-      throw new ApiError(`Game '${gameId}' was not found`, 404);
-    }
+    if (!game) throw new ApiError(`Game '${gameId}' was not found`, 404);
     const gameDto: GameDTO = game.toObject();
     return gameDto;
+  }
+
+  async getGameDocument(gameId: string) {
+    const game = await GameModel.findById(gameId);
+    if (!game) throw new ApiError(`Game '${gameId}' was not found`, 404);
+    return game;
   }
 
   async deleteGamesFromRoom(gameRoomId: string) {
@@ -134,6 +135,8 @@ export class GameService {
   }
 
   async startWithRandomPlacements(gameId: string) {
+    console.log("Setting random placements...");
+
     const game = await GameModel.findById(gameId);
 
     if (!game) {
@@ -141,11 +144,10 @@ export class GameService {
     }
 
     this.gameCreationService.randomizePlacements(game);
-    game.state = GameState.STARTED;
-
-    game.activePlayerId = game.players[0].playerId.toString();
+    game.state = GameState.PLACEMENTS;
 
     const updated = await game.save();
+
     const gameDTO: GameDTO = updated.toObject();
     return gameDTO;
   }

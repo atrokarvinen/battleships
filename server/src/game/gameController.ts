@@ -1,9 +1,11 @@
 import { NextFunction, Request, Response } from "express";
 import { Server } from "socket.io";
+import { GameRoomDTO, OpponentType } from "../database/gameRoom";
 import { GameRoomService } from "../gameRoom/gameRoomService";
 import { ApiError } from "../middleware/errorHandleMiddleware";
+import { throwInvalidStateError } from "../shipBuilder/validation";
 import { StartGamePayload } from "./api/startGamePayload";
-import { Point } from "./models";
+import { GameState, Point } from "./models";
 import { GameOptions } from "./models/gameOptions";
 import { AttackService } from "./services/attackService";
 import { pointsEqual } from "./services/board-utils";
@@ -22,21 +24,17 @@ export class GameController {
 
   startGame = async (req: Request, res: Response, next: NextFunction) => {
     try {
+      const userId = req.userId;
       const { gameRoomId }: StartGamePayload = req.body;
 
       console.log("Starting game:", req.body);
 
       const gameRoom = await this.gameRoomService.getGameRoom(gameRoomId);
-      if (!gameRoom) {
-        return res.status(404).json({ error: `Game room not found` });
-      }
       let game = await this.gameRoomService.getGameInRoom(gameRoomId);
-      const playerIds = gameRoom.players.map((p) => p.id);
-      if (playerIds.length !== 2) {
-        return res.status(400).json({ error: `Game requires 2 players` });
-      }
-      const firstPlayerId = this.randomizeFirstPlayer(playerIds);
-      const options: GameOptions = { gameRoomId, playerIds, firstPlayerId };
+
+      this.validateGameStart(userId, gameRoom, game?.state);
+
+      const options = this.createGameOptions(userId, gameRoom);
       if (!game) {
         console.log("Creating new game");
         game = await this.gameDbService.createEmptyGame(options);
@@ -49,16 +47,10 @@ export class GameController {
         game.id
       );
 
-      // Return only information that is visible to the player
-      const requester = startedGame.players.find(
-        (p) => p.playerId === req.userId
+      const { selfInfo, opponentInfo } = filterGameInfo(
+        req.userId,
+        startedGame
       );
-      const opponent = startedGame.players.find(
-        (p) => p.playerId !== req.userId
-      );
-
-      const selfInfo = filterGameInfo(requester!.playerId, startedGame);
-      const opponentInfo = filterGameInfo(opponent!.playerId, startedGame);
 
       console.log("Started game:", startedGame.id);
       this.io
@@ -70,6 +62,45 @@ export class GameController {
       next(error);
     }
   };
+
+  private validateGameStart(
+    userId: string,
+    gameRoom: GameRoomDTO,
+    state: GameState | undefined
+  ) {
+    const hasTwoPlayers = gameRoom.players.length === 2;
+    if (!hasTwoPlayers) {
+      throw new ApiError("Game requires 2 players");
+    }
+
+    const startedByEitherPlayer = gameRoom.players.some((p) => p.id === userId);
+    if (!startedByEitherPlayer) {
+      throw new ApiError("Game may only be started by a user in the game");
+    }
+
+    const isCorrectStateToStart =
+      state === undefined || state === GameState.ENDED;
+    if (!isCorrectStateToStart) {
+      throwInvalidStateError(state, GameState.ENDED);
+    }
+  }
+
+  private createGameOptions(userId: string, gameRoom: GameRoomDTO) {
+    const gameRoomId = gameRoom.id;
+    const playerIds = gameRoom.players.map((p) => p.id);
+    const isAgainstAi = gameRoom.opponentType === OpponentType.COMPUTER;
+    const firstPlayerId = this.randomizeFirstPlayer(playerIds);
+    console.log("First player:", firstPlayerId);
+    const options: GameOptions = {
+      gameRoomId,
+      players: playerIds.map((id) => ({
+        id,
+        isAi: id !== userId && isAgainstAi,
+      })),
+      firstPlayerId,
+    };
+    return options;
+  }
 
   attackSquare = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -148,7 +179,10 @@ export class GameController {
       const currentGame = await this.gameRoomService.getGameInRoom(gameRoomId);
       const game = await this.gameDbService.resetGame({
         gameRoomId,
-        playerIds: currentGame!.players.map((p) => p.playerId),
+        players: currentGame!.players.map((p) => ({
+          id: p.playerId,
+          isAi: p.isAi,
+        })),
       });
       const otherPlayer = game.players.find((p) => p.playerId !== req.userId);
       game.winnerPlayerId = otherPlayer?.playerId;
