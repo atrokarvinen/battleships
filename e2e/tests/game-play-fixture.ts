@@ -1,55 +1,62 @@
 import { test as base } from "@playwright/test";
-import {
-  createGameRoom,
-  joinGame,
-  signIn,
-  signUpAndSignIn,
-  uniquefy,
-} from "./common";
+import { signIn } from "./common";
 import { config } from "./config";
 import { defaultPassword } from "./defaults";
 import { GamePlayPage } from "./game-play-page";
+import { LobbyPage } from "./lobby-page";
+import { GameRoom } from "./models/gameRoom";
+import { User } from "./models/user";
 
 type GameFixture = {
-  gamePlayPage: GamePlayPage;
+  user1: User;
+  user2: User;
+  gameRoom: GameRoom;
+  page1: GamePlayPage;
+  page2: GamePlayPage;
+  lobbyPage: LobbyPage;
 };
 
 export const test = base.extend<GameFixture>({
-  gamePlayPage: async ({ page, context }, use) => {
-    const gameName = uniquefy("test game");
-    const player1 = uniquefy("Player 1");
-    const player2 = uniquefy("Player 2");
+  user1: async ({ page }, use) => {
+    const user = new User(page.request, "Player 1");
+    await user.create();
+    await use(user);
+    await user.cleanup();
+  },
+  user2: async ({ page }, use) => {
+    const user = new User(page.request, "Player 2");
+    await user.create();
+    await use(user);
+    await user.cleanup();
+  },
+  gameRoom: async ({ page }, use) => {
+    const gameRoom = new GameRoom(page.request, "Test game");
+    await gameRoom.create();
+    await use(gameRoom);
+    await gameRoom.cleanup();
+  },
+  page1: async ({ page, user1, user2, gameRoom }, use) => {
+    const gamePlayPage = new GamePlayPage(page);
 
-    const { request } = page;
-    // Set up the fixture.
-    const gamePlayPage = new GamePlayPage(page, context, player1, player2);
+    await user1.signIn();
+    await gameRoom.join();
+    await gameRoom.addPlayer(user2.name);
+    await page.goto(`${config.frontendUrl}/game/${gameRoom.id}`);
 
-    await gamePlayPage.cleanup(gameName, player1, player2);
-
-    await signUpAndSignIn({
-      req: request,
-      user: { username: player1, password: defaultPassword },
-    });
-
-    const response = await createGameRoom(request, { title: gameName });
-    const createdGameRoom = await response.json();
-    const gameRoomId = createdGameRoom.id;
-    gamePlayPage.setGameRoomId(gameRoomId);
-
-    await joinGame(request, { gameId: createdGameRoom.id });
-    await gamePlayPage.addPlayerToGame(player2, gameRoomId);
-
-    await signIn({
-      req: request,
-      user: { username: player1, password: defaultPassword },
-    });
-
-    await page.goto(`${config.frontendUrl}/game/${gameRoomId}`);
-
-    // Use the fixture value in the test.
     await use(gamePlayPage);
+  },
+  page2: async ({ user2, gameRoom, browser }, use) => {
+    const page = await browser.newPage();
+    const gamePlayPage = new GamePlayPage(page);
 
-    // Clean up the fixture.
-    await gamePlayPage.cleanup(gameName, player1, player2);
+    const user = { username: user2.name, password: defaultPassword };
+    await signIn({ req: page.request, user });
+    await page.goto(`${config.frontendUrl}/game/${gameRoom.id}`);
+
+    await use(gamePlayPage);
+  },
+  lobbyPage: async ({ page2 }, use) => {
+    const lobbyPage = new LobbyPage(page2.page);
+    await use(lobbyPage);
   },
 });

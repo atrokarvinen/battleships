@@ -29,6 +29,8 @@ export type Point = {
 
 export type JoinGamePayload = { gameId: string };
 
+export type AddPlayerToGamePayload = { gameRoomId: string; playerName: string };
+
 export type LoginInfo = {
   req: APIRequestContext;
   user: User;

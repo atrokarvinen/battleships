@@ -12,6 +12,7 @@ export const testRouter = (io: Server) => {
   router.delete("/games/:title", controller.deleteGameRoomByTitle);
   router.delete("/games/:title/games", controller.deleteGamesFromGameRoom);
 
+  router.post("/games/player", controller.addPlayerToGame);
   router.post("/games/seed", controller.seedGame);
 
   router.get("/game/:gameId/opponent/:opponentId/ships", controller.getShips);

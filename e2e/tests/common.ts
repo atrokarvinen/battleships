@@ -1,7 +1,12 @@
 import { APIRequestContext } from "@playwright/test";
 import { v4 as uuid } from "uuid";
 import { deleteRequest, post } from "./api-request";
-import { GameSeed, JoinGamePayload, LoginInfo } from "./models";
+import {
+  AddPlayerToGamePayload,
+  GameSeed,
+  JoinGamePayload,
+  LoginInfo,
+} from "./models";
 
 // Make sure the name is unique to prevent parallel tests from
 // clashing with each other.
@@ -58,8 +63,22 @@ export const createGameRoom = (
   return post({ request, url: "/game-room", data });
 };
 
+export const leaveGame = (
+  request: APIRequestContext,
+  data: JoinGamePayload
+) => {
+  return post({ request, url: "/game-room/player/leave", data });
+};
+
 export const joinGame = (request: APIRequestContext, data: JoinGamePayload) => {
   return post({ request, url: "/game-room/player/join", data });
+};
+
+export const addPlayerToGame = (
+  request: APIRequestContext,
+  data: AddPlayerToGamePayload
+) => {
+  return post({ request, url: "/test/games/player", data });
 };
 
 export const seedGameShips = (request: APIRequestContext, setup: GameSeed) => {

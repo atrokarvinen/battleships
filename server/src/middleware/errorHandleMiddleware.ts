@@ -10,7 +10,7 @@ export class ApiError extends Error {
   public readonly status: number;
   public readonly errorMessage: string;
 
-  constructor(message: string, status: number = 500) {
+  constructor(message: string, status: number = 400) {
     super(message);
     this.status = status;
     this.errorMessage = message;
