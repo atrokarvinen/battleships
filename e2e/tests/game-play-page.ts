@@ -1,10 +1,25 @@
 import { expect, Page } from "@playwright/test";
-import { leaveGame, seedGameShips } from "./common";
-import { GameSeed } from "./models";
+import { leaveGame, seedGameShips, startGameRequest } from "./common";
+import { GameSeed, GameState } from "./models";
 
 export const STANDARD_SHIP_SQUARE_COUNT = 26;
 
 export class GamePlayPage {
+  async clickPrimarySquare(x: number, y: number) {
+    const square = this.getPrimarySquare(x, y).getByTestId("ship-square");
+    await square.click();
+  }
+  async verifyShipInSquare(x: number, y: number) {
+    const square = this.getPrimarySquare(x, y).getByTestId("ship-square");
+    await expect(square).toBeVisible();
+  }
+  async rotateShip() {
+    await this.page.getByTestId("LoopIcon").click();
+  }
+  async moveShipDown() {
+    await this.page.getByTestId("ArrowDropDownIcon").click();
+  }
+
   readonly page: Page;
 
   constructor(page: Page) {
@@ -17,9 +32,10 @@ export class GamePlayPage {
   getGameOverDialog = () => this.page.getByTestId("game-over-dialog");
   getTrackingSquare = (x: number, y: number) =>
     this.page.getByTestId("tracking-board").getByTestId(`square-${x}-${y}`);
+  getPrimarySquare = (x: number, y: number) =>
+    this.page.getByTestId("primary-board").getByTestId(`square-${x}-${y}`);
 
   startGame = async () => {
-    await expect(this.page.getByTestId("ship-square")).toBeHidden();
     await this.getStartButton().click();
   };
 
@@ -48,10 +64,26 @@ export class GamePlayPage {
     }
   }
 
-  verifyGameHasStarted = async () => {
-    await expect(this.page.getByTestId("ship-square")).toHaveCount(
-      STANDARD_SHIP_SQUARE_COUNT
-    );
+  verifyGameInPlacementsState = async () => {
+    await expect(this.getConfirmButton()).toBeVisible();
+  };
+
+  verifyGameInStartedState = async () => {
+    await expect(this.getStartButton()).toBeVisible();
+  };
+
+  verifyPlayerReady = async (name: string) => {
+    await expect(
+      this.page
+        .getByTestId("player-info")
+        .filter({ has: this.page.getByText(name) })
+        .getByTestId("ready-icon")
+    ).toBeVisible();
+  };
+
+  verifyGameVisible = async (gameName: string) => {
+    const gameHeading = this.page.getByRole("heading", { name: gameName });
+    await expect(gameHeading).toBeVisible();
   };
 
   verifyGameOver = async (winner: string) => {
@@ -91,10 +123,13 @@ export class GamePlayPage {
   seedGameDummyShips = async (
     player1: string,
     player2: string,
-    gameRoomId: string
+    gameRoomId: string,
+    state: GameState
   ) => {
     const { request } = this.page;
+    await startGameRequest(request, gameRoomId);
     const seed: GameSeed = {
+      state,
       firstPlayerName: player1,
       gameRoomId: gameRoomId,
       shipPositions: [

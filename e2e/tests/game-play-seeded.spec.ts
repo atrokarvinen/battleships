@@ -1,5 +1,5 @@
 import { expect } from "@playwright/test";
-import { test } from "./xgame-play-seeded-fixture";
+import { test } from "./game-play-seeded-fixture";
 
 test("loads game after page refresh", async ({ seededPage: page1, user1 }) => {
   const page = page1.page;

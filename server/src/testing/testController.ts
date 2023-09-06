@@ -4,11 +4,13 @@ import { Server } from "socket.io";
 import { GameRoom } from "../database/gameRoom";
 import { User } from "../database/user";
 import { GameModel } from "../game/database/dbSchema";
-import { GameDTO, GameState } from "../game/models";
+import { GameDTO } from "../game/models";
+import { GameService } from "../game/services/gameService";
 import { GameSeed } from "./models";
 
 export class TestController {
   private io: Server;
+  private gameService = new GameService();
 
   constructor(io: Server) {
     this.io = io;
@@ -55,6 +57,7 @@ export class TestController {
 
   seedGame = async (req: Request, res: Response) => {
     const seed: GameSeed = req.body;
+    console.log("Seeding game '%s'...", seed.gameRoomId);
     const { gameRoomId, shipPositions, firstPlayerName } = seed;
     const gameRoom = new Types.ObjectId(gameRoomId);
     const game = await GameModel.findOne({ gameRoom });
@@ -80,7 +83,7 @@ export class TestController {
 
     p1.ownShips = ships1;
     p2.ownShips = ships2;
-    game.state = GameState.STARTED;
+    game.state = seed.state;
     game.activePlayerId = firstPlayer.id.toString();
 
     const updatedGame = await game.save();

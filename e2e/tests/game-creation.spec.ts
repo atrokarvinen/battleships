@@ -1,61 +1,52 @@
-import { APIRequestContext, Page, expect, test } from "@playwright/test";
-import {
-  deleteGameRoomByTitle,
-  deleteUserByName,
-  signUpAndSignIn,
-  uniquefy,
-} from "./common";
-import { config } from "./config";
-import { defaultPassword, defaultUser } from "./defaults";
+// import { APIRequestContext, Page, expect, test } from "@playwright/test";
+import { expect } from "@playwright/test";
+import { test } from "./game-creation-fixture";
 
-const { frontendUrl } = config;
+// const { frontendUrl } = config;
 
-const gameTitle = uniquefy("test game");
-const gameTitleNotDeleted = uniquefy("not deleted");
-const username = uniquefy(defaultUser.username);
+// const gameTitle = uniquefy("test game");
+// const gameTitleNotDeleted = uniquefy("not deleted");
+// const username = uniquefy(defaultUser.username);
 
-test.beforeEach(async ({ page }) => {
-  await cleanup(page.request);
-  signUpAndSignIn({
-    req: page.request,
-    user: { username, password: defaultPassword },
-  });
-  await page.goto(`${frontendUrl}/lobby`);
-  await page.waitForURL(`${frontendUrl}/lobby`);
+test.beforeEach(async ({ page1 }) => {
+  // await cleanup(page.request);
+  // signUpAndSignIn({
+  //   req: page.request,
+  //   user: { username, password: defaultPassword },
+  // });
+  await page1.goToLobby();
+  // await page.waitForURL(`${frontendUrl}/lobby`);
 });
 
-test.afterEach(async ({ request }) => {
-  await cleanup(request);
-});
+// test.afterEach(async ({ request }) => {
+//   await cleanup(request);
+// });
 
-const cleanup = async (request: APIRequestContext) => {
-  await deleteGameRoomByTitle(request, gameTitle);
-  await deleteGameRoomByTitle(request, gameTitleNotDeleted);
-  await deleteUserByName(request, username);
-};
+// const cleanup = async (request: APIRequestContext) => {
+//   await deleteGameRoomByTitle(request, gameTitle);
+//   await deleteGameRoomByTitle(request, gameTitleNotDeleted);
+//   await deleteUserByName(request, username);
+// };
 
-test("creates game", async ({ page }) => {
-  const dialog = page.getByTestId("create-game-dialog");
-  await expect(dialog).toBeHidden();
-  await page.getByRole("button", { name: /create new game/i }).click();
-  await expect(dialog).toBeVisible();
-
-  await page.getByLabel(/title/i).fill(gameTitle);
-  await page.getByRole("button", { name: /submit/i }).click();
-
-  await expect(dialog).toBeHidden();
+test("creates game", async ({ page1, gameTitle }) => {
+  const page = page1.page;
+  await page1.createGameRoom(gameTitle);
   await expect(page.getByText(gameTitle)).toBeVisible();
 });
 
-test("loads games after page reload", async ({ page }) => {
-  await createGame(gameTitle, page);
+test("loads games after page reload", async ({ page1, gameTitle }) => {
+  await page1.createGameRoom(gameTitle);
 
-  await page.reload();
+  await page1.page.reload();
 
-  await expect(page.getByText(gameTitle)).toBeVisible();
+  await expect(page1.page.getByText(gameTitle)).toBeVisible();
 });
 
-test("cancel closes dialog and does not create game", async ({ page }) => {
+test("cancel closes dialog and does not create game", async ({
+  page1,
+  gameTitle,
+}) => {
+  const page = page1.page;
   const dialog = page.getByTestId("create-game-dialog");
   await expect(dialog).toBeHidden();
   await page.getByRole("button", { name: /create new game/i }).click();
@@ -68,27 +59,33 @@ test("cancel closes dialog and does not create game", async ({ page }) => {
   await expect(page.getByText(gameTitle)).toBeHidden();
 });
 
-test("deletes game", async ({ page }) => {
-  await createGame(gameTitle, page);
-  await createGame(gameTitleNotDeleted, page);
+test("deletes game", async ({ page1, gameTitle, gameTitleNotDeleted }) => {
+  await page1.createGameRoom(gameTitle);
+  await page1.createGameRoom(gameTitleNotDeleted);
 
-  const createdGame = page
+  const createdGame = page1.page
     .getByTestId("game-row")
     .filter({ hasText: gameTitle });
   await expect(createdGame).toBeVisible();
   await createdGame.click();
 
-  const dialog = page.getByTestId("game-details-dialog");
+  const dialog = page1.page.getByTestId("game-details-dialog");
   await expect(dialog).toBeVisible();
 
   await dialog.getByRole("button", { name: /delete/i }).click();
   await expect(dialog).toBeHidden();
   await expect(createdGame).toBeHidden();
-  await expect(page.getByText(gameTitleNotDeleted)).toBeVisible();
+  await expect(page1.page.getByText(gameTitleNotDeleted)).toBeVisible();
 });
 
-const createGame = async (title: string, page: Page) => {
-  await page.getByRole("button", { name: /create new game/i }).click();
-  await page.getByLabel(/title/i).fill(title);
-  await page.getByRole("button", { name: /submit/i }).click();
-};
+test("broadcasts game creation to other users", async ({
+  page1,
+  page2,
+  gameTitle,
+}) => {
+  await page2.goToLobby();
+  await page1.createGameRoom(gameTitle);
+
+  await page1.verifyGameRoomVisible(gameTitle);
+  await page2.verifyGameRoomVisible(gameTitle);
+});

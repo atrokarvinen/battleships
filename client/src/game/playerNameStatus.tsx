@@ -9,10 +9,12 @@ const PlayerNameStatus = ({ id }: PlayerNameStatusProps) => {
   const hasDonePlacements = useAppSelector(selectIsPlayerReady(id));
 
   if (hasDonePlacements)
-    return <CheckBoxIcon color="success" fontSize="large" />;
+    return (
+      <CheckBoxIcon data-testid="ready-icon" color="success" fontSize="large" />
+    );
   return (
     <Box ml={2} display="flex" alignItems="center">
-      <CircularProgress size={32} />
+      <CircularProgress data-testid="thinking-icon" size={32} />
     </Box>
   );
 };

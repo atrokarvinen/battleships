@@ -81,6 +81,13 @@ export const addPlayerToGame = (
   return post({ request, url: "/test/games/player", data });
 };
 
+export const startGameRequest = (
+  request: APIRequestContext,
+  gameRoomId: string
+) => {
+  return post({ request, url: "/game/start", data: { gameRoomId } });
+};
+
 export const seedGameShips = (request: APIRequestContext, setup: GameSeed) => {
   return post({ request, url: "/test/games/seed", data: setup });
 };

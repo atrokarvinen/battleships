@@ -19,7 +19,12 @@ const PlayerName = ({ id, name }: PlayerNameProps) => {
   const isPlayersTurn = playerIdToPlay === id;
 
   return (
-    <Box display="flex" justifyContent="center" alignItems="center">
+    <Box
+      data-testid="player-info"
+      display="flex"
+      justifyContent="center"
+      alignItems="center"
+    >
       <Typography
         data-testid="player-name"
         variant="h6"

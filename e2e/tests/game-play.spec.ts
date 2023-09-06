@@ -1,14 +1,6 @@
 import { expect } from "@playwright/test";
 import { test } from "./game-play-fixture";
 
-test("starts game", async ({ page, page1 }) => {
-  await expect(page.getByRole("button", { name: /start/i })).toBeVisible();
-
-  await page1.startGame();
-
-  await page1.verifyGameHasStarted();
-});
-
 test("cannot start game when game already started", async ({
   page1,
   page2,
@@ -33,11 +25,6 @@ test("cannot start game if player count is not two", async ({
 
   await page1.startGame();
   await page1.verifyTwoPlayersErrorVisible();
-});
-
-test("game start is broadcasted", async ({ page1, page2 }) => {
-  await page1.startGame();
-  await expect(page2.getConfirmButton()).toBeVisible();
 });
 
 test("ends game", async ({ page1, page2, user2 }) => {

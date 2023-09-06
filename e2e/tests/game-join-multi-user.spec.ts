@@ -1,4 +1,3 @@
-import { expect } from "@playwright/test";
 import { test } from "./game-join-multi-user-fixture";
 
 test("game join is broadcasted", async ({
@@ -33,8 +32,4 @@ test("game leave is broadcasted", async ({
 
   await gameJoinPage.expectUserNotInGameRoom(title, username1);
   await gameJoinPage2.expectUserNotInGameRoom(title, username1);
-});
-
-test("cannot join game if it's full", async ({ page }) => {
-  expect(1).toBe(1);
 });

@@ -6,10 +6,18 @@ export type User = {
 };
 
 export type GameSeed = {
+  state: GameState;
   firstPlayerName: string;
   gameRoomId: string;
   shipPositions: ShipPlacement[];
 };
+
+export enum GameState {
+  UNKNOWN,
+  STARTED,
+  ENDED,
+  PLACEMENTS,
+}
 
 export type ShipPlacement = {
   playerId: string;

@@ -7,7 +7,7 @@ import {
   uniquefy,
 } from "../common";
 
-export class GameRoom {
+export class GameRoomApi {
   request: APIRequestContext;
   name: string;
   id: string = "N/A";
