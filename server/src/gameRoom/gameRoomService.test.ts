@@ -3,6 +3,7 @@ import { env } from "../core/env";
 import { GameRoom, OpponentType } from "../database/gameRoom";
 import { User } from "../database/user";
 import { GameModel } from "../game/database/dbSchema";
+import { defaultGameRoom } from "../testing/defaults/defaultGameRoom";
 import { GameRoomService } from "./gameRoomService";
 
 const service = new GameRoomService();
@@ -41,7 +42,10 @@ it("creates game", async () => {
 
 it("gets game in game room", async () => {
   const game = await GameModel.create({});
-  const gameRoom = await GameRoom.create({ title: "test", game: game._id });
+  const gameRoom = await GameRoom.create({
+    ...defaultGameRoom,
+    game: game._id,
+  });
   const gameRoomId = gameRoom.id;
 
   const fetchedGame = await service.getGameInRoom(gameRoomId);
@@ -50,7 +54,7 @@ it("gets game in game room", async () => {
 
 it("joins player to game room", async () => {
   const player = await User.create({ username: "test user", password: "pass" });
-  const gameRoom = await GameRoom.create({ title: "test" });
+  const gameRoom = await GameRoom.create({ ...defaultGameRoom });
   const gameRoomId = gameRoom.id;
   const userId = player.id;
 
@@ -68,7 +72,7 @@ it("joins player to game room", async () => {
 it("player cannot join same game twice", async () => {
   const player = await User.create({ username: "test user", password: "pass" });
   const gameRoom = await GameRoom.create({
-    title: "test",
+    ...defaultGameRoom,
     players: [player._id],
   });
   const gameRoomId = gameRoom.id;
@@ -86,7 +90,7 @@ it("player cannot join full game", async () => {
   const p1 = await User.create({ username: "p1", password: "pass" });
   const p2 = await User.create({ username: "p2", password: "pass" });
   const gameRoom = await GameRoom.create({
-    title: "test",
+    ...defaultGameRoom,
     players: [p1._id, p2._id],
   });
   const gameRoomId = gameRoom.id;
