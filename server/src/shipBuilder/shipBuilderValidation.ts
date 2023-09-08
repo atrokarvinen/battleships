@@ -13,14 +13,14 @@ export type PointArea = {
 };
 
 export class ShipBuilderValidator {
-  validatePlacements = (gameState: GameState, playerShips: Ship[]) => {
+  validatePlacements (gameState: GameState, playerShips: Ship[]) {
     const shipPoints = shipsToPoints(playerShips);
 
     this.validateCorrectGameState(gameState);
     this.validateNoOverlaps(shipPoints);
     this.validateAllShipsPlaced(playerShips);
     this.validatePointsInsideBorders(shipPoints);
-    this.validateNoAdjacentShips(playerShips, shipPoints);
+    this.validateNoAdjacentShips(playerShips);
   };
 
   validateNoOverlaps(shipPoints: Point[]) {
@@ -28,13 +28,14 @@ export class ShipBuilderValidator {
     if (hasOverlaps) throw new ApiError("Ships cannot overlap");
   }
 
-  validateNoAdjacentShips(playerShips: Ship[], shipPoints: Point[]) {
-    const hasAdjacentShips = this.hasAdjacentShips(playerShips, shipPoints);
+  validateNoAdjacentShips(playerShips: Ship[]) {
+    const hasAdjacentShips = this.hasAdjacentShips(playerShips);
     if (hasAdjacentShips)
       throw new ApiError("Ships cannot be cardinally adjacent to each other");
   }
 
-  hasAdjacentShips(playerShips: Ship[], shipPoints: Point[]) {
+  hasAdjacentShips(playerShips: Ship[]) {
+    const shipPoints = shipsToPoints(playerShips);
     const adjacentShipPoints = playerShips
       .map((s) => {
         const ownPoints = shipToPoints(s);
@@ -54,14 +55,14 @@ export class ShipBuilderValidator {
     return hasAdjacentShips;
   }
 
-  getAdjacentPoints = (p: Point) => {
+  getAdjacentPoints(p: Point) {
     return [
       { x: p.x, y: p.y + 1 },
       { x: p.x + 1, y: p.y },
       { x: p.x, y: p.y - 1 },
       { x: p.x - 1, y: p.y },
     ];
-  };
+  }
 
   validatePointsInsideBorders(shipPoints: Point[]) {
     const allShipsInsideBorders = this.arePointsInsideBorders(shipPoints);
@@ -98,14 +99,14 @@ export class ShipBuilderValidator {
     return allShipsPlaced;
   }
 
-  validateCorrectGameState = (gameState: GameState) => {
+  validateCorrectGameState(gameState: GameState) {
     const isCorrectState = gameState === GameState.PLACEMENTS;
     if (!isCorrectState) {
       throwInvalidStateError(gameState, GameState.PLACEMENTS);
     }
-  };
+  }
 
-  hasDuplicates = (points: Point[]) => {
+  hasDuplicates(points: Point[]) {
     const pointsAggregated: Point[] = [];
     for (let i = 0; i < points.length; ++i) {
       const point = points[i];
@@ -115,16 +116,16 @@ export class ShipBuilderValidator {
       pointsAggregated.push(point);
     }
     return false;
-  };
+  }
 
-  pointWithinArea = (point: Point, area: PointArea) => {
+  pointWithinArea(point: Point, area: PointArea) {
     const minX = area.start.x;
     const minY = area.start.y;
     const maxX = area.end.x;
     const maxY = area.end.y;
     const { x, y } = point;
     return minX <= x && x <= maxX && minY <= y && y <= maxY;
-  };
+  }
 }
 
 export function throwInvalidStateError(

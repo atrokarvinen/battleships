@@ -2,7 +2,7 @@ import { GameDTO, GameState, IGame } from "../game/models";
 import { GameService } from "../game/services/gameService";
 import { ApiError } from "../middleware/errorHandleMiddleware";
 import { TransformShipPayload } from "./models";
-import { ShipBuilderValidator } from "./validation";
+import { ShipBuilderValidator } from "./shipBuilderValidation";
 
 export class ShipBuilderService {
   private gameService = new GameService();
@@ -15,7 +15,9 @@ export class ShipBuilderService {
     shipToUpdate.isVertical = ship.isVertical;
     shipToUpdate.start = ship.start;
 
-    await game.save();
+    const updatedGame = await game.save();
+    const gameDto: GameDTO = updatedGame.toObject();
+    return gameDto;
   };
 
   confirm = async (userId: string, gameId: string) => {
@@ -37,13 +39,13 @@ export class ShipBuilderService {
     return gameDto;
   };
 
-  getPlayer = (game: IGame, playerId: string) => {
+  private getPlayer = (game: IGame, playerId: string) => {
     const player = game.players.find((p) => p.playerId.toString() === playerId);
     if (!player) throw new ApiError("Player not found", 404);
     return player;
   };
 
-  getPlayerShip = (game: IGame, playerId: string, shipId: string) => {
+  private getPlayerShip = (game: IGame, playerId: string, shipId: string) => {
     const ships = this.getPlayer(game, playerId).ownShips;
     const ship = ships.find((s: any) => s._id.toString() === shipId);
     if (!ship) throw new ApiError("Ship not found", 404);

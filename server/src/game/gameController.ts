@@ -3,7 +3,7 @@ import { Server } from "socket.io";
 import { GameRoomDTO, OpponentType } from "../database/gameRoom";
 import { GameRoomService } from "../gameRoom/gameRoomService";
 import { ApiError } from "../middleware/errorHandleMiddleware";
-import { throwInvalidStateError } from "../shipBuilder/validation";
+import { throwInvalidStateError } from "../shipBuilder/shipBuilderValidation";
 import { StartGamePayload } from "./api/startGamePayload";
 import { GameState, Point } from "./models";
 import { GameOptions } from "./models/gameOptions";
