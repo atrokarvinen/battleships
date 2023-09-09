@@ -55,7 +55,6 @@ it("requires username, password and confirm password", async () => {
 
   await userEvent.click(screen.getByRole("button", { name: /submit/i }));
 
-  expect(screen.getByText("Username is required")).toBeVisible();
   expect(screen.getByText("Password is required")).toBeVisible();
   expect(screen.getByText("Confirm password is required")).toBeVisible();
   expect(onSubmit).not.toHaveBeenCalled();

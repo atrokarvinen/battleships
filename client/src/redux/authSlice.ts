@@ -23,8 +23,8 @@ const authSlice = createSlice({
   name: "auth",
   reducers: {
     login(state, action: PayloadAction<LoginPayload>) {
-      console.log("[Redux] Logged in");
       const { userId, username, isGuest } = action.payload;
+      console.log(`[Redux] Logged in user '${username}'`);
       state.isLoggedIn = true;
       state.userId = userId;
       state.username = username;

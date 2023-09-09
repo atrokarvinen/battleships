@@ -28,7 +28,7 @@ const Lobby = ({}: LobbyProps) => {
   useEffect(() => {
     getGames();
   }, []);
-
+ 
   const onCreateGameCancel = () => {
     setIsCreateGameOpen(false);
   };

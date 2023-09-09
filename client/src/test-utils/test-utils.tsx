@@ -8,6 +8,7 @@ import {
   RootState,
   preloadedState as initialState,
   rootReducer,
+  store,
 } from "../redux/store";
 
 afterEach(() => {
@@ -21,13 +22,21 @@ const setupStore = (preloadedState: PreloadedState<RootState>) => {
   });
 };
 
-function customRender(
-  ui: React.ReactElement,
-  preloadedState = initialState,
-  initialRoutes: string[] | undefined = undefined,
-  store = setupStore(preloadedState),
-  options: RenderOptions = {}
-) {
+export type CustomOptions = {
+  preloadedState?: PreloadedState<RootState>;
+  initialRoutes?: string[] | undefined;
+  store?: typeof store;
+  options?: RenderOptions;
+};
+
+function customRender(ui: React.ReactElement, customOptions: CustomOptions = {}) {
+  const {
+    preloadedState = initialState,
+    initialRoutes = undefined,
+    store = setupStore(preloadedState),
+    options = {},
+  } = customOptions;
+
   return render(ui, {
     // wrap provider(s) here if needed
     wrapper: ({ children }) => (
