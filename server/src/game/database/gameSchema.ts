@@ -1,22 +1,11 @@
 import { Schema, model } from "mongoose";
 import { toObjectOptions } from "../../core/dbOptions";
-import { IGame, IPlayer, Point, Ship, Square } from "../models";
+import { IGame, IPlayer, Point, Ship } from "../models";
 
 const pointSchema = new Schema<Point>(
   {
     x: Number,
     y: Number,
-  },
-  { _id: false }
-);
-
-const squareSchema = new Schema<Square>(
-  {
-    ship: Number,
-    hasBeenAttacked: Boolean,
-    hasShip: Boolean,
-    point: pointSchema,
-    isVertical: Boolean,
   },
   { _id: false }
 );

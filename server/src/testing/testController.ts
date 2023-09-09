@@ -4,13 +4,11 @@ import { Server } from "socket.io";
 import { User } from "../auth/userSchema";
 import { GameModel } from "../game/database/gameSchema";
 import { GameDTO } from "../game/models";
-import { GameService } from "../game/services/gameService";
 import { GameRoom } from "../gameRoom/gameRoomSchema";
 import { GameSeed } from "./models";
 
 export class TestController {
   private io: Server;
-  private gameService = new GameService();
 
   constructor(io: Server) {
     this.io = io;
@@ -47,7 +45,11 @@ export class TestController {
         return res.status(404).json({ error: "Game room not found" });
       const player = await User.findOne({ username: playerName });
       if (!player) return res.status(404).json({ error: "User not found" });
-      gameRoom.players.push(player.id);
+      gameRoom.players.push({
+        id: player.id,
+        isAi: false,
+        username: player.username,
+      });
       await gameRoom.save();
       res.end();
     } catch (error) {

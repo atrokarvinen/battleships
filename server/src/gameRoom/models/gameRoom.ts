@@ -7,11 +7,17 @@ export interface IGameRoom {
   id?: string;
   title: string;
   opponentType: OpponentType;
-  players: Types.ObjectId[];
+  players: GameRoomPlayer[];
   game?: Types.ObjectId;
   createdBy: string;
   createdAt: Date;
 }
+
+export type GameRoomPlayer = {
+  id: string;
+  username: string;
+  isAi: boolean,
+};
 
 export type GameRoomDTO = {
   id: string;

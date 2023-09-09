@@ -1,5 +1,5 @@
 import { Types } from "mongoose";
-import { IUser, UserDTO } from "../auth/models/user";
+import { UserDTO } from "../auth/models/user";
 import { User } from "../auth/userSchema";
 import { GameModel } from "../game/database/gameSchema";
 import { GameOptions } from "../game/models";
@@ -77,14 +77,11 @@ export class GameRoomService {
     const gameRoom = await GameRoom.findById(gameRoomId);
     if (!gameRoom) throw new Error("Failed to add bot to game, game not found");
 
-    const botPlayer: IUser = {
+    gameRoom.players.push({
+      id: new Types.ObjectId().toString(),
       username: "AI",
-      password: "ai",
-      gamesJoined: [new Types.ObjectId(gameRoomId)],
-    };
-    const createdBot = await User.create(botPlayer);
-
-    gameRoom.players.push(createdBot._id);
+      isAi: true,
+    });
     const updatedGameRoom = await gameRoom.save();
 
     return updatedGameRoom;
@@ -105,13 +102,17 @@ export class GameRoomService {
 
     this.validateGameJoin(gameRoom, userId);
 
-    gameRoom.players.push(user.id);
+    gameRoom.players.push({
+      id: user.id.toString(),
+      username: user.username,
+      isAi: false,
+    });
     await gameRoom.save();
 
     user.gamesJoined.push(gameRoom.id);
     await user.save();
 
-    console.log(`User '${user.username}' joined game ${gameRoom.title}`);
+    console.log(`User '${user.username}', '${user.id}' joined game ${gameRoom.title}`);
     const joinedPlayer: UserDTO = user.toObject();
     return joinedPlayer;
   }
@@ -122,7 +123,9 @@ export class GameRoomService {
     const gameRoom = await this.getGameRoomDocument(gameRoomId);
     const user = await this.getUserDocument(userId);
 
-    gameRoom.players = gameRoom.players.filter((p) => !p.equals(user.id));
+    gameRoom.players = gameRoom.players.filter(
+      (p) => p.id !== user.id.toString()
+    );
     await gameRoom.save();
 
     user.gamesJoined = user.gamesJoined.filter((g) => !g.equals(gameRoom.id));
