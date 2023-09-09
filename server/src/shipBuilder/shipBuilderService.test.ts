@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 import { env } from "../core/env";
-import { GameModel } from "../game/database/dbSchema";
+import { GameModel } from "../game/database/gameSchema";
 import { ShipDTO } from "../game/models/ship";
 import { defaultGame } from "../testing/defaults/defaultGameDto";
 import { defaultPlayer } from "../testing/defaults/defaultPlayerDto";
@@ -35,6 +35,7 @@ it("confirms placements", async () => {
   const createdGame = await GameModel.create({
     ...defaultGame,
     players: [defaultPlayer],
+    gameRoom: undefined
   });
   const userId = createdGame.players[0].playerId.toString();
   const gameId = createdGame.id;

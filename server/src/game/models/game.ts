@@ -1,5 +1,5 @@
 import { Types } from "mongoose";
-import { GameRoomDTO } from "../../database/gameRoom";
+import { GameRoomDTO } from "../../gameRoom/gameRoomSchema";
 import { GameState } from "./gameState";
 import { IPlayer, PlayerDTO } from "./player";
 

@@ -3,10 +3,10 @@ import { NextFunction, Request, Response } from "express";
 import jwt from "jsonwebtoken";
 import { JWT_COOKIE_NAME } from "../core/constants";
 import { env } from "../core/env";
-import { User } from "../database/user";
 import { generateGuid, getRandomGuestName } from "./guestNames";
 import { SignInPayload } from "./models/signInPayload";
 import { SignUpPayload } from "./models/signUpPayload";
+import { User } from "./userSchema";
 
 export class AuthController {
   signUp = async (req: Request, res: Response, next: NextFunction) => {

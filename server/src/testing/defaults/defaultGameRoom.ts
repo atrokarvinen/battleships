@@ -1,4 +1,5 @@
-import { IGameRoom, OpponentType } from "../../database/gameRoom";
+import { IGameRoom } from "../../gameRoom/models/gameRoom";
+import { OpponentType } from "../../gameRoom/models/opponentType";
 
 export const defaultGameRoom: IGameRoom = {
   createdAt: new Date(),

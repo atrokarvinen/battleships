@@ -1,5 +1,5 @@
 import { Schema, model } from "mongoose";
-import { toObjectOptions } from "../../database/dbOptions";
+import { toObjectOptions } from "../../core/dbOptions";
 import { IGame, IPlayer, Point, Ship, Square } from "../models";
 
 const pointSchema = new Schema<Point>(

@@ -1,8 +1,8 @@
 import { NextFunction, Request, Response } from "express";
 import { Server } from "socket.io";
-import { IGameRoom } from "../database/gameRoom";
 import { filterGameInfo } from "../game/services/info-filter";
 import { GameRoomService } from "./gameRoomService";
+import { IGameRoom } from "./models/gameRoom";
 
 export class GameRoomController {
   private io: Server;

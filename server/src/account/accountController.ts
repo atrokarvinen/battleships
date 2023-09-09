@@ -1,8 +1,8 @@
 import { NextFunction, Request, Response } from "express";
 import jwt from "jsonwebtoken";
+import { User } from "../auth/userSchema";
 import { JWT_COOKIE_NAME } from "../core/constants";
 import { env } from "../core/env";
-import { User } from "../database/user";
 
 export class AccountController {
   async getAccount(req: Request, res: Response, next: NextFunction) {

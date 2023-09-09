@@ -1,11 +1,11 @@
 import { NextFunction, Request, Response } from "express";
 import { Types } from "mongoose";
 import { Server } from "socket.io";
-import { GameRoom } from "../database/gameRoom";
-import { User } from "../database/user";
-import { GameModel } from "../game/database/dbSchema";
+import { User } from "../auth/userSchema";
+import { GameModel } from "../game/database/gameSchema";
 import { GameDTO } from "../game/models";
 import { GameService } from "../game/services/gameService";
+import { GameRoom } from "../gameRoom/gameRoomSchema";
 import { GameSeed } from "./models";
 
 export class TestController {

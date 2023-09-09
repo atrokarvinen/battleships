@@ -1,6 +1,6 @@
 import { httpServer } from "./app";
+import { connectToDb } from "./src/core/db";
 import { env } from "./src/core/env";
-import { connectToDb } from "./src/database/db";
 
 connectToDb();
 

@@ -1,10 +1,11 @@
 import mongoose from "mongoose";
+import { User } from "../auth/userSchema";
 import { env } from "../core/env";
-import { GameRoom, OpponentType } from "../database/gameRoom";
-import { User } from "../database/user";
-import { GameModel } from "../game/database/dbSchema";
+import { GameModel } from "../game/database/gameSchema";
 import { defaultGameRoom } from "../testing/defaults/defaultGameRoom";
+import { GameRoom } from "./gameRoomSchema";
 import { GameRoomService } from "./gameRoomService";
+import { OpponentType } from "./models/opponentType";
 
 const service = new GameRoomService();
 

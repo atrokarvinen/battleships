@@ -1,7 +1,8 @@
 import { NextFunction, Request, Response } from "express";
 import { Server } from "socket.io";
-import { GameRoomDTO, OpponentType } from "../database/gameRoom";
 import { GameRoomService } from "../gameRoom/gameRoomService";
+import { GameRoomDTO } from "../gameRoom/models/gameRoom";
+import { OpponentType } from "../gameRoom/models/opponentType";
 import { ApiError } from "../middleware/errorHandleMiddleware";
 import { throwInvalidStateError } from "../shipBuilder/shipBuilderValidation";
 import { StartGamePayload } from "./api/startGamePayload";

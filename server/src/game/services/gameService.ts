@@ -1,6 +1,6 @@
 import { Types } from "mongoose";
 import { ApiError } from "../../middleware/errorHandleMiddleware";
-import { GameModel } from "../database/dbSchema";
+import { GameModel } from "../database/gameSchema";
 import {
   AttackSquare,
   GameDTO,

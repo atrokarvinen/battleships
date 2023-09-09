@@ -1,5 +1,5 @@
 import { Types } from "mongoose";
-import { GameModel } from "../database/dbSchema";
+import { GameModel } from "../database/gameSchema";
 import { GameDTO, GameOptions, GameState, IGame, IPlayer } from "../models";
 import { createRandomFleetLocations } from "./shipGeneration";
 

@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { env } from "../core/env";
+import { env } from "./env";
 
 export const connectToDb = () => {
   const connectionString = env.DB_CONNECTION_STRING ?? "N/A";

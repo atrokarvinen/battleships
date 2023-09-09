@@ -1,16 +1,14 @@
 import { Types } from "mongoose";
-import {
-  GameRoom,
-  GameRoomDTO,
-  IGameRoom,
-  OpponentType,
-} from "../database/gameRoom";
-import { IUser, User, UserDTO } from "../database/user";
-import { GameModel } from "../game/database/dbSchema";
+import { IUser, UserDTO } from "../auth/models/user";
+import { User } from "../auth/userSchema";
+import { GameModel } from "../game/database/gameSchema";
 import { GameOptions } from "../game/models";
 import { GameDTO } from "../game/models/game";
 import { GameCreationService } from "../game/services/gameCreationService";
 import { ApiError } from "../middleware/errorHandleMiddleware";
+import { GameRoom } from "./gameRoomSchema";
+import { GameRoomDTO, IGameRoom } from "./models/gameRoom";
+import { OpponentType } from "./models/opponentType";
 
 export class GameRoomService {
   private gameCreationService: GameCreationService = new GameCreationService();

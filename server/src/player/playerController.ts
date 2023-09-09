@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
-import { GameRoom } from "../database/gameRoom";
-import { UserDTO } from "../database/user";
+import { UserDTO } from "../auth/models/user";
+import { GameRoom } from "../gameRoom/gameRoomSchema";
 
 export class PlayerController {
   async getPlayers(req: Request, res: Response, next: NextFunction) {

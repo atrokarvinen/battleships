@@ -2,9 +2,9 @@ import mongoose from "mongoose";
 import request from "supertest";
 import { app } from "../../app";
 import { env } from "../core/env";
-import { User } from "../database/user";
 import { SignInPayload } from "./models/signInPayload";
 import { SignUpPayload } from "./models/signUpPayload";
+import { User } from "./userSchema";
 
 beforeAll(async () => {
   await mongoose.connect(env.DB_CONNECTION_STRING_TESTS);

@@ -1,4 +1,4 @@
-import { GameRoomDTO } from "../../database/gameRoom";
+import { GameRoomDTO } from "../../gameRoom/models/gameRoom";
 import { defaultGameRoom } from "./defaultGameRoom";
 
 export const defaultGameRoomDto: GameRoomDTO = {
