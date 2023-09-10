@@ -34,5 +34,4 @@ export const errorHandleMiddleware = (
     console.log(`[ErrorMiddleware] Caught exception: ${error}`);
     return res.status(500).json({ error: "Internal server error" });
   }
-  next(error);
 };

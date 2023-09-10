@@ -1,5 +1,5 @@
 import { GameState, Point, Ship } from "../game/models";
-import { pointEquals } from "../game/services/board-utils";
+import { pointsEqual } from "../game/services/board-utils";
 import { standardReserve } from "../game/services/ship-reserve";
 import {
   shipToPoints,
@@ -43,14 +43,14 @@ export class ShipBuilderValidator {
 
         // Filter out points that belong to the ship itself
         const adjacent = rawAdjacent.filter(
-          (p) => !ownPoints.some(pointEquals(p))
+          (p) => !ownPoints.some(pointsEqual(p))
         );
         return adjacent;
       })
       .flat();
 
     const hasAdjacentShips = shipPoints.some((p) =>
-      adjacentShipPoints.some(pointEquals(p))
+      adjacentShipPoints.some(pointsEqual(p))
     );
     return hasAdjacentShips;
   }
@@ -110,7 +110,7 @@ export class ShipBuilderValidator {
     const pointsAggregated: Point[] = [];
     for (let i = 0; i < points.length; ++i) {
       const point = points[i];
-      if (pointsAggregated.some(pointEquals(point))) {
+      if (pointsAggregated.some(pointsEqual(point))) {
         return true;
       }
       pointsAggregated.push(point);

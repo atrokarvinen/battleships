@@ -6,7 +6,6 @@ import http from "http";
 import { Server } from "socket.io";
 import { accountRouter } from "./src/account/accountRouter";
 import { authRouter } from "./src/auth/authRouter";
-import { cookieRouter } from "./src/cookie/cookieRouter";
 import { env } from "./src/core/env";
 import { gameRouter } from "./src/game/gameRouter";
 import { gameRoomRouter } from "./src/gameRoom/gameRoomRouter";
@@ -34,16 +33,12 @@ addListeners(io);
 app.use(logRequestMiddleware);
 app.use(socketMiddleware);
 
-// app.use("/", (req, res, next) => {
-//   return res.json({ name: "frodo" });
-// });
-app.use("/cookie", cookieRouter);
-app.use("/auth", authRouter());
 app.use("/account", authMiddleware, accountRouter);
-app.use("/game-room", authMiddleware, gameRoomRouter(io));
+app.use("/auth", authRouter());
 app.use("/game", authMiddleware, gameRouter(io));
-app.use("/ship-builder", authMiddleware, shipBuilderRouter(io));
+app.use("/game-room", authMiddleware, gameRoomRouter(io));
 app.use("/player", playerRouter());
+app.use("/ship-builder", authMiddleware, shipBuilderRouter(io));
 app.use("/test", testEnvMiddleware, testRouter(io));
 
 app.use(unknownRouteMiddleware);

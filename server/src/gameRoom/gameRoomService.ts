@@ -112,7 +112,9 @@ export class GameRoomService {
     user.gamesJoined.push(gameRoom.id);
     await user.save();
 
-    console.log(`User '${user.username}', '${user.id}' joined game ${gameRoom.title}`);
+    console.log(
+      `User '${user.username}', '${user.id}' joined game ${gameRoom.title}`
+    );
     const joinedPlayer: UserDTO = user.toObject();
     return joinedPlayer;
   }
@@ -156,7 +158,7 @@ export class GameRoomService {
       throw new ApiError("Game is full", 400);
     }
 
-    const joinedPlayerIds = game.players.map((p) => p.toString());
+    const joinedPlayerIds = game.players.map((p) => p.id);
     const alreadyJoined = joinedPlayerIds.includes(userId);
     if (alreadyJoined) {
       throw new ApiError("Already joined to game", 400);

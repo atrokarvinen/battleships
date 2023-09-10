@@ -7,6 +7,8 @@ import { GameDTO } from "../game/models";
 import { GameRoom } from "../gameRoom/gameRoomSchema";
 import { GameSeed } from "./models";
 
+// A utility class that provides endpoints for easy data manipulation
+// for end-to-end tests.
 export class TestController {
   private io: Server;
 
@@ -93,24 +95,4 @@ export class TestController {
 
     return res.end();
   };
-
-  async getShips(req: Request, res: Response, next: NextFunction) {
-    try {
-      const { gameId, opponentId } = req.params;
-      const game = await GameModel.findById(gameId);
-      if (!game) {
-        return res.status(404).json({ error: "game not found" });
-      }
-      const opponent = game.players.find(
-        (p) => p.playerId.toString() === opponentId
-      );
-      if (!opponent) {
-        return res.status(404).json({ error: "opponent not found" });
-      }
-      const ships = opponent.ownShips;
-      return res.json(ships);
-    } catch (error) {
-      next(error);
-    }
-  }
 }

@@ -3,6 +3,7 @@ import { User } from "../auth/userSchema";
 import { env } from "../core/env";
 import { GameModel } from "../game/database/gameSchema";
 import { defaultGameRoom } from "../testing/defaults/defaultGameRoom";
+import { defaultPlayer } from "../testing/defaults/defaultPlayerDto";
 import { GameRoom } from "./gameRoomSchema";
 import { GameRoomService } from "./gameRoomService";
 import { OpponentType } from "./models/opponentType";
@@ -62,7 +63,7 @@ it("joins player to game room", async () => {
   await service.joinGame(gameRoomId, userId);
 
   const joinedGameRoom = await GameRoom.findById(gameRoomId);
-  const playerIds = joinedGameRoom?.players.map((p) => p.toString());
+  const playerIds = joinedGameRoom?.players.map((p) => p.id);
   expect(playerIds).toContain(userId);
 
   const joiningPlayer = await User.findById(userId);
@@ -74,8 +75,9 @@ it("player cannot join same game twice", async () => {
   const player = await User.create({ username: "test user", password: "pass" });
   const gameRoom = await GameRoom.create({
     ...defaultGameRoom,
-    players: [player._id],
+    players: [{ ...defaultPlayer, id: player.id }],
   });
+
   const gameRoomId = gameRoom.id;
   const userId = player.id;
 

@@ -1,8 +1,3 @@
-import {
-  mapShipsToBoardPoint,
-  mergePoints,
-  shipToBoardPoint,
-} from "../game/api/api";
 import { ShipDTO } from "../game/api/apiModel";
 import { pointMatches, pointMatchesToPoint } from "../redux/activeGameSlice";
 import { useAppSelector } from "../redux/hooks";
@@ -11,6 +6,11 @@ import {
   selectShipBuilderActive,
 } from "../redux/selectors";
 import { AttackResult, Point } from "./models";
+import {
+  mapShipsToBoardPoint,
+  mergePoints,
+  shipToBoardPoint,
+} from "./ship-to-square-mapper";
 import { PlaySquare } from "./square/playSquare";
 import { StaticSquares } from "./square/staticSquares";
 import styles from "./styles.module.scss";

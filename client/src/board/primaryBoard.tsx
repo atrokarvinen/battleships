@@ -1,4 +1,3 @@
-import { shipToBoardPoint } from "../game/api/api";
 import { pointMatches } from "../redux/activeGameSlice";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import {
@@ -9,6 +8,7 @@ import {
 import { setSelectedShip } from "../ship-builder/redux/shipBuilderSlice";
 import { Point } from "./models";
 import PlayBoard from "./playBoard";
+import { shipToBoardPoint } from "./ship-to-square-mapper";
 
 type PrimaryBoardProps = {
   ownId: string;

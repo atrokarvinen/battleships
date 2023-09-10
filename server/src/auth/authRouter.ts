@@ -19,7 +19,6 @@ export const authRouter = () => {
     validationMiddleware,
     authController.signIn
   );
-  router.get("/guest/sign-in", authController.signInAsGuest);
   router.post("/sign-out", authController.signOut);
 
   return router;

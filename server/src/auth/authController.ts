@@ -3,7 +3,6 @@ import { NextFunction, Request, Response } from "express";
 import jwt from "jsonwebtoken";
 import { JWT_COOKIE_NAME } from "../core/constants";
 import { env } from "../core/env";
-import { generateGuid, getRandomGuestName } from "./guestNames";
 import { SignInPayload } from "./models/signInPayload";
 import { SignUpPayload } from "./models/signUpPayload";
 import { User } from "./userSchema";
@@ -72,27 +71,6 @@ export class AuthController {
           userId: user.id,
           gamesJoined: user.gamesJoined,
         });
-    } catch (error) {
-      next(error);
-    }
-  };
-
-  signInAsGuest = async (req: Request, res: Response, next: NextFunction) => {
-    try {
-      const username = getRandomGuestName();
-      const userId = generateGuid();
-      const token = this.createToken(userId);
-      const cookieName = JWT_COOKIE_NAME;
-
-      console.log(`Successfully created guest user '${username}'`);
-      res
-        .status(200)
-        .cookie(cookieName, token, {
-          httpOnly: true,
-          sameSite: "none",
-          secure: true,
-        })
-        .json({ username: username, userId, gamesJoined: [] });
     } catch (error) {
       next(error);
     }

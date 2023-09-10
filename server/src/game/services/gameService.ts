@@ -10,12 +10,45 @@ import {
   IPlayer,
   Point,
 } from "../models";
-import { pointEquals } from "./board-utils";
+import { pointsEqual } from "./board-utils";
 import { GameCreationService } from "./gameCreationService";
 import { shipsToPoints } from "./shipToSquareMapper";
 
 export class GameService {
   private gameCreationService: GameCreationService = new GameCreationService();
+
+  async findGame(gameId: string) {
+    const game = await GameModel.findById(gameId);
+    const gameDto: GameDTO | undefined = game?.toObject();
+    return gameDto;
+  }
+
+  async getGame(gameId: string) {
+    const game = await GameModel.findById(gameId).populate("gameRoom");
+    if (!game) throw new ApiError(`Game '${gameId}' was not found`, 404);
+    const gameDto: GameDTO = game.toObject();
+    return gameDto;
+  }
+
+  async getGameDocument(gameId: string) {
+    const game = await GameModel.findById(gameId);
+    if (!game) throw new ApiError(`Game '${gameId}' was not found`, 404);
+    return game;
+  }
+
+  createGame(game: IGame) {
+    return this.gameCreationService.createGame(game);
+  }
+
+  createEmptyGame(options: GameOptions) {
+    return this.gameCreationService.createEmptyGame(options);
+  }
+
+  async deleteGamesFromRoom(gameRoomId: string) {
+    const gameRoom = new Types.ObjectId(gameRoomId);
+    const result = await GameModel.deleteMany({ gameRoom });
+    console.log(`Deleted (${result.deletedCount}) games from game room`);
+  }
 
   async attackSquare(params: AttackSquare) {
     const { point: attackedPoint, gameId, attackerPlayerId } = params;
@@ -46,7 +79,7 @@ export class GameService {
     attacks.push(attackedPoint);
 
     const defenderShipPoints = shipsToPoints(defender.ownShips);
-    const shipHit = defenderShipPoints.some(pointEquals(attackedPoint));
+    const shipHit = defenderShipPoints.some(pointsEqual(attackedPoint));
     const nextPlayerId = shipHit
       ? attackerPlayerId
       : defender.playerId.toString();
@@ -60,19 +93,19 @@ export class GameService {
       game.state = GameState.ENDED;
     }
 
-    const updatedGame = await game.save();
+    await game.save();
 
     return { shipHit, nextPlayerId, isGameOver };
   }
 
   private checkContainsAllPoints(superset: Point[], subset: Point[]) {
-    return subset.every((dp) => superset.find(pointEquals(dp)));
+    return subset.every((dp) => superset.find(pointsEqual(dp)));
   }
 
   private validateAttack(params: AttackSquare, game: IGame, attacker: IPlayer) {
     const { attackerPlayerId, point } = params;
     const isPlayerTurn = game.activePlayerId === attackerPlayerId;
-    const squareAlreadyAttacked = attacker.attacks.some(pointEquals(point));
+    const squareAlreadyAttacked = attacker.attacks.some(pointsEqual(point));
     const isGameStateCorrect = game.state === GameState.STARTED;
 
     if (!isPlayerTurn) {
@@ -87,14 +120,6 @@ export class GameService {
     }
   }
 
-  createGame(game: IGame) {
-    return this.gameCreationService.createGame(game);
-  }
-
-  createEmptyGame(options: GameOptions) {
-    return this.gameCreationService.createEmptyGame(options);
-  }
-
   async resetGame(options: GameOptions) {
     const gameRoomId = new Types.ObjectId(options.gameRoomId);
     const game = await GameModel.findOne({ gameRoom: gameRoomId });
@@ -107,31 +132,6 @@ export class GameService {
 
     const gameDto = await this.getGame(game.id);
     return gameDto;
-  }
-
-  async findGame(gameId: string) {
-    const game = await GameModel.findById(gameId);
-    const gameDto: GameDTO | undefined = game?.toObject();
-    return gameDto;
-  }
-
-  async getGame(gameId: string) {
-    const game = await GameModel.findById(gameId).populate("gameRoom");
-    if (!game) throw new ApiError(`Game '${gameId}' was not found`, 404);
-    const gameDto: GameDTO = game.toObject();
-    return gameDto;
-  }
-
-  async getGameDocument(gameId: string) {
-    const game = await GameModel.findById(gameId);
-    if (!game) throw new ApiError(`Game '${gameId}' was not found`, 404);
-    return game;
-  }
-
-  async deleteGamesFromRoom(gameRoomId: string) {
-    const gameRoom = new Types.ObjectId(gameRoomId);
-    const result = await GameModel.deleteMany({ gameRoom });
-    console.log(`Deleted (${result.deletedCount}) games from game room`);
   }
 
   async startWithRandomPlacements(gameId: string) {

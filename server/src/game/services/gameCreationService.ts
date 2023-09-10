@@ -38,9 +38,6 @@ export class GameCreationService {
     game.players.forEach((player) => {
       const placements = createRandomFleetLocations();
       player.ownShips = placements;
-
-      console.log("Player is ai:", player.isAi);
-
       player.placementsReady = player.isAi;
     });
   }

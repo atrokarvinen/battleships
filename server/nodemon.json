@@ -1,5 +1,5 @@
 {
-  "watch": ["src", "index.ts", ".env", "package.json"],
+  "watch": ["src", "index.ts", "app.ts", ".env", "package.json"],
   "ext": ".ts,.js",
   "ignore": [],
   "exec": "ts-node --files index.ts"

@@ -7,11 +7,11 @@ export const gameRouter = (io: Server) => {
 
   const ctr = new GameController(io);
 
-  router.get("/:gameRoomId/attack/ai", ctr.getAiAttack);
-
   router.post("/start", ctr.startGame);
   router.post("/attack", ctr.attackSquare);
   router.post("/end", ctr.endGame);
+
+  router.get("/:gameRoomId/attack/ai", ctr.getAiAttack);
 
   return router;
 };

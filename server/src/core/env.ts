@@ -2,7 +2,7 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
-export interface EnvConfig {
+export type EnvConfig = {
   CLIENT_ADDRESS: string;
   DB_CONNECTION_STRING: string;
   DB_CONNECTION_STRING_TESTS: string;

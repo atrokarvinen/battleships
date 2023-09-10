@@ -1,6 +1,6 @@
 import { GameDTO, PlayerDTO } from "../models";
 import { ShipDTO } from "../models/ship";
-import { pointEquals } from "./board-utils";
+import { pointsEqual } from "./board-utils";
 import { shipsToPoints } from "./shipToSquareMapper";
 
 export const filterGameInfo = (ownId: string, gameDto: GameDTO) => {
@@ -26,7 +26,7 @@ export const filterPlayerInfo = (
   const attackedPoints = self.attacks;
   const opponentShipPoints = shipsToPoints(opponent.ownShips);
   const knownOpponentShipPoints = opponentShipPoints.filter((op) =>
-    attackedPoints.some(pointEquals(op))
+    attackedPoints.some(pointsEqual(op))
   );
   const knownOpponentShips = knownOpponentShipPoints.map<ShipDTO>(
     (p, index) => ({

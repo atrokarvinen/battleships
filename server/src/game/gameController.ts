@@ -123,7 +123,6 @@ export class GameController {
     try {
       const userId = req.userId;
       const { gameRoomId } = req.params;
-      console.log("gameRoomId:", gameRoomId);
 
       const game = await this.gameRoomService.getGameInRoom(gameRoomId);
       if (!game) return res.status(404).json({ error: "Game not found" });
@@ -156,9 +155,7 @@ export class GameController {
         x: Math.round(Math.random() * boardSize - 0.5),
         y: Math.round(Math.random() * boardSize - 0.5),
       };
-      const isAlreadyAttacked = attackedPoints.some((ap) =>
-        pointsEqual(ap, randomPoint)
-      );
+      const isAlreadyAttacked = attackedPoints.some(pointsEqual(randomPoint));
       if (!isAlreadyAttacked) {
         return randomPoint;
       }
