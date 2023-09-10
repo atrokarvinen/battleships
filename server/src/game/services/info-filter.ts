@@ -1,4 +1,4 @@
-import { GameDTO, PlayerDTO } from "../models";
+import { GameDTO, GameState, PlayerDTO } from "../models";
 import { ShipDTO } from "../models/ship";
 import { pointsEqual } from "./board-utils";
 import { shipsToPoints } from "./shipToSquareMapper";
@@ -20,7 +20,7 @@ export const filterPlayerInfo = (
 ) => {
   const self = gameDto.players.find((p) => p.playerId === ownId);
   const opponent = gameDto.players.find((p) => p.playerId !== ownId);
-  if (!self || !opponent) {
+  if (!self || !opponent || gameDto.state === GameState.ENDED) {
     return gameDto;
   }
   const attackedPoints = self.attacks;

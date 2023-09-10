@@ -11,6 +11,8 @@ export const gameRouter = (io: Server) => {
   router.post("/attack", ctr.attackSquare);
   router.post("/end", ctr.endGame);
 
+  router.get("/:gameId/opponent-ships", ctr.getOpponentShips);
+
   router.get("/:gameRoomId/attack/ai", ctr.getAiAttack);
 
   return router;

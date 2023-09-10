@@ -1,6 +1,6 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 import { BoardPoint, Point } from "../board/models";
-import { GameState, PlayerDTO } from "../game/api/apiModel";
+import { GameState, PlayerDTO, ShipRevealPayload } from "../game/api/apiModel";
 import { TransformShipPayload } from "../ship-builder/api/api";
 import { AttackResultPayload } from "./models";
 
@@ -70,6 +70,12 @@ const activeGameSlice = createSlice({
       const isOver = action.payload;
       console.log(`Setting game over to (${isOver})...`);
       state.isGameOver = isOver;
+    },
+    setPlayerShips(state, action: PayloadAction<ShipRevealPayload>) {
+      const { playerId, ships } = action.payload;
+      const player = state.players.find((p) => p.playerId === playerId);
+      if (!player) return;
+      player.ownShips = ships;
     },
     closeGameOverDialog(state) {
       console.log("closing game over dialog...");
@@ -145,6 +151,7 @@ export const {
   setActiveGame,
   setPlayerReady,
   setIsGameOver,
+  setPlayerShips,
   closeGameOverDialog,
   attackSquare,
   gameOver,

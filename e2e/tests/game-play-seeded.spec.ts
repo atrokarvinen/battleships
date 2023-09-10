@@ -45,3 +45,20 @@ test("attacks are broadcasted", async ({ seededPage: page1, page2, user2 }) => {
   const squareP2 = primaryBoardP2.getByTestId("square-5-5");
   await expect(squareP2.getByTestId("water-square")).toHaveClass(/missed/);
 });
+
+test("reveals opponent ships when game ends", async ({
+  seededPage: page1,
+  page2,
+}) => {
+  await page2.verifyEmptyEnemySquare(0, 0);
+  await page2.verifyEmptyEnemySquare(0, 1);
+  await page1.verifyEmptyEnemySquare(0, 0);
+  await page1.verifyEmptyEnemySquare(0, 1);
+
+  await page1.endGame();
+
+  await page1.verifyEnemyShipInSquare(0, 0);
+  await page1.verifyEnemyShipInSquare(0, 1);
+  await page2.verifyEnemyShipInSquare(0, 0);
+  await page2.verifyEnemyShipInSquare(0, 1);
+});

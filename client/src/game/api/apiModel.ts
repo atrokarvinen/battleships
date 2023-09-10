@@ -80,3 +80,8 @@ export type GameDTO = {
   primaryBoard: any;
   trackingBoard: any;
 };
+
+export type ShipRevealPayload = {
+  playerId: string;
+  ships: ShipDTO[];
+};

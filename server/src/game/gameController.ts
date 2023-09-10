@@ -6,7 +6,7 @@ import { OpponentType } from "../gameRoom/models/opponentType";
 import { ApiError } from "../middleware/errorHandleMiddleware";
 import { throwInvalidStateError } from "../shipBuilder/shipBuilderValidation";
 import { StartGamePayload } from "./api/startGamePayload";
-import { GameState, Point } from "./models";
+import { GameDTO, GameState, Point } from "./models";
 import { GameOptions } from "./models/gameOptions";
 import { AttackService } from "./services/attackService";
 import { pointsEqual } from "./services/board-utils";
@@ -14,7 +14,7 @@ import { GameService } from "./services/gameService";
 import { filterGameInfo } from "./services/info-filter";
 
 export class GameController {
-  private gameDbService = new GameService();
+  private gameService = new GameService();
   private gameRoomService = new GameRoomService();
   private attackService = new AttackService();
   private io: Server;
@@ -38,13 +38,13 @@ export class GameController {
       const options = this.createGameOptions(userId, gameRoom);
       if (!game) {
         console.log("Creating new game");
-        game = await this.gameDbService.createEmptyGame(options);
+        game = await this.gameService.createEmptyGame(options);
         await this.gameRoomService.setGameInRoom(gameRoomId, game.id);
       } else {
         console.log("Resetting old game");
-        game = await this.gameDbService.resetGame(options);
+        game = await this.gameService.resetGame(options);
       }
-      const startedGame = await this.gameDbService.startWithRandomPlacements(
+      const startedGame = await this.gameService.startWithRandomPlacements(
         game.id
       );
 
@@ -82,7 +82,20 @@ export class GameController {
     const isCorrectStateToStart =
       state === undefined || state === GameState.ENDED;
     if (!isCorrectStateToStart) {
-      throwInvalidStateError(state, GameState.ENDED);
+      throwInvalidStateError(state, [GameState.ENDED]);
+    }
+  }
+
+  private validateGameEnd(userId: string, game: GameDTO) {
+    const endedByEitherPlayer = game.players.some((p) => p.playerId === userId);
+    if (!endedByEitherPlayer) {
+      throw new ApiError("Game may only be ended by a user in the game");
+    }
+
+    const validStates = [GameState.STARTED, GameState.PLACEMENTS];
+    const isCorrectState = validStates.includes(game.state);
+    if (!isCorrectState) {
+      throwInvalidStateError(game.state, validStates);
     }
   }
 
@@ -108,12 +121,37 @@ export class GameController {
       const { point, attackerPlayerId, gameId } = req.body;
       const params = { point, attackerPlayerId, gameId };
       const attackResultDto = await this.attackService.attack(params);
-      const game = await this.gameDbService.getGame(gameId);
+      const game = await this.gameService.getGame(gameId);
       this.io
         .to(game.gameRoom.id)
         .except(req.socketId)
         .emit("squareAttacked", attackResultDto);
       return res.json(attackResultDto);
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  getOpponentShips = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) => {
+    try {
+      const userId = req.userId;
+      const { gameId } = req.params;
+
+      const game = await this.gameService.getGame(gameId);
+      const player = game.players.find((p) => p.playerId !== userId);
+      if (!player) return res.json({ error: "Opponent not found" });
+      if (game.state !== GameState.ENDED) {
+        return res.json({
+          error: "Opponent ships can only be revealed when game had ended",
+        });
+      }
+
+      const ships = player.ownShips;
+      return res.json({ playerId: player.playerId, ships });
     } catch (error) {
       next(error);
     }
@@ -174,18 +212,22 @@ export class GameController {
   endGame = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { gameRoomId } = req.body;
-      const currentGame = await this.gameRoomService.getGameInRoom(gameRoomId);
-      const game = await this.gameDbService.resetGame({
-        gameRoomId,
-        players: currentGame!.players.map((p) => ({
-          id: p.playerId,
-          isAi: p.isAi,
-        })),
-      });
+      const game = await this.gameRoomService.getGameInRoom(gameRoomId);
+      if (!game) return res.json({ error: "Game not found" });
+      const gameDoc = await this.gameService.getGameDocument(game?.id);
+      if (!gameDoc) return res.json({ error: "Game not found" });
+
+      this.validateGameEnd(req.userId, game);
+
       const otherPlayer = game.players.find((p) => p.playerId !== req.userId);
-      game.winnerPlayerId = otherPlayer?.playerId;
-      this.io.to(gameRoomId).except(req.socketId).emit("gameEnded", game);
-      res.json(game);
+
+      gameDoc.winnerPlayerId = otherPlayer?.playerId;
+      gameDoc.state = GameState.ENDED;
+      const updatedGame = await gameDoc.save();
+      const gameDto = updatedGame.toObject();
+
+      this.io.to(gameRoomId).except(req.socketId).emit("gameEnded", gameDto);
+      res.json(gameDto);
     } catch (error) {
       next(error);
     }

@@ -21,6 +21,10 @@ export const getAiAttack = ({ gameRoomId }: { gameRoomId: string }) => {
   return axios.get(`/game/${gameRoomId}/attack/ai`);
 };
 
+export const getOpponentShips = (gameId: string) => {
+  return axios.get(`game/${gameId}/opponent-ships`);
+};
+
 export const mapGameDtoToActiveGame = (game: GameDTO) => {
   const activeGame: ActiveGameState = {
     id: game.id,

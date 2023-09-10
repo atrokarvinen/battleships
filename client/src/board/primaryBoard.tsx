@@ -35,8 +35,6 @@ const PrimaryBoard = ({ ownId, enemyId }: PrimaryBoardProps) => {
     }
   };
 
-  console.log("ownships: ", ownShips);
-
   return (
     <PlayBoard
       datatestId="primary-board"

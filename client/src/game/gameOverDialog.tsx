@@ -5,20 +5,40 @@ import {
   DialogContent,
   DialogTitle,
 } from "@mui/material";
-import { closeGameOverDialog } from "../redux/activeGameSlice";
+import { useEffect } from "react";
+import { useApiRequest } from "../api/useApiRequest";
+import { closeGameOverDialog, setPlayerShips } from "../redux/activeGameSlice";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import {
+  selectActiveGameId,
   selectShowGameOverDialog,
   selectWinnerPlayer,
 } from "../redux/selectors";
+import { getOpponentShips } from "./api/api";
+import { ShipRevealPayload } from "./api/apiModel";
 
 type GameOverDialogProps = {};
 
 const GameOverDialog = ({}: GameOverDialogProps) => {
+  const { request } = useApiRequest();
   const dispatch = useAppDispatch();
 
   const isOpen = useAppSelector(selectShowGameOverDialog);
   const winner = useAppSelector(selectWinnerPlayer);
+  const gameId = useAppSelector(selectActiveGameId);
+
+  useEffect(() => {
+    if (isOpen) {
+      revealOpponentShips();
+    }
+  }, [isOpen, gameId]);
+
+  const revealOpponentShips = async () => {
+    const response = await request(getOpponentShips(gameId));
+    if (!response) return;
+    const payload: ShipRevealPayload = response.data;
+    dispatch(setPlayerShips(payload));
+  };
 
   const onClose = () => {
     dispatch(closeGameOverDialog());

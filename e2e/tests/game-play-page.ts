@@ -9,8 +9,16 @@ export class GamePlayPage {
     const square = this.getPrimarySquare(x, y).getByTestId("ship-square");
     await square.click();
   }
-  async verifyShipInSquare(x: number, y: number) {
+  async verifyOwnShipInSquare(x: number, y: number) {
     const square = this.getPrimarySquare(x, y).getByTestId("ship-square");
+    await expect(square).toBeVisible();
+  }
+  async verifyEnemyShipInSquare(x: number, y: number) {
+    const square = this.getTrackingSquare(x, y).getByTestId("ship-square");
+    await expect(square).toBeVisible();
+  }
+  async verifyEmptyEnemySquare(x: number, y: number) {
+    const square = this.getTrackingSquare(x, y).getByTestId("water-square");
     await expect(square).toBeVisible();
   }
   async rotateShip() {

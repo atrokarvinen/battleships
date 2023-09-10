@@ -13,7 +13,7 @@ export type PointArea = {
 };
 
 export class ShipBuilderValidator {
-  validatePlacements (gameState: GameState, playerShips: Ship[]) {
+  validatePlacements(gameState: GameState, playerShips: Ship[]) {
     const shipPoints = shipsToPoints(playerShips);
 
     this.validateCorrectGameState(gameState);
@@ -21,7 +21,7 @@ export class ShipBuilderValidator {
     this.validateAllShipsPlaced(playerShips);
     this.validatePointsInsideBorders(shipPoints);
     this.validateNoAdjacentShips(playerShips);
-  };
+  }
 
   validateNoOverlaps(shipPoints: Point[]) {
     const hasOverlaps = this.hasDuplicates(shipPoints);
@@ -102,7 +102,7 @@ export class ShipBuilderValidator {
   validateCorrectGameState(gameState: GameState) {
     const isCorrectState = gameState === GameState.PLACEMENTS;
     if (!isCorrectState) {
-      throwInvalidStateError(gameState, GameState.PLACEMENTS);
+      throwInvalidStateError(gameState, [GameState.PLACEMENTS]);
     }
   }
 
@@ -130,9 +130,11 @@ export class ShipBuilderValidator {
 
 export function throwInvalidStateError(
   state: GameState,
-  expectedState: GameState
+  expectedStates: GameState[]
 ) {
   const current = GameState[state];
-  const expected = GameState[expectedState];
-  throw new ApiError(`Invalid game state '${current}'. Expected '${expected}'`);
+  const expected = expectedStates.map((s) => GameState[s]).join(", ");
+  throw new ApiError(
+    `Invalid game state '${current}'. Expected one of '${expected}'`
+  );
 }

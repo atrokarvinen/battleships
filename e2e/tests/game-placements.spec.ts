@@ -32,16 +32,16 @@ test("moves and rotates ship", async ({ seededPlacements }) => {
 
   await seededPlacements.clickPrimarySquare(0, 0);
 
-  await seededPlacements.verifyShipInSquare(0, 0);
-  await seededPlacements.verifyShipInSquare(0, 1);
+  await seededPlacements.verifyOwnShipInSquare(0, 0);
+  await seededPlacements.verifyOwnShipInSquare(0, 1);
 
   await seededPlacements.moveShipDown();
 
-  await seededPlacements.verifyShipInSquare(0, 1);
-  await seededPlacements.verifyShipInSquare(0, 2);
+  await seededPlacements.verifyOwnShipInSquare(0, 1);
+  await seededPlacements.verifyOwnShipInSquare(0, 2);
 
   await seededPlacements.rotateShip();
 
-  await seededPlacements.verifyShipInSquare(0, 1);
-  await seededPlacements.verifyShipInSquare(1, 1);
+  await seededPlacements.verifyOwnShipInSquare(0, 1);
+  await seededPlacements.verifyOwnShipInSquare(1, 1);
 });
