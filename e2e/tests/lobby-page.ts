@@ -8,16 +8,17 @@ export class LobbyPage {
     this.page = page;
   }
 
+  getGameDetailsDialog = () => this.page.getByTestId("game-details-dialog");
+
   getGameRoom(title: string) {
     return this.page
       .getByTestId("game-row")
       .filter({ has: this.page.getByText(title) });
   }
-
+  
   async goToLobby() {
     await this.page.goto(`${config.frontendUrl}/lobby`);
   }
-
   async goToLobbyFromLogo() {
     await this.page.getByRole("link", { name: "Battleships app" }).click();
   }
@@ -39,9 +40,14 @@ export class LobbyPage {
   }
 
   async joinGame(title: string) {
-    await this.getGameRoom(title).click();
-    const dialog = this.page.getByTestId("game-details-dialog");
+    await this.openGameDetails(title);
+    const dialog = this.getGameDetailsDialog();
     await dialog.getByRole("button", { name: /join/i }).click();
+  }
+  
+  async leaveGame() {
+    const dialog = this.getGameDetailsDialog();
+    await dialog.getByRole("button", { name: /leave/i }).click();
   }
 
   async leaveGameRoom(roomName: string) {
@@ -63,5 +69,26 @@ export class LobbyPage {
   async verifyUserInGameRoom(roomName: string, username: string) {
     const gameRow = this.getGameRoom(roomName);
     await expect(gameRow).toContainText(username);
+  }
+
+  async expectUserInGameRoom(title: string, username: string) {
+    const gameRoomItem = this.getGameRoom(title);
+    await expect(gameRoomItem.getByText(username)).toBeVisible();
+  }
+
+  async expectUserNotInGameRoom(title: string, username: string) {
+    const gameRoomItem = this.getGameRoom(title);
+    await expect(gameRoomItem.getByText(username)).toBeHidden();
+  }
+
+  async expectUserAlreadyInGameRoom() {
+    const dialog = this.getGameDetailsDialog();
+    await expect(dialog.getByRole("button", { name: /join/i })).toBeHidden();
+    await expect(dialog.getByRole("button", { name: /go/i })).toBeEnabled();
+  }
+
+  async openGameDetails(title: string) {
+    const gameRoomItem = this.getGameRoom(title);
+    await gameRoomItem.click();
   }
 }

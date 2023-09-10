@@ -1,32 +1,9 @@
-// import { APIRequestContext, Page, expect, test } from "@playwright/test";
 import { expect } from "@playwright/test";
 import { test } from "./game-creation-fixture";
 
-// const { frontendUrl } = config;
-
-// const gameTitle = uniquefy("test game");
-// const gameTitleNotDeleted = uniquefy("not deleted");
-// const username = uniquefy(defaultUser.username);
-
 test.beforeEach(async ({ page1 }) => {
-  // await cleanup(page.request);
-  // signUpAndSignIn({
-  //   req: page.request,
-  //   user: { username, password: defaultPassword },
-  // });
   await page1.goToLobby();
-  // await page.waitForURL(`${frontendUrl}/lobby`);
 });
-
-// test.afterEach(async ({ request }) => {
-//   await cleanup(request);
-// });
-
-// const cleanup = async (request: APIRequestContext) => {
-//   await deleteGameRoomByTitle(request, gameTitle);
-//   await deleteGameRoomByTitle(request, gameTitleNotDeleted);
-//   await deleteUserByName(request, username);
-// };
 
 test("creates game", async ({ page1, gameTitle }) => {
   const page = page1.page;

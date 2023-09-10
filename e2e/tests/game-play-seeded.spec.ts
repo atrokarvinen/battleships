@@ -40,7 +40,6 @@ test("can only attack on own turn", async ({ seededPage: page1, user1 }) => {
 test("attacks are broadcasted", async ({ seededPage: page1, page2, user2 }) => {
   await page1.attackSquare(5, 5, false);
 
-  // await page2.page.waitForTimeout(2000);
   await page2.verifyPlayerTurnActive(user2.name);
   const primaryBoardP2 = page2.page.getByTestId("primary-board");
   const squareP2 = primaryBoardP2.getByTestId("square-5-5");
