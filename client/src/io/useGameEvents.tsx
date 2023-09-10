@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { Socket } from "socket.io-client";
-import { mapGameDtoToActiveGame } from "../game/api";
-import { GameDTO } from "../game/apiModel";
+import { mapGameDtoToActiveGame } from "../game/api/api";
+import { GameDTO } from "../game/api/apiModel";
 import {
   attackSquare,
   gameOver,
@@ -14,10 +14,10 @@ export const useGameEvents = (socket: Socket) => {
   const dispatch = useAppDispatch();
 
   useEffect(() => {
-    unSubscribeEvents();
+    unsubscribeEvents();
     subscribeEvents();
     return () => {
-      unSubscribeEvents();
+      unsubscribeEvents();
     };
   }, []);
 
@@ -46,7 +46,7 @@ export const useGameEvents = (socket: Socket) => {
     });
   };
 
-  const unSubscribeEvents = () => {
+  const unsubscribeEvents = () => {
     socket.off("gameStarted");
     socket.off("playerConfirmedPlacements");
     socket.off("gameEnded");

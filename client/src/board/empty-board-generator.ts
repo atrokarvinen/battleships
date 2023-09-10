@@ -1,5 +1,5 @@
-import { AttackResult } from "../models/attack-result";
-import { BoardPoint } from "../models/boardPoint";
+import { AttackResult } from "./models/attack-result";
+import { BoardPoint } from "./models/boardPoint";
 
 const boardSize = 10;
 const arr = Array.from(Array(boardSize)).map((_, index) => index);

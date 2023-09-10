@@ -11,8 +11,8 @@ import {
   selectPlayersInGameRoom,
   selectUserId,
 } from "../../redux/selectors";
-import { getAiAttack } from "../api";
-import { GameState } from "../apiModel";
+import { getAiAttack } from "../api/api";
+import { GameState } from "../api/apiModel";
 
 export const useAiPlayer = (gameRoomId: string) => {
   const dispatch = useAppDispatch();

@@ -1,5 +1,5 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
-import { ShipDTO } from "../../game/apiModel";
+import { ShipDTO } from "../../game/api/apiModel";
 import { pointMatchesToPoint } from "../../redux/activeGameSlice";
 
 export type ShipBuilderState = {

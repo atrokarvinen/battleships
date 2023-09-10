@@ -19,7 +19,6 @@ const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
 
   if (!isAuth) {
     const route = location.pathname;
-    console.log(`not authenticated, saving route '${route}', redirecting...`);
     if (route !== deniedRoute) {
       setDeniedRoute(route);
     }

@@ -1,6 +1,6 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 import { BoardPoint, Point } from "../board/models";
-import { GameState, PlayerDTO } from "../game/apiModel";
+import { GameState, PlayerDTO } from "../game/api/apiModel";
 import { TransformShipPayload } from "../ship-builder/api/api";
 import { AttackResultPayload } from "./models";
 
@@ -75,36 +75,6 @@ const activeGameSlice = createSlice({
       console.log("closing game over dialog...");
       state.showGameOverDialog = false;
     },
-    setShowOpponentBoard: (state, action: PayloadAction<boolean>) => {
-      state.showOpponentBoard = action.payload;
-    },
-    setOpponentShipLocations: (
-      state,
-      action: PayloadAction<{
-        points: BoardPoint[];
-        playerId: string;
-      }>
-    ) => {
-      // TODO can be refactored with players.ownShips maybe
-      // const { points, playerId } = action.payload;
-      // const opponent = state.trackingBoard;
-      // opponent.points.forEach((point) => {
-      //   const foundPoint = points.find(
-      //     (p) => p.point.x === point.point.x && p.point.y === point.point.y
-      //   );
-      //   if (!foundPoint || !foundPoint.shipPart) return;
-      //   point.shipPart = foundPoint.shipPart;
-      // });
-    },
-    resetOpponentShipLocations: (state, action: PayloadAction<string>) => {
-      // TODO can be refactored, see above
-      // const opponent = state.trackingBoard;
-      // opponent.points
-      //   .filter((p) => p.attackResult === AttackResult.None)
-      //   .forEach((point) => {
-      //     point.shipPart = undefined;
-      //   });
-    },
     attackSquare: (state, action: PayloadAction<AttackResultPayload>) => {
       const {
         hasShip,
@@ -176,9 +146,6 @@ export const {
   setPlayerReady,
   setIsGameOver,
   closeGameOverDialog,
-  setShowOpponentBoard,
-  setOpponentShipLocations,
-  resetOpponentShipLocations,
   attackSquare,
   gameOver,
   transformShip,

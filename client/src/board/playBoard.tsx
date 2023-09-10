@@ -2,8 +2,8 @@ import {
   mapShipsToBoardPoint,
   mergePoints,
   shipToBoardPoint,
-} from "../game/api";
-import { ShipDTO } from "../game/apiModel";
+} from "../game/api/api";
+import { ShipDTO } from "../game/api/apiModel";
 import { pointMatches, pointMatchesToPoint } from "../redux/activeGameSlice";
 import { useAppSelector } from "../redux/hooks";
 import {

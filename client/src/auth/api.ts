@@ -22,6 +22,3 @@ export const getAccountInfo = () => {
   return axios.get("/account");
 };
 
-export const getGuestAccountInfo = () => {
-  return axios.get("/account/guest");
-};

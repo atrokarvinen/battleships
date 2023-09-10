@@ -1,13 +1,10 @@
-import { GameState } from "../game/apiModel";
+import { GameState } from "../game/api/apiModel";
 import { RootState } from "./store";
 
 // Players
 export const selectPlayers = (state: RootState) =>
   Object.values(state.players.byId);
 export const selectPlayerIds = (state: RootState) => state.players.allIds;
-
-// Chat
-export const selectChatMessages = (state: RootState) => state.chat.messages;
 
 // Auth
 export const selectIsLoggedIn = (state: RootState) => state.auth.isLoggedIn;

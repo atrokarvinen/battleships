@@ -14,10 +14,10 @@ export const useGameRoomEvents = (socket: Socket) => {
   const dispatch = useAppDispatch();
 
   useEffect(() => {
-    unSubscribeEvents();
+    unsubscribeEvents();
     subscribeEvents();
     return () => {
-      unSubscribeEvents();
+      unsubscribeEvents();
     };
   }, []);
 
@@ -44,7 +44,7 @@ export const useGameRoomEvents = (socket: Socket) => {
     });
   };
 
-  const unSubscribeEvents = () => {
+  const unsubscribeEvents = () => {
     socket.off("gameCreated");
     socket.off("gameDeleted");
     socket.off("gameJoined");

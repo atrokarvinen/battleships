@@ -6,7 +6,6 @@ import { useAppSelector } from "../redux/hooks";
 import { selectShipBuilderActive } from "../redux/selectors";
 import ShipBuilder from "../ship-builder/shipBuilder";
 import { PlayerName } from "./playerName";
-import RevealOpponentBoard from "./revealOpponentBoard";
 
 type PlayerAreaProps = {
   player1Name: string;
@@ -28,17 +27,12 @@ const PlayerArea = ({
   const { sm } = useBreakpoint();
   const isShipBuilderActive = useAppSelector(selectShipBuilderActive);
 
-  const OpponenBoard = () => {
+  const OpponentBoard = () => {
     return (
-      <>
-        <TrackingBoard gameId={gameId} ownId={player1Id} enemyId={player2Id} />
-        {process.env.NODE_ENV === "development" && (
-          <RevealOpponentBoard opponentId={player2Id} gameId={gameId} />
-        )}
-      </>
+      <TrackingBoard gameId={gameId} ownId={player1Id} enemyId={player2Id} />
     );
   };
-
+ 
   return (
     <Box>
       <Stack
@@ -53,7 +47,7 @@ const PlayerArea = ({
         </Stack>
         <Stack direction="column" spacing={1} justifyContent="space-between">
           <PlayerName name={player2Name} id={player2Id} />
-          {isShipBuilderActive ? <ShipBuilder /> : <OpponenBoard />}
+          {isShipBuilderActive ? <ShipBuilder /> : <OpponentBoard />}
         </Stack>
       </Stack>
     </Box>

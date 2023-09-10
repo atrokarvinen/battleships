@@ -1,4 +1,4 @@
-import { ShipDTO } from "../game/apiModel";
+import { ShipDTO } from "../game/api/apiModel";
 
 export const canMoveUp = (ship: ShipDTO) => {
   return ship.start.y !== 0;

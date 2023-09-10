@@ -7,7 +7,7 @@ import {
   Link as MuiLink,
   Toolbar,
 } from "@mui/material";
-import { Link, useNavigate } from "react-router-dom";
+import { Link as RouterLink, useNavigate } from "react-router-dom";
 import { handleError } from "../api/errorHandling";
 import { signOutRequest } from "../auth/api";
 import { logout as logoutUser } from "../redux/authSlice";
@@ -27,8 +27,6 @@ const Navigation = ({}: NavigationProps) => {
 
   const isAuth = useAppSelector(selectIsLoggedIn);
 
-  // console.log("colorMode.mode:", colorMode.mode);
-
   const logout = async () => {
     try {
       await signOutRequest();
@@ -38,7 +36,7 @@ const Navigation = ({}: NavigationProps) => {
       handleError(error);
     }
   };
-
+ 
   if (breakpoints.sm) {
     return <NavigationMobile />;
   }
@@ -49,7 +47,7 @@ const Navigation = ({}: NavigationProps) => {
           <Grid item xs={2} alignItems="center" display="flex">
             <IconButton color="inherit">
               <MuiLink
-                component={Link}
+                component={RouterLink}
                 color="inherit"
                 underline="none"
                 to="/lobby"

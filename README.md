@@ -10,6 +10,7 @@ This project is an application of the Battleships board game [https://en.wikiped
 - Game rooms
 - Authentication
 - Support for desktop and mobile use
+- Dark mode
 
 The application is hosted in Github Pages and Fly.io and can be tested online from https://atrokarvinen.github.io/battleships
 
@@ -28,9 +29,9 @@ This project has been a learning opportunity for me and it's the first NodeJS ap
 - Playwright for end-to-end testing
 - Github Actions and Fly.io for CI/CD and deployment
 
-## Local setup
+## Local setup - Try it yourself!
 
-The project has separate client and server programs which are in their corresponding folder. 
+The project has separate client and server programs which are in their corresponding folder. To run the code locally, both need to be set up.
 
 ### Server setup
 

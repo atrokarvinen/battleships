@@ -17,8 +17,8 @@ import {
   endGameRequest,
   mapGameDtoToActiveGame,
   startGameRequest,
-} from "./api";
-import { GameDTO } from "./apiModel";
+} from "./api/api";
+import { GameDTO } from "./api/apiModel";
 
 type GameControlsProps = { gameRoomId: string };
 

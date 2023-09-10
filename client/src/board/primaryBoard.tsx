@@ -1,4 +1,4 @@
-import { shipToBoardPoint } from "../game/api";
+import { shipToBoardPoint } from "../game/api/api";
 import { pointMatches } from "../redux/activeGameSlice";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import {

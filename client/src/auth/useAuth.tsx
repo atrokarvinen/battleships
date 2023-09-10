@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { handleError } from "../api/errorHandling";
-import { getAccountInfo, getGuestAccountInfo } from "../auth/api";
+import { getAccountInfo } from "../auth/api";
 import { login } from "../redux/authSlice";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import {
@@ -28,8 +28,7 @@ export const useAuth = () => {
     }
 
     try {
-      const request = isGuest ? getGuestAccountInfo : getAccountInfo;
-      const response = await request();
+      const response = await getAccountInfo();
       const { userId, username } = response.data;
       dispatch(login({ userId, username, isGuest: false }));
     } catch (error) {

@@ -1,7 +1,7 @@
-import { axios } from "../api/axios";
-import { BoardPoint, ShipPart } from "../board/models";
-import { generateEmptyBoardPoints } from "../board/redux/board-utils";
-import { ActiveGameState, pointMatches } from "../redux/activeGameSlice";
+import { axios } from "../../api/axios";
+import { generateEmptyBoardPoints } from "../../board/empty-board-generator";
+import { BoardPoint, ShipPart } from "../../board/models";
+import { ActiveGameState, pointMatches } from "../../redux/activeGameSlice";
 import { GameDTO, GameState, ShipDTO } from "./apiModel";
 
 export type StartGamePayload = { gameRoomId: string };
